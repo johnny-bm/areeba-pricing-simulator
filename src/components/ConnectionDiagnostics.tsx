@@ -44,7 +44,7 @@ export function ConnectionDiagnostics() {
         diagnosticResults.checks.push({
           name: 'Backend Health',
           status: 'failed',
-          message: `Error: ${error.message}`
+          message: `Error: ${(error as Error).message}`
         });
       }
 
@@ -60,7 +60,7 @@ export function ConnectionDiagnostics() {
         diagnosticResults.checks.push({
           name: 'Ping Test',
           status: 'failed',
-          message: `Error: ${error.message}`
+          message: `Error: ${(error as Error).message}`
         });
       }
 
@@ -76,12 +76,12 @@ export function ConnectionDiagnostics() {
         diagnosticResults.checks.push({
           name: 'Data Loading',
           status: 'failed',
-          message: `Error: ${error.message}`
+          message: `Error: ${(error as Error).message}`
         });
       }
 
     } catch (error) {
-      diagnosticResults.error = error.message;
+      diagnosticResults.error = (error as Error).message;
     }
 
     setResults(diagnosticResults);

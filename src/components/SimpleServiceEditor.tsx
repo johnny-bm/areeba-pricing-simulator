@@ -34,7 +34,7 @@ interface ServiceFormData {
   unit: string;
   defaultPrice: number;
   tags: string[];
-  pricingType: 'simple' | 'tiered';
+  pricingType: 'fixed' | 'tiered';
   tiers: PricingTier[];
   quantitySourceFields: string[];
   autoAddServices: string[];
@@ -59,7 +59,7 @@ export function SimpleServiceEditor({
     unit: 'per month',
     defaultPrice: 0,
     tags: [],
-    pricingType: 'simple',
+    pricingType: 'fixed',
     tiers: [],
     quantitySourceFields: [],
     autoAddServices: []
@@ -117,7 +117,7 @@ export function SimpleServiceEditor({
           unit: service.unit,
           defaultPrice: service.defaultPrice,
           tags: service.tags || [],
-          pricingType: service.pricingType || 'simple',
+          pricingType: service.pricingType || 'fixed',
           tiers: service.tiers || [],
           quantitySourceFields: service.quantitySourceFields || [],
           autoAddServices: service.autoAddServices || []
@@ -132,7 +132,7 @@ export function SimpleServiceEditor({
           unit: 'per month',
           defaultPrice: 0,
           tags: [],
-          pricingType: 'simple',
+          pricingType: 'fixed',
           tiers: [],
           quantitySourceFields: [],
           autoAddServices: []
@@ -209,7 +209,7 @@ export function SimpleServiceEditor({
       onClose();
     } catch (error) {
       console.error('Error saving service:', error);
-      alert(`Failed to save service: ${error.message || 'Unknown error'}`);
+      alert(`Failed to save service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsSaving(false);
     }
@@ -230,7 +230,7 @@ export function SimpleServiceEditor({
       onClose();
     } catch (error) {
       console.error('Error deleting service:', error);
-      alert(`Failed to delete service: ${error.message || 'Unknown error'}`);
+      alert(`Failed to delete service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDeleting(false);
     }
@@ -327,7 +327,7 @@ export function SimpleServiceEditor({
               <Label>Pricing Type</Label>
               <Select 
                 value={formData.pricingType} 
-                onValueChange={(value: 'simple' | 'tiered') => updateField('pricingType', value)}
+                onValueChange={(value: 'fixed' | 'tiered') => updateField('pricingType', value)}
               >
                 <SelectTrigger>
                   <SelectValue />

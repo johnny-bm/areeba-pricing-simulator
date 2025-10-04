@@ -115,6 +115,7 @@ export function applyAutoAddLogic(
           : service.defaultPrice,
         discount: 0,
         discountType: 'percentage',
+        discountApplication: 'total',
         isFree: false
       };
       
@@ -146,7 +147,7 @@ export function applyAutoAddLogic(
     }
     
     // Apply quantity source fields (use normalized fields with fallback)
-    const quantityFields = selectedItem.item.quantity_source_fields || selectedItem.item.quantitySourceFields || [];
+    const quantityFields = selectedItem.item.quantitySourceFields || [];
     if (quantityFields.length > 0) {
       // Convert dynamic config to legacy format for compatibility
       const legacyConfig = convertToLegacyConfig(clientConfig);
@@ -200,7 +201,7 @@ export function calculateServiceQuantity(
   }
   
   // Also check normalized field name
-  const quantityFields = service.quantity_source_fields || [];
+  const quantityFields = service.quantitySourceFields || [];
   if (quantityFields.length > 0) {
     quantityFields.forEach(configFieldId => {
       const configValue = configValues[configFieldId];

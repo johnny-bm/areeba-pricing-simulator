@@ -152,7 +152,7 @@ export function FeeSummary({
 
   const sortedCategories = categories
     .filter(cat => groupedItems[cat.id])
-    .sort((a, b) => a.order_index - b.order_index);
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
 
   const getCategoryTotal = (categoryId: string) => {
     const items = groupedItems[categoryId] || [];

@@ -498,22 +498,6 @@ async saveGuestScenario(data: {
     }
   },
 
-  // Get scenario data by ID
-  async getScenarioData(scenarioId: string): Promise<ScenarioData | null> {
-    try {
-      const response = await createApiRequest(`${API_BASE_URL}/scenarios/${scenarioId}`);
-      
-      if (!response.ok) {
-        return null;
-      }
-      
-      const data = await response.json();
-      return data.scenario || null;
-    } catch (error) {
-      console.error(`Failed to load scenario ${scenarioId}:`, error);
-      return null;
-    }
-  },
 
   // Save configuration (single) - works by loading all, updating one, and saving all
   async saveConfiguration(config: ConfigurationDefinition): Promise<void> {

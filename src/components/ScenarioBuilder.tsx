@@ -53,7 +53,7 @@ export function ScenarioBuilder({
 
   // Helper function to get the current calculated quantity for auto-synced items
   const getCurrentQuantity = (selectedItem: SelectedItem): number => {
-    const quantityFields = selectedItem.item.quantity_source_fields || selectedItem.item.quantitySourceFields || [];
+    const quantityFields = selectedItem.item.quantitySourceFields || [];
     if (quantityFields.length > 0) {
       const calculatedQuantity = getConfigBasedQuantity(selectedItem.item, clientConfig);
       return calculatedQuantity;
@@ -201,7 +201,7 @@ export function ScenarioBuilder({
     const categoryIds = new Set(selectedItems.map(item => item.item.category));
     return categories
       .filter(cat => categoryIds.has(cat.id))
-      .sort((a, b) => a.order_index - b.order_index);
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
   }, [selectedItems, categories]);
 
   // Group filtered items by category
@@ -264,7 +264,7 @@ export function ScenarioBuilder({
               <div className="space-y-3">
                 {categories
                   .filter(category => itemsByCategory.has(category.id))
-                  .sort((a, b) => a.order_index - b.order_index)
+                  .sort((a, b) => (a.order || 0) - (b.order || 0))
                   .map((category) => {
                     const categoryItems = itemsByCategory.get(category.id) || [];
                     const isCategoryExpanded = expandedCategories[category.id] ?? allCategoriesExpanded;
@@ -300,7 +300,7 @@ export function ScenarioBuilder({
                               {categoryItems.map((selectedItem) => {
                                 const currentQuantity = getCurrentQuantity(selectedItem);
                                 const total = calculateRowTotal(selectedItem);
-                                const hasAutoQuantity = (selectedItem.item.quantity_source_fields || selectedItem.item.quantitySourceFields || []).length > 0;
+                                const hasAutoQuantity = (selectedItem.item.quantitySourceFields || []).length > 0;
                                 const isExpanded = expandedCards[selectedItem.id] ?? allCardsExpanded;
                                 
                                 return (
@@ -510,13 +510,13 @@ export function ScenarioBuilder({
               <div>
                 <Label htmlFor="edit-quantity">
                   Quantity
-                  {((editingItem.item.quantity_source_fields || editingItem.item.quantitySourceFields || []).length > 0) && (
+                  {((editingItem.item.quantitySourceFields || []).length > 0) && (
                     <span className="ml-1 text-xs text-blue-600" title="Quantity automatically calculated from configuration">
                       🔄 Auto
                     </span>
                   )}
                 </Label>
-                {((editingItem.item.quantity_source_fields || editingItem.item.quantitySourceFields || []).length > 0) ? (
+                {((editingItem.item.quantitySourceFields || []).length > 0) ? (
                   <div className="h-10 px-3 py-2 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-md cursor-not-allowed flex items-center justify-between">
                     <span className="text-foreground">
                       {getCurrentQuantity(editingItem).toLocaleString()}

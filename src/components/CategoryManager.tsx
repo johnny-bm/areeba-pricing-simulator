@@ -101,7 +101,7 @@ export function CategoryManager({
     try {
       await handleDeleteCategory(category);
     } catch (error) {
-      alert(`Failed to delete category: ${error.message || 'Unknown error'}`);
+      alert(`Failed to delete category: ${(error as Error).message || 'Unknown error'}`);
     }
   };
 

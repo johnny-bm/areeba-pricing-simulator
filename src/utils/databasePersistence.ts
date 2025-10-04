@@ -88,7 +88,7 @@ async function loadFromDatabase<T>(key: string, fallback: T): Promise<T> {
     return await api.loadSessionData(sessionId, key, fallback);
   } catch (error) {
     // Enhanced error handling for timeouts
-    if (error.name === 'AbortError' || error.message?.includes('timeout')) {
+    if ((error as Error).name === 'AbortError' || (error as Error).message?.includes('timeout')) {
       console.warn(`⏰ Load timeout for ${key} - using fallback value`);
     } else {
       console.warn(`Failed to load ${key} from database:`, error);
@@ -103,7 +103,7 @@ const deleteFromDatabase = async (key: string): Promise<void> => {
     await api.deleteSessionData(sessionId, key);
   } catch (error) {
     // Enhanced error handling for timeouts
-    if (error.name === 'AbortError' || error.message?.includes('timeout')) {
+    if ((error as Error).name === 'AbortError' || (error as Error).message?.includes('timeout')) {
       console.warn(`⏰ Delete timeout for ${key} - operation may not have completed`);
     } else {
       console.warn(`Failed to delete ${key} from database:`, error);
@@ -308,7 +308,7 @@ export const getSessionInfo = async () => {
     console.warn('Failed to get session info:', error);
     return {
       sessionId,
-      error: error.message,
+      error: (error as Error).message,
       hasData: false
     };
   }

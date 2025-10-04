@@ -46,7 +46,7 @@ export function ItemLibrary({
     if (!categories || categories.length === 0) {
       return [];
     }
-    return [...categories].sort((a, b) => a.order_index - b.order_index);
+    return [...categories].sort((a, b) => (a.order || 0) - (b.order || 0));
   }, [categories]);
 
   // Get all unique tags across all items

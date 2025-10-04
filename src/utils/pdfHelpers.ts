@@ -248,7 +248,7 @@ function generateHTMLReport(data: PDFData): string {
   }, {} as Record<string, SelectedItem[]>);
 
   // Create sorted categories based on order_index
-  const sortedCategories = [...data.categories].sort((a, b) => a.order_index - b.order_index);
+  const sortedCategories = [...data.categories].sort((a, b) => (a.order || 0) - (b.order || 0));
 
   const servicesHTML = sortedCategories.map(category => {
     const categoryItems = groupedItems[category.id];

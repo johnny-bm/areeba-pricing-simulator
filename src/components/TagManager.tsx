@@ -91,7 +91,7 @@ export function TagManager({
     try {
       await handleDeleteTag(tagName);
     } catch (error) {
-      alert(`Failed to delete tag: ${error.message || 'Unknown error'}`);
+      alert(`Failed to delete tag: ${(error as Error).message || 'Unknown error'}`);
     }
   };
 

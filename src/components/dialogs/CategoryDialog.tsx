@@ -80,7 +80,7 @@ export function CategoryDialog({ isOpen, onClose, onSave, onDelete, onDuplicate,
       onClose();
     } catch (error) {
       console.error('Failed to save category:', error);
-      alert(`Failed to save category: ${error.message || 'Unknown error'}`);
+      alert(`Failed to save category: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsSaving(false);
     }
@@ -98,7 +98,7 @@ export function CategoryDialog({ isOpen, onClose, onSave, onDelete, onDuplicate,
       onClose();
     } catch (error) {
       console.error('Failed to delete category:', error);
-      alert(`Failed to delete category: ${error.message || 'Unknown error'}`);
+      alert(`Failed to delete category: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDeleting(false);
     }
@@ -119,7 +119,7 @@ export function CategoryDialog({ isOpen, onClose, onSave, onDelete, onDuplicate,
       onClose();
     } catch (error) {
       console.error('Failed to duplicate category:', error);
-      alert(`Failed to duplicate category: ${error.message || 'Unknown error'}`);
+      alert(`Failed to duplicate category: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDuplicating(false);
     }

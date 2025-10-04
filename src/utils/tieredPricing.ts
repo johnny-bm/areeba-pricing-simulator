@@ -58,7 +58,7 @@ export function calculateTieredPrice(
 
         activeTiers.push({
           tierId: tier.id,
-          tierName: tier.name,
+          tierName: tier.name || 'Unnamed Tier',
           tierQuantity,
           tierUnitPrice: tier.unitPrice,
           tierTotal
@@ -104,7 +104,7 @@ export function getEffectiveUnitPrice(item: PricingItem, quantity: number): numb
   let applicableTier = null;
   for (const tier of sortedTiers) {
     if (quantity >= tier.minQuantity) {
-      if (tier.maxQuantity === null || quantity <= tier.maxQuantity) {
+      if (tier.maxQuantity === null || tier.maxQuantity === undefined || quantity <= tier.maxQuantity) {
         applicableTier = tier;
       }
     }
@@ -134,7 +134,7 @@ export function formatTierRange(tier: PricingTier): string {
   if (tier.maxQuantity === null) {
     return `${tier.minQuantity.toLocaleString()}+`;
   } else {
-    return `${tier.minQuantity.toLocaleString()} - ${tier.maxQuantity.toLocaleString()}`;
+    return `${tier.minQuantity.toLocaleString()} - ${tier.maxQuantity?.toLocaleString() || '∞'}`;
   }
 }
 
@@ -149,7 +149,7 @@ export function getBestTierForQuantity(item: PricingItem, quantity: number): Pri
   // Find the tier that applies to this quantity
   const applicableTiers = item.tiers.filter(tier => 
     quantity >= tier.minQuantity && 
-    (tier.maxQuantity === null || quantity <= tier.maxQuantity)
+    (tier.maxQuantity === null || tier.maxQuantity === undefined || quantity <= tier.maxQuantity)
   );
 
   if (applicableTiers.length === 0) {
@@ -166,7 +166,7 @@ export function getBestTierForQuantity(item: PricingItem, quantity: number): Pri
  */
 export function getConfigBasedQuantity(item: PricingItem, config: ClientConfig): number {
   // Use normalized fields with fallback to legacy fields
-  const quantityFields = item.quantity_source_fields || item.quantitySourceFields || [];
+  const quantityFields = item.quantitySourceFields || [];
   
   if (quantityFields.length > 0) {
     let totalQuantity = 0;
@@ -192,7 +192,7 @@ export function getConfigBasedQuantity(item: PricingItem, config: ClientConfig):
  * Get a human-readable description of which config fields drive the quantity
  */
 export function getQuantitySourceDescription(item: PricingItem): string | null {
-  const quantityFields = item.quantity_source_fields || item.quantitySourceFields || [];
+  const quantityFields = item.quantitySourceFields || [];
   
   if (quantityFields.length === 0) {
     return null;

@@ -117,7 +117,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           unit: item.unit || 'per month',
           defaultPrice: item.defaultPrice || 0,
           tags: item.tags || [],
-          pricingType: item.pricingType || 'simple',
+          pricingType: item.pricingType || 'fixed',
           tiers: item.tiers || [],
           quantitySourceFields: item.auto_add_trigger_fields || item.autoQuantitySources || item.quantitySourceFields as string[],
           quantityMultiplier: item.quantityMultiplier || 1,
@@ -202,18 +202,18 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
       console.error('Failed to save service:', error);
       
       // 🔧 CRITICAL FIX: Handle auto-add related errors gracefully  
-      if (error.message && (
-        error.message.includes('auto_add_services') ||
-        error.message.includes('autoAddServices') ||
-        error.message.includes('quantitySourceFields') ||
-        error.message.includes('quantityMultiplier') ||
-        error.message.includes('autoQuantitySources') ||
-        error.message.includes('pricingType') ||
-        error.message.includes('Auto-add functionality') ||
-        error.message.includes('schema cache') ||
-        error.message.includes('fallback method') ||
-        error.message.includes('Could not find the') ||
-        error.message.includes('column of \'services\'')
+      if ((error as Error).message && (
+        (error as Error).message.includes('auto_add_services') ||
+        (error as Error).message.includes('autoAddServices') ||
+        (error as Error).message.includes('quantitySourceFields') ||
+        (error as Error).message.includes('quantityMultiplier') ||
+        (error as Error).message.includes('autoQuantitySources') ||
+        (error as Error).message.includes('pricingType') ||
+        (error as Error).message.includes('Auto-add functionality') ||
+        (error as Error).message.includes('schema cache') ||
+        (error as Error).message.includes('fallback method') ||
+        (error as Error).message.includes('Could not find the') ||
+        (error as Error).message.includes('column of \'services\'')
       )) {
         console.log('🔧 ItemDialog: Auto-add related success - service saved without database persistence');
         alert('Service saved successfully! Auto-add functionality works using application state (database persistence not required).');
@@ -221,7 +221,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         return;
       }
       
-      alert(`Failed to save service: ${error.message || 'Unknown error'}`);
+      alert(`Failed to save service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsSaving(false);
     }
@@ -239,7 +239,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
       onClose();
     } catch (error) {
       console.error('Failed to delete service:', error);
-      alert(`Failed to delete service: ${error.message || 'Unknown error'}`);
+      alert(`Failed to delete service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDeleting(false);
     }
@@ -254,7 +254,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
       onClose();
     } catch (error) {
       console.error('Failed to duplicate service:', error);
-      alert(`Failed to duplicate service: ${error.message || 'Unknown error'}`);
+      alert(`Failed to duplicate service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDuplicating(false);
     }
