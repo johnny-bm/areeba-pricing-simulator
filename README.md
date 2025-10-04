@@ -111,3 +111,4 @@ The application uses the following Supabase tables:
 ## License
 
 UNLICENSED - All rights reserved by areeba
+# Deployment trigger
