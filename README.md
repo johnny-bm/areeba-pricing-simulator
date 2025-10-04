@@ -112,3 +112,4 @@ The application uses the following Supabase tables:
 
 UNLICENSED - All rights reserved by areeba
 # Deployment trigger
+# Trigger Vercel deployment
