@@ -110,4 +110,4 @@ The application uses the following Supabase tables:
 
 ## License
 
-UNLICENSED - All rights reserved by Areeba
+UNLICENSED - All rights reserved by areeba
