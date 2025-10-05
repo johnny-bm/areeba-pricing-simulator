@@ -23,7 +23,7 @@ interface ItemFormData {
   unit: string;
   defaultPrice: number;
   tags: string[];
-  pricingType: 'simple' | 'tiered';
+  pricingType: 'fixed' | 'tiered';
   tiers: PricingTier[];
   quantitySourceFields?: string[];
   quantityMultiplier?: number;
@@ -51,7 +51,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
     unit: 'per month',
     defaultPrice: 0,
     tags: [],
-    pricingType: 'simple',
+    pricingType: 'fixed',
     tiers: [],
     quantitySourceFields: undefined,
     quantityMultiplier: 1,
@@ -133,7 +133,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           unit: 'per month',
           defaultPrice: 0,
           tags: [],
-          pricingType: 'simple',
+          pricingType: 'fixed',
           tiers: [],
           quantitySourceFields: undefined,
           quantityMultiplier: 1,
@@ -152,6 +152,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         name: formData.name,
         description: formData.description,
         category: formData.category,
+        categoryId: formData.category,
         unit: formData.unit,
         defaultPrice: formData.defaultPrice,
         tags: formData.tags || [],
@@ -161,7 +162,11 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         auto_add_trigger_fields: formData.quantitySourceFields && formData.quantitySourceFields.length > 0 ? formData.quantitySourceFields : undefined,
         autoQuantitySources: formData.quantitySourceFields && formData.quantitySourceFields.length > 0 ? formData.quantitySourceFields : undefined,
         quantityMultiplier: formData.quantityMultiplier && formData.quantityMultiplier !== 1 ? formData.quantityMultiplier : undefined,
-        autoAddServices: formData.autoAddServices && formData.autoAddServices.length > 0 ? formData.autoAddServices : undefined
+        autoAddServices: formData.autoAddServices && formData.autoAddServices.length > 0 ? formData.autoAddServices.map(serviceId => ({
+          configFieldId: serviceId,
+          triggerCondition: 'boolean',
+          triggerValue: true
+        })) : undefined
       };
 
       // Saving service with tags
@@ -262,12 +267,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
   };
 
   const updateField = <K extends keyof ItemFormData>(field: K, value: ItemFormData[K]) => {
-    // Add safety checks for string fields to prevent undefined values
-    let safeValue = value;
-    if (field === 'name' || field === 'description') {
-      safeValue = (value as string) || '' as ItemFormData[K];
-    }
-    setFormData(prev => ({ ...prev, [field]: safeValue }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const isValid = formData.name?.trim() && formData.description?.trim() && formData.category && formData.unit;
@@ -361,13 +361,13 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
               <Label>Pricing Type</Label>
               <Select 
                 value={formData.pricingType} 
-                onValueChange={(value: 'simple' | 'tiered') => updateField('pricingType', value)}
+                onValueChange={(value: 'fixed' | 'tiered') => updateField('pricingType', value)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="simple">Simple Pricing</SelectItem>
+                  <SelectItem value="fixed">Fixed Pricing</SelectItem>
                   <SelectItem value="tiered">Tiered Pricing</SelectItem>
                 </SelectContent>
               </Select>

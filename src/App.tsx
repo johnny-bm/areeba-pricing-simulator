@@ -357,8 +357,6 @@ function AppContent() {
             globalDiscountPersistence.loadDiscountApplication().catch(() => DISCOUNT_APPLICATIONS.NONE),
             serviceMappingsPersistence.load().catch(() => ({})),
             autoAddConfigPersistence.load().catch(() => ({ autoAddRules: {}, quantityRules: {} }))
-          ]),
-          timeoutPromise
         ]);
 
         if (persistedSimulator) {
