@@ -348,10 +348,9 @@ function AppContent() {
           persistedDiscountApplication,
           persistedMappings,
           persistedAutoAddConfig
-        ] = await Promise.race([
-          Promise.all([
-            simulatorSelectionPersistence.load().catch(() => null),
-            clientConfigPersistence.load().catch(() => null),
+        ] = await Promise.all([
+          simulatorSelectionPersistence.load().catch(() => null),
+          clientConfigPersistence.load().catch(() => null),
             selectedItemsPersistence.load().catch(() => []),
             globalDiscountPersistence.loadDiscount().catch(() => 0),
             globalDiscountPersistence.loadDiscountType().catch(() => DISCOUNT_TYPES.PERCENTAGE),
@@ -624,7 +623,7 @@ function AppContent() {
           let updatedItems = applyAutoAddLogic(itemsAfterRemoval, clientConfig, pricingServices, autoAddConfig, serviceMappings);
           
           updatedItems = updatedItems.map(selectedItem => {
-            const quantityFields = selectedItem.item.quantity_source_fields || selectedItem.item.quantitySourceFields || [];
+            const quantityFields = selectedItem.item.quantitySourceFields || [];
             if (quantityFields.length > 0) {
               const newQuantity = getDefaultQuantity(selectedItem.item, legacyConfig);
               if (selectedItem.quantity !== newQuantity) {

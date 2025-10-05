@@ -121,7 +121,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           tiers: item.tiers || [],
           quantitySourceFields: item.auto_add_trigger_fields || item.autoQuantitySources || item.quantitySourceFields as string[],
           quantityMultiplier: item.quantityMultiplier || 1,
-          autoAddServices: item.autoAddServices || []
+          autoAddServices: (item.autoAddServices as any) || []
         });
       } else {
         // Create mode
