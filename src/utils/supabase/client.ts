@@ -14,7 +14,9 @@ export const supabase = (() => {
       hasUrl: !!supabaseUrl,
       hasKey: !!supabaseAnonKey,
       urlLength: supabaseUrl?.length || 0,
-      keyLength: supabaseAnonKey?.length || 0
+      keyLength: supabaseAnonKey?.length || 0,
+      urlValue: supabaseUrl,
+      keyValue: supabaseAnonKey ? `${supabaseAnonKey.substring(0, 10)}...` : 'undefined'
     });
     
     if (!supabaseUrl || !supabaseAnonKey) {
