@@ -7,13 +7,16 @@ export const supabase = (() => {
   if (!supabaseInstance) {
     console.log('🔐 Creating Supabase client singleton');
     
-    // Debug: Check all environment variables
-    console.log('🔍 All env vars:', import.meta.env);
-    console.log('🔍 VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
-    console.log('🔍 VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY);
+    // Get environment variables with fallback
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    console.log('🔍 Environment variables loaded:', {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseAnonKey,
+      urlLength: supabaseUrl?.length || 0,
+      keyLength: supabaseAnonKey?.length || 0
+    });
     
     console.log('🔍 Environment check:', {
       hasUrl: !!supabaseUrl,
