@@ -1,10 +1,18 @@
 {
-  "buildCommand": "npm run build:prod",
+  "framework": "vite",
   "outputDirectory": "dist",
+  "buildCommand": "npm run build:prod",
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
     }
   ]
 }
