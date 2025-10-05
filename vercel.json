@@ -7,11 +7,6 @@
   "env": {
     "NODE_ENV": "production"
   },
-  "functions": {
-    "src/api/**/*.ts": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
@@ -50,8 +45,8 @@
   ],
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "redirects": [
