@@ -7,6 +7,11 @@ export const supabase = (() => {
   if (!supabaseInstance) {
     console.log('🔐 Creating Supabase client singleton');
     
+    // Debug: Check all environment variables
+    console.log('🔍 All env vars:', import.meta.env);
+    console.log('🔍 VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
+    console.log('🔍 VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY);
+    
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
     
