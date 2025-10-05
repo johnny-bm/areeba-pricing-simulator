@@ -5,16 +5,19 @@ export interface PricingItem {
   name: string;
   description?: string;
   category: string;
+  categoryId: string;
   unit: string;
   defaultPrice: number;
   pricingType: 'fixed' | 'tiered';
   tiers?: PricingTier[];
   tags?: string[];
   isActive?: boolean;
-  autoAddServices?: string[];
+  isArchived?: boolean;
+  autoAddServices?: { configFieldId: string; triggerCondition: string; triggerValue: any }[];
   quantitySourceFields?: string[];
   quantityMultiplier?: number;
   autoQuantitySources?: string[];
+  auto_add_trigger_fields?: string[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -99,7 +102,7 @@ export interface ConfigurationDefinition {
 export interface ConfigurationField {
   id: string;
   name: string;
-  type: 'text' | 'number' | 'boolean' | 'select';
+  type: 'text' | 'number' | 'boolean' | 'select' | 'string';
   label: string;
   placeholder?: string;
   defaultValue: any;
@@ -110,6 +113,9 @@ export interface ConfigurationField {
     max?: number;
     pattern?: string;
   };
+  min?: number;
+  max?: number;
+  step?: number;
   order?: number;
   description?: string;
 }
@@ -146,6 +152,11 @@ export interface ScenarioSummary {
   preparedBy?: string;
   createdAt?: string;
   itemCount?: number;
+  // Add missing properties
+  globalDiscount?: number;
+  globalDiscountType?: 'percentage' | 'fixed';
+  globalDiscountApplication?: 'none' | 'both' | 'monthly' | 'onetime';
+  submissionCode?: string;
 }
 
 export interface GuestScenario {
@@ -178,6 +189,10 @@ export interface User {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  // Add missing properties for Supabase User type compatibility
+  app_metadata?: Record<string, any>;
+  user_metadata?: Record<string, any>;
+  aud?: string;
 }
 
 export interface UserInvite {

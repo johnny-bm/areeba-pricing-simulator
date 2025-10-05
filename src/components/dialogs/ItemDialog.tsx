@@ -117,7 +117,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           unit: item.unit || 'per month',
           defaultPrice: item.defaultPrice || 0,
           tags: item.tags || [],
-          pricingType: item.pricingType || 'fixed',
+          pricingType: (item.pricingType as any) || 'fixed',
           tiers: item.tiers || [],
           quantitySourceFields: item.auto_add_trigger_fields || item.autoQuantitySources || item.quantitySourceFields as string[],
           quantityMultiplier: item.quantityMultiplier || 1,

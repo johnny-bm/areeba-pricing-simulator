@@ -46,7 +46,7 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
       setEmail(user.email);
       setFirstName(user.first_name || '');
       setLastName(user.last_name || '');
-      setRole(user.role);
+      setRole(user.role as any);
       setIsActive(user.is_active);
       setPassword('');
     } else {

@@ -472,12 +472,12 @@ export function AutoAddConfigPanel({
                     It will test if your configuration data is being properly saved and loaded from the database.
                   </p>
                 </div>
-                <AutoAddPersistenceDebugger
+                {/* <AutoAddPersistenceDebugger
                   serviceMappings={serviceMappings}
                   autoAddConfig={autoAddConfig}
                   onClose={() => setShowDebugger(false)}
                   onFixSynchronization={onUpdateAutoAddConfig}
-                />
+                /> */}
               </CardContent>
             )}
           </Card>

@@ -89,7 +89,7 @@ export function applyAutoAddLogic(
       if (configValue !== undefined && configValue !== null) {
         const shouldAdd = (mapping.triggerCondition === 'boolean' && configValue === true) ||
                          (mapping.triggerCondition === 'number' && typeof configValue === 'number' && configValue > 0) ||
-                         (mapping.triggerCondition === 'string' && typeof configValue === 'string' && configValue.trim() !== '');
+                         (mapping.triggerCondition === 'string' && typeof configValue === 'string' && (configValue as string).trim() !== '');
         
         if (shouldAdd && 
             !currentSelectedItems.some(item => item.item.id === mapping.serviceId) &&

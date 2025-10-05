@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
+import { Label } from '../../../shared/components/ui/label';
 import { NumberInput } from '../../../components/NumberInput';
 import { PricingItem, SelectedItem } from '../types';
 import { formatPrice } from '../../../utils/formatters';

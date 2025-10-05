@@ -11,8 +11,8 @@ export class PricingService {
     sort?: PricingSortOptions
   ): Promise<PricingItem[]> {
     try {
-      const response = await api.getPricingItems();
-      let items = response.data || [];
+      const response = await api.loadPricingItems();
+      let items = response || [];
 
       // Apply filters
       if (filters) {
@@ -84,8 +84,8 @@ export class PricingService {
    */
   static async getPricingItem(id: string): Promise<PricingItem | null> {
     try {
-      const response = await api.getPricingItems();
-      const items = response.data || [];
+      const response = await api.loadPricingItems();
+      const items = response || [];
       return items.find(item => item.id === id) || null;
     } catch (error) {
       throw new Error(`Failed to fetch pricing item: ${(error as Error).message}`);
@@ -98,7 +98,7 @@ export class PricingService {
   static async createPricingItem(item: Omit<PricingItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<PricingItem> {
     try {
       const response = await api.createPricingItem(item);
-      return response.data;
+      return response;
     } catch (error) {
       throw new Error(`Failed to create pricing item: ${(error as Error).message}`);
     }
@@ -110,7 +110,7 @@ export class PricingService {
   static async updatePricingItem(id: string, updates: Partial<PricingItem>): Promise<PricingItem> {
     try {
       const response = await api.updatePricingItem(id, updates);
-      return response.data;
+      return response;
     } catch (error) {
       throw new Error(`Failed to update pricing item: ${(error as Error).message}`);
     }
@@ -132,8 +132,8 @@ export class PricingService {
    */
   static async getCategories(): Promise<Category[]> {
     try {
-      const response = await api.getCategories();
-      return response.data || [];
+      const response = await api.loadCategories();
+      return response || [];
     } catch (error) {
       throw new Error(`Failed to fetch categories: ${(error as Error).message}`);
     }
@@ -145,7 +145,7 @@ export class PricingService {
   static async createCategory(category: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>): Promise<Category> {
     try {
       const response = await api.createCategory(category);
-      return response.data;
+      return response;
     } catch (error) {
       throw new Error(`Failed to create category: ${(error as Error).message}`);
     }
@@ -157,7 +157,7 @@ export class PricingService {
   static async updateCategory(id: string, updates: Partial<Category>): Promise<Category> {
     try {
       const response = await api.updateCategory(id, updates);
-      return response.data;
+      return response;
     } catch (error) {
       throw new Error(`Failed to update category: ${(error as Error).message}`);
     }
@@ -180,7 +180,7 @@ export class PricingService {
   static async getTags(): Promise<Tag[]> {
     try {
       const response = await api.getTags();
-      return response.data || [];
+      return response || [];
     } catch (error) {
       throw new Error(`Failed to fetch tags: ${(error as Error).message}`);
     }
@@ -192,7 +192,7 @@ export class PricingService {
   static async createTag(tag: Omit<Tag, 'id' | 'createdAt' | 'updatedAt'>): Promise<Tag> {
     try {
       const response = await api.createTag(tag);
-      return response.data;
+      return response;
     } catch (error) {
       throw new Error(`Failed to create tag: ${(error as Error).message}`);
     }
@@ -204,7 +204,7 @@ export class PricingService {
   static async updateTag(id: string, updates: Partial<Tag>): Promise<Tag> {
     try {
       const response = await api.updateTag(id, updates);
-      return response.data;
+      return response;
     } catch (error) {
       throw new Error(`Failed to update tag: ${(error as Error).message}`);
     }

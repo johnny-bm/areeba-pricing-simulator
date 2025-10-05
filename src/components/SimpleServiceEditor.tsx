@@ -31,6 +31,7 @@ interface ServiceFormData {
   name: string;
   description: string;
   category: string;
+  categoryId: string;
   unit: string;
   defaultPrice: number;
   tags: string[];
@@ -56,6 +57,7 @@ export function SimpleServiceEditor({
     name: '',
     description: '',
     category: categories.length > 0 ? categories[0].id : '',
+    categoryId: categories.length > 0 ? categories[0].id : '',
     unit: 'per month',
     defaultPrice: 0,
     tags: [],
@@ -114,6 +116,7 @@ export function SimpleServiceEditor({
           name: service.name,
           description: service.description,
           category: service.category,
+          categoryId: service.categoryId || service.category,
           unit: service.unit,
           defaultPrice: service.defaultPrice,
           tags: service.tags || [],
@@ -129,6 +132,7 @@ export function SimpleServiceEditor({
           name: '',
           description: '',
           category: categories.length > 0 ? categories[0].id : '',
+          categoryId: categories.length > 0 ? categories[0].id : '',
           unit: 'per month',
           defaultPrice: 0,
           tags: [],
@@ -145,7 +149,7 @@ export function SimpleServiceEditor({
     // Add safety checks for string fields to prevent undefined values
     let safeValue = value;
     if (field === 'name' || field === 'description') {
-      safeValue = (value as string) || '' as ServiceFormData[K];
+      safeValue = (value as string) || '';
     }
     setFormData(prev => ({ ...prev, [field]: safeValue }));
   };
@@ -177,6 +181,7 @@ export function SimpleServiceEditor({
         name: formData.name.trim(),
         description: formData.description.trim(),
         category: formData.category,
+        categoryId: formData.categoryId || '',
         unit: formData.unit,
         defaultPrice: formData.defaultPrice,
         tags: formData.tags,

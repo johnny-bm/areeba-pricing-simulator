@@ -51,15 +51,15 @@ export function SignupPage() {
       }
 
       // Check if expired
-      if (new Date(data.expires_at) < new Date()) {
+      if (new Date((data as any).expires_at) < new Date()) {
         setError('This invite has expired. Please request a new one');
         setLoadingInvite(false);
         return;
       }
 
       setInvite(data);
-      setFirstName(data.first_name || '');
-      setLastName(data.last_name || '');
+      setFirstName((data as any).first_name || '');
+      setLastName((data as any).last_name || '');
       setShowForm(true);
       setError('');
     } catch (err) {

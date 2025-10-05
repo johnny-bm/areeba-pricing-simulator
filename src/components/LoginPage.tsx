@@ -106,13 +106,13 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
       // Step 5: Store user data
       localStorage.setItem('user', JSON.stringify({
-        id: profile.id,
-        email: profile.email,
-        full_name: profile.full_name,
-        role: profile.role
+        id: (profile as any).id,
+        email: (profile as any).email,
+        full_name: (profile as any).full_name,
+        role: (profile as any).role
       }));
 
-      console.log('✅ Login complete. Role:', profile.role);
+      console.log('✅ Login complete. Role:', (profile as any).role);
 
       // Step 6: Callback to update auth state
       if (onLoginSuccess) {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Button } from './components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
 import { toast } from "sonner";
 import { Toaster } from "./components/ui/sonner";
 import { SimulatorLanding } from './components/SimulatorLanding';
@@ -212,16 +212,16 @@ function AppContent() {
         
         // Everything is valid - restore session
         setIsAuthenticated(true);
-        setUserId(profile.id);
-        setUserRole(profile.role);
+        setUserId((profile as any).id);
+        setUserRole((profile as any).role);
         
         // Update localStorage with fresh data
         localStorage.setItem('user', JSON.stringify({
-          id: profile.id,
-          email: profile.email,
-          first_name: profile.first_name,
-          last_name: profile.last_name,
-          role: profile.role
+          id: (profile as any).id,
+          email: (profile as any).email,
+          first_name: (profile as any).first_name,
+          last_name: (profile as any).last_name,
+          role: (profile as any).role
         }));
         
       } catch (error) {

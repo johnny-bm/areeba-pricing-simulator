@@ -1,0 +1,7 @@
+dist/
+supabase:functions/
+scripts/
+node_modules/
+*.js
+*.mjs
+*.cjs

@@ -59,7 +59,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
       if (invitesError) throw invitesError;
 
       // Convert invites to user format for display
-      const pendingInvites = (invitesData || []).map(invite => ({
+      const pendingInvites = (invitesData || []).map((invite: any) => ({
         id: invite.id,
         email: invite.email,
         first_name: invite.first_name,

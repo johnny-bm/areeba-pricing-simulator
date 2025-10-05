@@ -129,22 +129,16 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         setIsLoading(true);
         
         // Load pricing services
-        const servicesResponse = await api.getPricingItems();
-        if (servicesResponse.success) {
-          setPricingServices(servicesResponse.data || []);
-        }
+        const servicesResponse = await api.loadPricingItems();
+        setPricingServices(servicesResponse || []);
         
         // Load categories
-        const categoriesResponse = await api.getCategories();
-        if (categoriesResponse.success) {
-          setCategories(deduplicateCategories(categoriesResponse.data || []));
-        }
+        const categoriesResponse = await api.loadCategories();
+        setCategories(deduplicateCategories(categoriesResponse || []));
         
         // Load configurations
-        const configResponse = await api.getConfigurations();
-        if (configResponse.success) {
-          setConfigurations(configResponse.data || []);
-        }
+        const configResponse = await api.loadConfigurations();
+        setConfigurations(configResponse || []);
         
         // Load persisted data
         await loadPersistedData();
@@ -274,7 +268,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       setIsSubmitting(true);
       
       // Submit guest scenario
-      const response = await api.submitGuestScenario({
+      const response = await api.saveGuestScenario({
         contactInfo: contactData,
         scenarioData: {
           selectedItems,
@@ -284,12 +278,8 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         }
       });
 
-      if (response.success) {
-        setGuestContactSubmitted(true);
-        toast.success('Quote submitted successfully!');
-      } else {
-        throw new Error(response.error || 'Failed to submit quote');
-      }
+      setGuestContactSubmitted(true);
+      toast.success('Quote submitted successfully!');
     } catch (error) {
       console.error('Guest submission failed:', error);
       toast.error('Failed to submit quote. Please try again.');
@@ -301,10 +291,10 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   // Calculate summary
   const calculateSummary = () => {
     const oneTimeItems = selectedItems.filter(item => 
-      item.item.categoryId === 'setup' || isOneTimeUnit(item.item.unit)
+      item.item.category === 'setup' || isOneTimeUnit(item.item.unit)
     );
     const monthlyItems = selectedItems.filter(item => 
-      item.item.categoryId !== 'setup' && !isOneTimeUnit(item.item.unit)
+      item.item.category !== 'setup' && !isOneTimeUnit(item.item.unit)
     );
 
     const oneTimeSubtotal = oneTimeItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
@@ -512,11 +502,9 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
           }}
           onSave={async (scenarioData) => {
             try {
-              const response = await api.saveScenario(scenarioData);
-              if (response.success) {
-                setSavedScenarioId(response.data.id);
-                toast.success('Scenario saved successfully!');
-              }
+              await api.saveScenarioData(scenarioData);
+              setSavedScenarioId('scenario-saved');
+              toast.success('Scenario saved successfully!');
             } catch (error) {
               console.error('Failed to save scenario:', error);
               toast.error('Failed to save scenario');

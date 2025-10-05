@@ -120,6 +120,11 @@ export const api = {
     }
   },
 
+  // Get pricing items (alias for loadPricingItems)
+  async getPricingItems(): Promise<PricingItem[]> {
+    return this.loadPricingItems();
+  },
+
   // Save services
   async savePricingItems(items: PricingItem[]): Promise<void> {
     try {
@@ -534,6 +539,235 @@ async saveGuestScenario(data: {
       await this.saveConfigurations(filteredConfigs);
     } catch (error) {
       console.error('Failed to delete configuration:', error);
+      throw error;
+    }
+  },
+
+  // Get categories (alias for loadCategories)
+  async getCategories(): Promise<Category[]> {
+    return this.loadCategories();
+  },
+
+  // Get configurations (alias for loadConfigurations)
+  async getConfigurations(): Promise<ConfigurationDefinition[]> {
+    return this.loadConfigurations();
+  },
+
+  // Create pricing item
+  async createPricingItem(item: Partial<PricingItem>): Promise<PricingItem> {
+    try {
+      console.log('📡 Creating pricing item...');
+      const response = await createApiRequest(`${API_BASE_URL}/services`, {
+        method: 'POST',
+        body: JSON.stringify(item),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to create pricing item: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Pricing item created successfully');
+      return data;
+    } catch (error) {
+      console.error('❌ Failed to create pricing item:', error);
+      throw error;
+    }
+  },
+
+  // Update pricing item
+  async updatePricingItem(id: string, updates: Partial<PricingItem>): Promise<PricingItem> {
+    try {
+      console.log(`📡 Updating pricing item ${id}...`);
+      const response = await createApiRequest(`${API_BASE_URL}/services/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to update pricing item: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Pricing item updated successfully');
+      return data;
+    } catch (error) {
+      console.error('❌ Failed to update pricing item:', error);
+      throw error;
+    }
+  },
+
+  // Delete pricing item
+  async deletePricingItem(id: string): Promise<void> {
+    try {
+      console.log(`📡 Deleting pricing item ${id}...`);
+      const response = await createApiRequest(`${API_BASE_URL}/services/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to delete pricing item: ${response.status}`);
+      }
+      
+      console.log('✅ Pricing item deleted successfully');
+    } catch (error) {
+      console.error('❌ Failed to delete pricing item:', error);
+      throw error;
+    }
+  },
+
+  // Create category
+  async createCategory(category: Partial<Category>): Promise<Category> {
+    try {
+      console.log('📡 Creating category...');
+      const response = await createApiRequest(`${API_BASE_URL}/categories`, {
+        method: 'POST',
+        body: JSON.stringify(category),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to create category: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Category created successfully');
+      return data;
+    } catch (error) {
+      console.error('❌ Failed to create category:', error);
+      throw error;
+    }
+  },
+
+  // Update category
+  async updateCategory(id: string, updates: Partial<Category>): Promise<Category> {
+    try {
+      console.log(`📡 Updating category ${id}...`);
+      const response = await createApiRequest(`${API_BASE_URL}/categories/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to update category: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Category updated successfully');
+      return data;
+    } catch (error) {
+      console.error('❌ Failed to update category:', error);
+      throw error;
+    }
+  },
+
+  // Delete category
+  async deleteCategory(id: string): Promise<void> {
+    try {
+      console.log(`📡 Deleting category ${id}...`);
+      const response = await createApiRequest(`${API_BASE_URL}/categories/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to delete category: ${response.status}`);
+      }
+      
+      console.log('✅ Category deleted successfully');
+    } catch (error) {
+      console.error('❌ Failed to delete category:', error);
+      throw error;
+    }
+  },
+
+  // Get tags
+  async getTags(): Promise<Tag[]> {
+    try {
+      console.log('📡 Loading tags from database...');
+      const response = await createApiRequest(`${API_BASE_URL}/tags`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load tags: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const tags = data.tags || [];
+      
+      console.log(`✅ Loaded ${tags.length} tags`);
+      return tags;
+    } catch (error) {
+      console.error('❌ Failed to load tags:', error);
+      throw error;
+    }
+  },
+
+  // Create tag
+  async createTag(tag: Partial<Tag>): Promise<Tag> {
+    try {
+      console.log('📡 Creating tag...');
+      const response = await createApiRequest(`${API_BASE_URL}/tags`, {
+        method: 'POST',
+        body: JSON.stringify(tag),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to create tag: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Tag created successfully');
+      return data;
+    } catch (error) {
+      console.error('❌ Failed to create tag:', error);
+      throw error;
+    }
+  },
+
+  // Update tag
+  async updateTag(id: string, updates: Partial<Tag>): Promise<Tag> {
+    try {
+      console.log(`📡 Updating tag ${id}...`);
+      const response = await createApiRequest(`${API_BASE_URL}/tags/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to update tag: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Tag updated successfully');
+      return data;
+    } catch (error) {
+      console.error('❌ Failed to update tag:', error);
+      throw error;
+    }
+  },
+
+  // Delete tag
+  async deleteTag(id: string): Promise<void> {
+    try {
+      console.log(`📡 Deleting tag ${id}...`);
+      const response = await createApiRequest(`${API_BASE_URL}/tags/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to delete tag: ${response.status}`);
+      }
+      
+      console.log('✅ Tag deleted successfully');
+    } catch (error) {
+      console.error('❌ Failed to delete tag:', error);
       throw error;
     }
   }

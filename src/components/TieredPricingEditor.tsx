@@ -153,7 +153,7 @@ export function TieredPricingEditor({ tiers, unit, onUpdateTiers }: TieredPricin
                       <Select 
                         value={tier.configReference || 'none'} 
                         onValueChange={(value: keyof ClientConfig | 'none') => 
-                          updateTier(tier.id, { configReference: value === 'none' ? undefined : value as keyof ClientConfig })
+                          updateTier(tier.id, { configReference: value === 'none' ? undefined : value as string })
                         }
                       >
                         <SelectTrigger className="text-xs">
