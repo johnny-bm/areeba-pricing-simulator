@@ -8,11 +8,23 @@
         "build": "tsc && vite build",
         "build:prod": "vite build",
         "preview": "vite preview",
+        "test": "vitest",
+        "test:ui": "vitest --ui",
+        "test:coverage": "vitest --coverage",
+        "test:watch": "vitest --watch",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "lint:fix": "eslint . --ext ts,tsx --fix",
         "type-check": "tsc --noEmit",
         "format": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "analyze": "node scripts/analyze-bundle.js",
+        "security:audit": "npm audit",
+        "security:fix": "npm audit fix",
+        "deploy:vercel": "vercel --prod",
+        "deploy:netlify": "netlify deploy --prod",
+        "deploy:check": "npm run lint && npm run type-check && npm run test && npm run build:prod",
+        "precommit": "npm run lint:fix && npm run format && npm run type-check",
+        "predeploy": "npm run deploy:check && npm run analyze"
     },
     "dependencies": {
         "@radix-ui/react-accordion": "^1.2.3",
@@ -59,9 +71,13 @@
         "recharts": "^2.15.2",
         "sonner": "^2.0.7",
         "tailwind-merge": "^2.5.4",
-        "vaul": "^1.1.2"
+        "vaul": "^1.1.2",
+        "zod": "^4.1.11"
     },
     "devDependencies": {
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.0",
+        "@testing-library/user-event": "^14.6.1",
         "@types/node": "^22.10.2",
         "@types/react": "^18.3.17",
         "@types/react-dom": "^18.3.5",
@@ -72,11 +88,13 @@
         "eslint": "^9.17.0",
         "eslint-plugin-react-hooks": "^5.1.0",
         "eslint-plugin-react-refresh": "^0.4.14",
+        "jsdom": "^27.0.0",
         "postcss": "^8.5.1",
         "prettier": "^3.4.2",
         "tailwindcss": "^3.4.17",
         "typescript": "^5.7.2",
-        "vite": "^6.0.3"
+        "vite": "^6.0.3",
+        "vitest": "^3.2.4"
     },
     "engines": {
         "node": ">=18.0.0",

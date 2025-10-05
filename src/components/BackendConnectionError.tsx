@@ -4,6 +4,7 @@
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Button } from './ui/button';
 import { AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
+import { EXTERNAL_URLS } from '../config/api';
 
 interface BackendConnectionErrorProps {
   onRetry?: () => void;
@@ -61,7 +62,7 @@ export function BackendConnectionError({ onRetry, projectId }: BackendConnection
                   variant="outline"
                   size="sm"
                   className="gap-2"
-                  onClick={() => window.open(`https://supabase.com/dashboard/project/${displayProjectId}/functions`, '_blank')}
+                  onClick={() => window.open(EXTERNAL_URLS.SUPABASE_DASHBOARD(displayProjectId), '_blank')}
                 >
                   <ExternalLink className="h-4 w-4" />
                   Open Supabase Dashboard

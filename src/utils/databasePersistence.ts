@@ -192,8 +192,8 @@ export const globalDiscountPersistence = {
 
   loadDiscountApplication: async (): Promise<'none' | 'both' | 'monthly' | 'onetime'> => {
     const application = await loadFromDatabase(STORAGE_KEYS.GLOBAL_DISCOUNT_APPLICATION, 'none');
-    const validValues = ['none', 'both', 'monthly', 'onetime'];
-    return validValues.includes(application) ? application : 'none';
+    const validValues: ('none' | 'both' | 'monthly' | 'onetime')[] = ['none', 'both', 'monthly', 'onetime'];
+    return validValues.includes(application as any) ? (application as 'none' | 'both' | 'monthly' | 'onetime') : 'none';
   },
 
   clearAll: async (): Promise<void> => {
@@ -303,7 +303,14 @@ export const getSessionInfo = async () => {
   const sessionId = getSessionId();
   
   try {
-    return await api.getSessionInfo(sessionId);
+    // Check if we have any data stored for this session
+    const hasData = await loadFromDatabase(STORAGE_KEYS.SELECTED_ITEMS, null) !== null;
+    
+    return {
+      sessionId,
+      hasData,
+      timestamp: new Date().toISOString()
+    };
   } catch (error) {
     console.warn('Failed to get session info:', error);
     return {
@@ -325,7 +332,7 @@ export const flushPendingSaves = (): void => {
     setTimeout(async () => {
       try {
         // This will trigger the actual save without debounce
-        console.log(`🚀 Flushing pending save for ${key}`);
+        // Flushing pending save for ${key}
       } catch (error) {
         console.warn(`Failed to flush save for ${key}:`, error);
       }

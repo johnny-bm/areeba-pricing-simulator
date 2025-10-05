@@ -40,6 +40,7 @@ import {
   flushPendingSaves
 } from './utils/databasePersistence';
 import { COLUMNS, PRICING_TYPES, DISCOUNT_TYPES, DISCOUNT_APPLICATIONS, DB_HELPERS, CATEGORY_IDS, ROLES, TABLES } from './config/database';
+import { EXTERNAL_URLS } from './config/api';
 import { supabase } from './utils/supabase/client';
 import WordMarkRed from './imports/WordMarkRed';
 
@@ -1776,7 +1777,7 @@ function AppContent() {
                           </div>
                           <div className="flex items-center gap-4">
                             <a 
-                              href="https://www.areeba.com/english/privacy-and-security" 
+                              href={EXTERNAL_URLS.AREEBA_PRIVACY} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               className="hover:text-foreground transition-colors"

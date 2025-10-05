@@ -87,7 +87,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           });
           setExistingTags(Array.from(allTags).sort());
           
-          console.log('🏷️ ItemDialog: Loaded existing tags:', Array.from(allTags).sort());
+          // Loaded existing tags
         } catch (error) {
           console.error('Failed to load configuration data:', error);
           // Continue with empty arrays if loading fails
@@ -164,7 +164,8 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         autoAddServices: formData.autoAddServices && formData.autoAddServices.length > 0 ? formData.autoAddServices : undefined
       };
 
-      console.log('🏷️ ItemDialog: Saving service with tags:', {
+      // Saving service with tags
+      console.log('Saving service with tags:', {
         serviceId: newItem.id,
         serviceName: newItem.name,
         tags: newItem.tags,
@@ -184,7 +185,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         });
         const sortedTags = Array.from(allTags).sort();
         setExistingTags(sortedTags);
-        console.log('🏷️ ItemDialog: Refreshed existing tags after save:', sortedTags);
+        // Refreshed existing tags after save
         
         // Notify parent component about tag updates
         if (onTagsUpdated) {
@@ -215,7 +216,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         (error as Error).message.includes('Could not find the') ||
         (error as Error).message.includes('column of \'services\'')
       )) {
-        console.log('🔧 ItemDialog: Auto-add related success - service saved without database persistence');
+        // Auto-add related success - service saved without database persistence
         alert('Service saved successfully! Auto-add functionality works using application state (database persistence not required).');
         onClose(); // Close the dialog since save was actually successful
         return;
@@ -405,7 +406,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
                 // Immediately add new tag to available options for better UX
                 if (!existingTags.includes(trimmedTag) && !temporaryTags.includes(trimmedTag)) {
                   setTemporaryTags(prev => [...prev, trimmedTag]);
-                  console.log('🏷️ ItemDialog: Added new temporary tag to dropdown:', trimmedTag);
+                  // Added new temporary tag to dropdown
                 }
               }
             }}

@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
 import { Button } from './ui/button';
+import { EXTERNAL_URLS } from '../config/api';
 import { CreditCard, ArrowRight, Calculator, Zap } from 'lucide-react';
 import { UserProfileHeader } from './UserProfileHeader';
 import WordMarkRed from '../imports/WordMarkRed';
@@ -159,7 +160,7 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
             <p>areeba © {new Date().getFullYear()}. All Rights Reserved.</p>
             <div className="flex justify-center gap-4 mt-2">
               <a 
-                href="https://www.areeba.com/english/privacy-and-security" 
+                href={EXTERNAL_URLS.AREEBA_PRIVACY} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors"
@@ -167,7 +168,7 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
                 Privacy
               </a>
               <a 
-                href="https://www.areeba.com" 
+                href={EXTERNAL_URLS.AREEBA_WEBSITE} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors"
