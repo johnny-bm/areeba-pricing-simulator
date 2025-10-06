@@ -131,21 +131,23 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         // Load pricing services
         console.log('🔄 Starting to load services...');
         try {
+          console.log('🔄 About to call api.loadPricingItems()...');
           const servicesResponse = await api.loadPricingItems();
-          console.log('Services loaded:', servicesResponse?.length || 0);
+          console.log('✅ Services API call completed:', servicesResponse?.length || 0);
           setPricingServices(servicesResponse || []);
         } catch (error) {
-          console.error('Failed to load services:', error);
+          console.error('❌ Failed to load services:', error);
         }
         
         // Load categories
         console.log('🔄 Starting to load categories...');
         try {
+          console.log('🔄 About to call api.loadCategories()...');
           const categoriesResponse = await api.loadCategories();
-          console.log('Categories loaded:', categoriesResponse?.length || 0);
+          console.log('✅ Categories API call completed:', categoriesResponse?.length || 0);
           setCategories(deduplicateCategories(categoriesResponse || []));
         } catch (error) {
-          console.error('Failed to load categories:', error);
+          console.error('❌ Failed to load categories:', error);
         }
         
         // Load configurations
