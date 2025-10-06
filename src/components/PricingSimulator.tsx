@@ -125,8 +125,10 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   // Load initial data
   useEffect(() => {
     const loadInitialData = async () => {
+      console.log('🚀 loadInitialData function started');
       try {
         setIsLoading(true);
+        console.log('🔄 setIsLoading(true) called');
         
         // Load pricing services
         console.log('🔄 Starting to load services...');
@@ -151,20 +153,26 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         }
         
         // Load configurations
+        console.log('🔄 Loading configurations...');
         const configResponse = await api.loadConfigurations();
         setConfigurations(configResponse || []);
+        console.log('✅ Configurations loaded');
         
         // Load persisted data
+        console.log('🔄 Loading persisted data...');
         await loadPersistedData();
+        console.log('✅ Persisted data loaded');
         
       } catch (error) {
-        console.error('Failed to load initial data:', error);
+        console.error('❌ Failed to load initial data:', error);
         setBackendConnectionError(true);
       } finally {
+        console.log('🔄 setIsLoading(false) called');
         setIsLoading(false);
       }
     };
 
+    console.log('🚀 useEffect triggered, calling loadInitialData');
     loadInitialData();
   }, []);
 
