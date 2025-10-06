@@ -5,11 +5,12 @@ let supabaseInstance: ReturnType<typeof createClient> | null = null;
 
 export const supabase = (() => {
   if (!supabaseInstance) {
-    console.log('🔐 Creating Supabase client singleton');
-    
-    // Get environment variables with fallback
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    try {
+      console.log('🔐 Creating Supabase client singleton');
+      
+      // Get environment variables with fallback
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     
     console.log('🔍 Environment variables loaded:', {
       hasUrl: !!supabaseUrl,
@@ -68,7 +69,11 @@ export const supabase = (() => {
       }
     );
     
-    console.log('✅ Supabase client created');
+      console.log('✅ Supabase client created');
+    } catch (error) {
+      console.error('❌ Failed to create Supabase client:', error);
+      throw error;
+    }
   }
   
   return supabaseInstance;
