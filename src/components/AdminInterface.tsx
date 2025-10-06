@@ -126,6 +126,9 @@ export function AdminInterface({
   const [selectedSimulator, setSelectedSimulator] = useState('issuing-processing');
   const [activeTab, setActiveTab] = useState<'configurations' | 'categories' | 'services' | 'tags' | 'users' | 'scenarios' | 'guest-submissions'>('configurations');
 
+  // Debug: Log received data
+  console.log('AdminInterface data:', { items: items?.length || 0, categories: categories?.length || 0 });
+
   const [configurations, setConfigurations] = useState<any[]>([]);
   const [showConfigDialog, setShowConfigDialog] = useState(false);
   const [editingConfig, setEditingConfig] = useState<any>(null);
