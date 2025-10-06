@@ -21,6 +21,7 @@ import { api } from '../utils/api';
 import { getConfigBasedQuantity, getEffectiveUnitPrice } from '../utils/tieredPricing';
 import { isOneTimeUnit } from '../utils/unitClassification';
 import { applyAutoAddLogic, removeAutoAddedServices } from '../utils/autoAddLogic';
+import { seedDatabase } from '../utils/seedDatabase';
 import { 
   clientConfigPersistence, 
   selectedItemsPersistence, 
@@ -137,6 +138,28 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         const categoriesResponse = await api.loadCategories();
         console.log('🔍 Loaded categories:', categoriesResponse?.length || 0, categoriesResponse?.slice(0, 3));
         setCategories(deduplicateCategories(categoriesResponse || []));
+        
+        // Auto-seed database if empty
+        if ((!servicesResponse || servicesResponse.length === 0) && (!categoriesResponse || categoriesResponse.length === 0)) {
+          console.log('🌱 Database appears empty, auto-seeding...');
+          try {
+            await seedDatabase();
+            console.log('✅ Database seeded successfully, reloading data...');
+            
+            // Reload the data after seeding
+            const newServicesResponse = await api.loadPricingItems();
+            const newCategoriesResponse = await api.loadCategories();
+            setPricingServices(newServicesResponse || []);
+            setCategories(deduplicateCategories(newCategoriesResponse || []));
+            console.log('✅ Reloaded data after seeding:', {
+              services: newServicesResponse?.length || 0,
+              categories: newCategoriesResponse?.length || 0
+            });
+          } catch (seedError) {
+            console.error('❌ Auto-seeding failed:', seedError);
+            // Continue without seeding - user can manually seed later
+          }
+        }
         
         // Load configurations
         const configResponse = await api.loadConfigurations();
