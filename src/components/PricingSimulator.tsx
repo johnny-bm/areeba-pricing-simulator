@@ -129,14 +129,24 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         setIsLoading(true);
         
         // Load pricing services
-        const servicesResponse = await api.loadPricingItems();
-        console.log('Services loaded:', servicesResponse?.length || 0);
-        setPricingServices(servicesResponse || []);
+        console.log('🔄 Starting to load services...');
+        try {
+          const servicesResponse = await api.loadPricingItems();
+          console.log('Services loaded:', servicesResponse?.length || 0);
+          setPricingServices(servicesResponse || []);
+        } catch (error) {
+          console.error('Failed to load services:', error);
+        }
         
         // Load categories
-        const categoriesResponse = await api.loadCategories();
-        console.log('Categories loaded:', categoriesResponse?.length || 0);
-        setCategories(deduplicateCategories(categoriesResponse || []));
+        console.log('🔄 Starting to load categories...');
+        try {
+          const categoriesResponse = await api.loadCategories();
+          console.log('Categories loaded:', categoriesResponse?.length || 0);
+          setCategories(deduplicateCategories(categoriesResponse || []));
+        } catch (error) {
+          console.error('Failed to load categories:', error);
+        }
         
         // Load configurations
         const configResponse = await api.loadConfigurations();
