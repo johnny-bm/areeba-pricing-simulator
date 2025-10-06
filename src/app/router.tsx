@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../features/auth';
 import { ROUTES } from '../config/routes';
 import { SimulatorLanding } from '../components/SimulatorLanding';
@@ -11,6 +11,7 @@ import { AdminInterface } from '../components/AdminInterface';
 
 export function AppRouter() {
   const { isAuthenticated, isLoading } = useAuthContext();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -23,7 +24,7 @@ export function AppRouter() {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path={ROUTES.HOME} element={<SimulatorLanding onSelectSimulator={() => {}} onLogout={() => {}} />} />
+      <Route path={ROUTES.HOME} element={<SimulatorLanding onSelectSimulator={(simulatorId: string) => navigate(ROUTES.SIMULATOR)} onLogout={() => navigate(ROUTES.LOGIN)} />} />
       <Route path={ROUTES.LOGIN} element={<LoginPage />} />
       <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
       <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
