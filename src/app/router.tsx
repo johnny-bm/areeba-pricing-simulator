@@ -10,8 +10,11 @@ import { PricingSimulator } from '../components/PricingSimulator';
 import { AdminInterface } from '../components/AdminInterface';
 
 export function AppRouter() {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { isAuthenticated, isLoading, user } = useAuthContext();
   const navigate = useNavigate();
+
+  // Debug logging
+  console.log('🔍 Router Debug:', { isAuthenticated, isLoading, user: user?.email });
 
   if (isLoading) {
     return (
