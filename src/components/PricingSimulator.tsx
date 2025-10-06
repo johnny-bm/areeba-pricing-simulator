@@ -130,35 +130,28 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         setIsLoading(true);
         
         // Load pricing services
+        console.log('📡 Loading services from API...');
         const servicesResponse = await api.loadPricingItems();
         console.log('🔍 Loaded services:', servicesResponse?.length || 0, servicesResponse?.slice(0, 3));
         setPricingServices(servicesResponse || []);
         
         // Load categories
+        console.log('📡 Loading categories from API...');
         const categoriesResponse = await api.loadCategories();
         console.log('🔍 Loaded categories:', categoriesResponse?.length || 0, categoriesResponse?.slice(0, 3));
         setCategories(deduplicateCategories(categoriesResponse || []));
         
-        // Auto-seed database if empty
-        if ((!servicesResponse || servicesResponse.length === 0) && (!categoriesResponse || categoriesResponse.length === 0)) {
-          console.log('🌱 Database appears empty, auto-seeding...');
-          try {
-            await seedDatabase();
-            console.log('✅ Database seeded successfully, reloading data...');
-            
-            // Reload the data after seeding
-            const newServicesResponse = await api.loadPricingItems();
-            const newCategoriesResponse = await api.loadCategories();
-            setPricingServices(newServicesResponse || []);
-            setCategories(deduplicateCategories(newCategoriesResponse || []));
-            console.log('✅ Reloaded data after seeding:', {
-              services: newServicesResponse?.length || 0,
-              categories: newCategoriesResponse?.length || 0
-            });
-          } catch (seedError) {
-            console.error('❌ Auto-seeding failed:', seedError);
-            // Continue without seeding - user can manually seed later
-          }
+        // Debug: Check if data was loaded successfully
+        if (servicesResponse && servicesResponse.length > 0) {
+          console.log('✅ Services loaded successfully:', servicesResponse.length);
+        } else {
+          console.warn('⚠️ No services loaded from API');
+        }
+        
+        if (categoriesResponse && categoriesResponse.length > 0) {
+          console.log('✅ Categories loaded successfully:', categoriesResponse.length);
+        } else {
+          console.warn('⚠️ No categories loaded from API');
         }
         
         // Load configurations
@@ -169,7 +162,12 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         await loadPersistedData();
         
       } catch (error) {
-        console.error('Failed to load initial data:', error);
+        console.error('❌ Failed to load initial data:', error);
+        console.error('❌ Error details:', {
+          message: (error as Error).message,
+          stack: (error as Error).stack,
+          name: (error as Error).name
+        });
         setBackendConnectionError(true);
       } finally {
         setIsLoading(false);
