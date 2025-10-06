@@ -130,10 +130,12 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         
         // Load pricing services
         const servicesResponse = await api.loadPricingItems();
+        console.log('🔍 Loaded services:', servicesResponse?.length || 0, servicesResponse?.slice(0, 3));
         setPricingServices(servicesResponse || []);
         
         // Load categories
         const categoriesResponse = await api.loadCategories();
+        console.log('🔍 Loaded categories:', categoriesResponse?.length || 0, categoriesResponse?.slice(0, 3));
         setCategories(deduplicateCategories(categoriesResponse || []));
         
         // Load configurations
@@ -324,6 +326,13 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
 
   // Show admin interface
   if (showAdminInterface) {
+    console.log('🔍 Rendering AdminInterface with data:', {
+      pricingServicesCount: pricingServices?.length || 0,
+      categoriesCount: categories?.length || 0,
+      pricingServices: pricingServices?.slice(0, 3),
+      categories: categories?.slice(0, 3)
+    });
+    
     return (
       <AdminInterface
         onClose={() => setShowAdminInterface(false)}
