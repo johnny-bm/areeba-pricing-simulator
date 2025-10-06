@@ -9,7 +9,13 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  console.log('🔍 AuthProvider rendering');
   const auth = useAuth();
+  console.log('🔍 AuthProvider auth state:', { 
+    isAuthenticated: auth.isAuthenticated, 
+    isLoading: auth.isLoading, 
+    user: auth.user?.email 
+  });
 
   return (
     <AuthContext.Provider value={auth}>

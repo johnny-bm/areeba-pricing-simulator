@@ -10,6 +10,7 @@ import { PricingSimulator } from '../components/PricingSimulator';
 import { AdminInterface } from '../components/AdminInterface';
 
 export function AppRouter() {
+  console.log('🔍 AppRouter rendering');
   const { isAuthenticated, isLoading, user } = useAuthContext();
   const navigate = useNavigate();
 
