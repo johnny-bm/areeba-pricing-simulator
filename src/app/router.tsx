@@ -24,7 +24,19 @@ export function AppRouter() {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path={ROUTES.HOME} element={<SimulatorLanding onSelectSimulator={(simulatorId: string) => navigate(ROUTES.SIMULATOR)} onLogout={() => navigate(ROUTES.LOGIN)} />} />
+      <Route 
+        path={ROUTES.HOME} 
+        element={
+          isAuthenticated ? (
+            <SimulatorLanding 
+              onSelectSimulator={(simulatorId: string) => navigate(ROUTES.SIMULATOR)} 
+              onLogout={() => navigate(ROUTES.LOGIN)} 
+            />
+          ) : (
+            <Navigate to={ROUTES.LOGIN} replace />
+          )
+        } 
+      />
       <Route path={ROUTES.LOGIN} element={<LoginPage />} />
       <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
       <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
@@ -54,7 +66,7 @@ export function AppRouter() {
         } 
       />
       
-      {/* Guest routes */}
+      {/* Guest routes - explicit guest access */}
       <Route path={ROUTES.GUEST} element={<PricingSimulator isGuestMode />} />
       
       {/* Catch all */}
