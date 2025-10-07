@@ -72,6 +72,9 @@ export function UserManagement({ currentUserId, currentUserRole }) {
     const handleCreateUser = async (userId, userData) => {
         try {
             // Step 1: Create invite in database
+            // Generate a unique invite code
+            const inviteCode = crypto.randomUUID().replace(/-/g, '');
+            
             const { data: invite, error: inviteError } = await supabase
                 .from('user_invites')
                 .insert({
@@ -79,6 +82,7 @@ export function UserManagement({ currentUserId, currentUserRole }) {
                 first_name: userData.first_name || null,
                 last_name: userData.last_name || null,
                 role: userData.role,
+                invite_code: inviteCode,
                 created_by: currentUserId
             })
                 .select()
