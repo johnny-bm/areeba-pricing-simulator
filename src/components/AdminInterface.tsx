@@ -415,7 +415,7 @@ export function AdminInterface({
               className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-4"
             >
               <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
+              🔥 Sign Out (Updated)
             </Button>
           )}
           
