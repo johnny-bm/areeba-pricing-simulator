@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-run
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Plus, Edit, Trash2, User as UserIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, User as UserIcon, Mail } from 'lucide-react';
 import { DataTable } from './DataTable';
 import { UserDialog } from './dialogs/UserDialog';
 import { supabase } from '../utils/supabase/client';
@@ -71,6 +71,7 @@ export function UserManagement({ currentUserId, currentUserRole }) {
     }, []);
     const handleCreateUser = async (userId, userData) => {
         try {
+            // Step 1: Create invite in database
             const { data: invite, error: inviteError } = await supabase
                 .from('user_invites')
                 .insert({
@@ -82,16 +83,59 @@ export function UserManagement({ currentUserId, currentUserRole }) {
             })
                 .select()
                 .single();
-            if (inviteError)
-                throw inviteError;
-            toast.success('Invite created!', {
-                duration: 3000
+
+            if (inviteError) throw inviteError;
+
+            // Step 2: Send email invitation
+            console.log('📧 Attempting to send email invitation...', {
+                email: userData.email,
+                firstName: userData.first_name || '',
+                lastName: userData.last_name || '',
+                role: userData.role,
+                inviteCode: invite.invite_code,
+                appUrl: window.location.origin
             });
-            alert(`Invite created for ${userData.email}\n\n` +
-                `Invite Code: ${invite.invite_code}\n\n` +
-                `Share this code with the user.\n` +
-                `They should go to: ${window.location.origin}/signup\n` +
-                `And enter the code to create their account.`);
+
+            const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-invite', {
+                body: {
+                    email: userData.email,
+                    firstName: userData.first_name || '',
+                    lastName: userData.last_name || '',
+                    role: userData.role,
+                    inviteCode: invite.invite_code,
+                    appUrl: window.location.origin
+                }
+            });
+
+            console.log('📧 Email result:', { emailResult, emailError });
+
+            if (emailError) {
+                console.error('Email send failed:', emailError);
+                // Still show success for invite creation, but mention email issue
+                toast.success('Invite created!', {
+                    description: 'Invite was created but email delivery failed. You can manually share the invite code.',
+                    duration: 5000
+                });
+                
+                // Show manual sharing option
+                const manualShare = confirm(
+                    `Invite created for ${userData.email}\n\n` +
+                    `Email delivery failed. Would you like to copy the invite code to share manually?\n\n` +
+                    `Invite Code: ${invite.invite_code}\n` +
+                    `Signup URL: ${window.location.origin}/signup?invite=${invite.invite_code}`
+                );
+                
+                if (manualShare) {
+                    navigator.clipboard.writeText(`${window.location.origin}/signup?invite=${invite.invite_code}`);
+                    toast.info('Invite URL copied to clipboard');
+                }
+            } else {
+                toast.success('Invite sent!', {
+                    description: `Invitation email sent to ${userData.email}`,
+                    duration: 5000
+                });
+            }
+
             await loadUsers();
             setShowUserDialog(false);
         }
@@ -103,6 +147,52 @@ export function UserManagement({ currentUserId, currentUserRole }) {
             throw error;
         }
     };
+
+    const handleResendInvite = async (user) => {
+        try {
+            const { data: invite, error: inviteError } = await supabase
+                .from('user_invites')
+                .select('*')
+                .eq('email', user.email)
+                .is('used_at', null)
+                .single();
+
+            if (inviteError || !invite) {
+                toast.error('No pending invite found for this user');
+                return;
+            }
+
+            const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-invite', {
+                body: {
+                    email: user.email,
+                    firstName: user.first_name || '',
+                    lastName: user.last_name || '',
+                    role: user.role,
+                    inviteCode: invite.invite_code,
+                    appUrl: window.location.origin
+                }
+            });
+
+            if (emailError) {
+                console.error('Email send failed:', emailError);
+                toast.error('Failed to resend invite email', {
+                    description: emailError.message,
+                    duration: 5000
+                });
+            } else {
+                toast.success('Invite resent!', {
+                    description: `Invitation email resent to ${user.email}`,
+                    duration: 5000
+                });
+            }
+        } catch (error) {
+            toast.error('Failed to resend invite', {
+                description: error.message,
+                duration: 5000
+            });
+        }
+    };
+
     const handleUpdateUser = async (userId, updates) => {
         try {
             const { error } = await supabase
@@ -232,10 +322,10 @@ export function UserManagement({ currentUserId, currentUserRole }) {
                                     year: 'numeric',
                                     month: 'short',
                                     day: 'numeric'
-                                }) }) }), _jsx("td", { className: "px-6 py-4", onClick: (e) => e.stopPropagation(), children: _jsx("div", { className: "flex gap-1", children: canManageUsers && (_jsxs(_Fragment, { children: [!user.is_invite && (_jsx(Button, { size: "sm", variant: "ghost", onClick: () => {
+                                }) }) }), _jsx("td", { className: "px-6 py-4", onClick: (e) => e.stopPropagation(), children: _jsx("div", { className: "flex gap-1",                                     children: canManageUsers && (_jsxs(_Fragment, { children: [!user.is_invite && (_jsx(Button, { size: "sm", variant: "ghost", onClick: () => {
                                                 setEditingUser(user);
                                                 setShowUserDialog(true);
-                                            }, title: "Edit user", children: _jsx(Edit, { className: "h-3 w-3" }) })), (isOwner || (isAdmin && user.role !== ROLES.OWNER)) && user.id !== currentUserId && (_jsx(Button, { size: "sm", variant: "ghost", onClick: () => handleDeleteUser(user), title: "Delete user", className: "text-destructive hover:text-destructive", children: _jsx(Trash2, { className: "h-3 w-3" }) }))] })) }) })] })) }), showUserDialog && (_jsx(UserDialog, { isOpen: showUserDialog, onClose: () => {
+                                            }, title: "Edit user", children: _jsx(Edit, { className: "h-3 w-3" }) })), user.is_invite && (_jsx(Button, { size: "sm", variant: "ghost", onClick: () => handleResendInvite(user), title: "Resend invite email", className: "text-blue-600 hover:text-blue-700", children: _jsx(Mail, { className: "h-3 w-3" }) })), (isOwner || (isAdmin && user.role !== ROLES.OWNER)) && user.id !== currentUserId && (_jsx(Button, { size: "sm", variant: "ghost", onClick: () => handleDeleteUser(user), title: "Delete user", className: "text-destructive hover:text-destructive", children: _jsx(Trash2, { className: "h-3 w-3" }) }))] })) }) })] })) }), showUserDialog && (_jsx(UserDialog, { isOpen: showUserDialog, onClose: () => {
                     setShowUserDialog(false);
                     setEditingUser(null);
                 }, onSave: editingUser ? handleUpdateUser : handleCreateUser, onDelete: handleDeleteUser, user: editingUser, currentUserId: currentUserId, currentUserRole: currentUserRole })), inviteLink && (_jsx("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50", children: _jsxs("div", { className: "bg-white dark:bg-gray-800 p-6 rounded-lg max-w-lg w-full mx-4", children: [_jsx("h3", { className: "text-lg font-semibold mb-4", children: "Invite Link Created" }), _jsx("p", { className: "text-sm text-muted-foreground mb-4", children: "Share this link with the new user. They can use it to create their account." }), _jsx("div", { className: "bg-muted p-3 rounded border mb-4", children: _jsx("input", { type: "text", value: inviteLink, readOnly: true, className: "w-full bg-transparent border-none outline-none text-sm", onClick: (e) => e.currentTarget.select() }) }), _jsx("p", { className: "text-xs text-muted-foreground mb-4", children: "Click the link above to select it, then copy with Ctrl+C (Cmd+C on Mac)" }), _jsx(Button, { onClick: () => setInviteLink(null), className: "w-full", children: "Close" })] }) }))] }));
