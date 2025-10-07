@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useAuthContext } from '../features/auth';
 import { ROUTES } from '../config/routes';
 import { SimulatorLanding } from '../components/SimulatorLanding';
@@ -8,6 +9,77 @@ import { ForgotPasswordPage } from '../components/ForgotPasswordPage';
 import { ResetPasswordPage } from '../components/ResetPasswordPage';
 import { PricingSimulator } from '../components/PricingSimulator';
 import { AdminInterface } from '../components/AdminInterface';
+import { api } from '../utils/api';
+import { PricingItem, Category } from '../types/pricing';
+
+// Component to load data for admin panel
+function AdminDataLoader() {
+  const [items, setItems] = useState<PricingItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadAdminData = async () => {
+      console.log('🔄 AdminDataLoader: Loading admin data...');
+      try {
+        setIsLoading(true);
+        
+        // Load services and categories
+        const [servicesResponse, categoriesResponse] = await Promise.all([
+          api.loadPricingItems(),
+          api.loadCategories()
+        ]);
+        
+        console.log('✅ AdminDataLoader: Loaded data:', {
+          services: servicesResponse?.length || 0,
+          categories: categoriesResponse?.length || 0
+        });
+        
+        setItems(servicesResponse || []);
+        setCategories(categoriesResponse || []);
+      } catch (error) {
+        console.error('❌ AdminDataLoader: Failed to load data:', error);
+        setError('Failed to load admin data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAdminData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Error Loading Admin Data</h2>
+          <p className="text-muted-foreground">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <AdminInterface
+      onClose={() => window.history.back()}
+      items={items}
+      categories={categories}
+      onUpdateItems={setItems}
+      onUpdateCategories={setCategories}
+      currentUserId=""
+      currentUserRole=""
+    />
+  );
+}
 
 export function AppRouter() {
   console.log('🔍 AppRouter rendering');
@@ -56,17 +128,7 @@ export function AppRouter() {
       <Route 
         path={ROUTES.ADMIN} 
         element={
-          isAuthenticated ? (
-            <AdminInterface 
-              onClose={() => {}}
-              items={[]}
-              categories={[]}
-              onUpdateItems={() => {}}
-              onUpdateCategories={() => {}}
-              currentUserId=""
-              currentUserRole=""
-            />
-          ) : <Navigate to={ROUTES.LOGIN} />
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
         } 
       />
       
