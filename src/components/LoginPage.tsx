@@ -140,7 +140,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               type="button"
               variant="outline"
               className="w-full mt-4"
-              onClick={() => navigate('/?mode=guest')}
+              onClick={() => navigate('/guest')}
             >
               Continue as Guest
             </Button>
