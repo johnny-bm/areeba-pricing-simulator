@@ -91,6 +91,7 @@ serve(async (req) => {
 
     if (!res.ok) {
       const error = await res.text()
+      console.error('Resend API error:', { status: res.status, error })
       throw new Error(`Email send failed: ${error}`)
     }
 

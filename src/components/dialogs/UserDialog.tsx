@@ -5,7 +5,7 @@ import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Switch } from '../ui/switch';
 import { ROLES } from '../../config/database';
-import { AlertCircle, Eye, EyeOff, Trash2 } from 'lucide-react';
+import { AlertCircle, Trash2 } from 'lucide-react';
 
 interface User {
   id: string;
@@ -28,13 +28,11 @@ interface UserDialogProps {
 
 export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUserId, currentUserRole }: UserDialogProps) {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [role, setRole] = useState(ROLES.MEMBER);
   const [isActive, setIsActive] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const isEditing = !!user;
@@ -48,10 +46,8 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
       setLastName(user.last_name || '');
       setRole(user.role as any);
       setIsActive(user.is_active);
-      setPassword('');
     } else {
       setEmail('');
-      setPassword('');
       setFirstName('');
       setLastName('');
       setRole(ROLES.MEMBER);
@@ -70,14 +66,7 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
       newErrors.email = 'Invalid email format';
     }
 
-    // Password validation (only for new users)
-    if (!isEditing) {
-      if (!password) {
-        newErrors.password = 'Password is required';
-      } else if (password.length < 6) {
-        newErrors.password = 'Password must be at least 6 characters';
-      }
-    }
+    // No password validation needed for invitation system
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -101,10 +90,9 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
           updated_at: new Date().toISOString(),
         });
       } else {
-        // Create new user
+        // Create new user invitation
         await onSave('', {
           email,
-          password,
           first_name: firstName,
           last_name: lastName,
           role,
@@ -146,11 +134,11 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
     <StandardDialog
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? 'Edit User' : 'Add New User'}
+      title={isEditing ? 'Edit User' : 'Send User Invitation'}
       description={
         isEditing 
           ? 'Update user information and permissions' 
-          : 'Create a new user account with specified role and permissions'
+          : 'Send an invitation email to create a new user account with specified role and permissions'
       }
       size="md"
       destructiveActions={isEditing && onDelete && !isEditingSelf && (isOwner || user.role !== ROLES.OWNER) ? [{
@@ -167,7 +155,7 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
         }
       ]}
       primaryAction={{
-        label: isSaving ? 'Saving...' : isEditing ? 'Update User' : 'Create User',
+        label: isSaving ? 'Saving...' : isEditing ? 'Update User' : 'Send Invitation',
         onClick: handleSave,
         loading: isSaving
       }}
@@ -198,38 +186,22 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
             )}
           </div>
 
-          {/* Password (only for new users) */}
+          {/* Invitation Info */}
           {!isEditing && (
-            <div className="space-y-2">
-              <Label htmlFor="password">
-                Password <span className="text-destructive">*</span>
-              </Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter a strong password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950/20">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center dark:bg-blue-900/30">
+                    <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">ℹ</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100">Invitation Process</h4>
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    An invitation email will be sent to the user. They will create their own password during signup.
+                  </p>
+                </div>
               </div>
-              {errors.password && (
-                <p className="text-sm text-destructive flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.password}
-                </p>
-              )}
-              <p className="text-xs text-muted-foreground">
-                Minimum 6 characters
-              </p>
             </div>
           )}
 

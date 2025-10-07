@@ -6,16 +6,14 @@ import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Switch } from '../ui/switch';
 import { ROLES } from '../../config/database';
-import { AlertCircle, Eye, EyeOff, Trash2 } from 'lucide-react';
+import { AlertCircle, Trash2 } from 'lucide-react';
 export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUserId, currentUserRole }) {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [role, setRole] = useState(ROLES.MEMBER);
     const [isActive, setIsActive] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({});
     const isEditing = !!user;
     const isOwner = currentUserRole === ROLES.OWNER;
@@ -27,11 +25,9 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
             setLastName(user.last_name || '');
             setRole(user.role);
             setIsActive(user.is_active);
-            setPassword('');
         }
         else {
             setEmail('');
-            setPassword('');
             setFirstName('');
             setLastName('');
             setRole(ROLES.MEMBER);
@@ -48,15 +44,7 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             newErrors.email = 'Invalid email format';
         }
-        // Password validation (only for new users)
-        if (!isEditing) {
-            if (!password) {
-                newErrors.password = 'Password is required';
-            }
-            else if (password.length < 6) {
-                newErrors.password = 'Password must be at least 6 characters';
-            }
-        }
+        // No password validation needed for invitation system
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -78,10 +66,9 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
                 });
             }
             else {
-                // Create new user
+                // Create new user invitation
                 await onSave('', {
                     email,
-                    password,
                     first_name: firstName,
                     last_name: lastName,
                     role,
@@ -117,9 +104,9 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
             setIsSaving(false);
         }
     };
-    return (_jsx(StandardDialog, { isOpen: isOpen, onClose: onClose, title: isEditing ? 'Edit User' : 'Add New User', description: isEditing
+    return (_jsx(StandardDialog, { isOpen: isOpen, onClose: onClose, title: isEditing ? 'Edit User' : 'Send User Invitation', description: isEditing
             ? 'Update user information and permissions'
-            : 'Create a new user account with specified role and permissions', size: "md", destructiveActions: isEditing && onDelete && !isEditingSelf && (isOwner || user.role !== ROLES.OWNER) ? [{
+            : 'Send an invitation email to create a new user account with specified role and permissions', size: "md", destructiveActions: isEditing && onDelete && !isEditingSelf && (isOwner || user.role !== ROLES.OWNER) ? [{
                 label: 'Delete User',
                 onClick: handleDelete,
                 loading: isSaving,
@@ -131,7 +118,7 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
                 disabled: isSaving
             }
         ], primaryAction: {
-            label: isSaving ? 'Saving...' : isEditing ? 'Update User' : 'Create User',
+            label: isSaving ? 'Saving...' : isEditing ? 'Update User' : 'Send Invitation',
             onClick: handleSave,
             loading: isSaving
         }, children: _jsxs("div", { className: "space-y-4", children: [_jsxs("div", { className: "space-y-2", children: [_jsxs(Label, { htmlFor: "email", children: ["Email ", _jsx("span", { className: "text-destructive", children: "*" })] }), _jsx(Input, { id: "email", type: "email", placeholder: "user@example.com", value: email, onChange: (e) => setEmail(e.target.value), disabled: isEditing, className: errors.email ? 'border-destructive' : '' }), errors.email && (_jsxs("p", { className: "text-sm text-destructive flex items-center gap-1", children: [_jsx(AlertCircle, { className: "h-3 w-3" }), errors.email] })), isEditing && (_jsx("p", { className: "text-xs text-muted-foreground", children: "Email cannot be changed after account creation" }))] }), !isEditing && (_jsxs("div", { className: "space-y-2", children: [_jsxs(Label, { htmlFor: "password", children: ["Password ", _jsx("span", { className: "text-destructive", children: "*" })] }), _jsxs("div", { className: "relative", children: [_jsx(Input, { id: "password", type: showPassword ? 'text' : 'password', placeholder: "Enter a strong password", value: password, onChange: (e) => setPassword(e.target.value), className: errors.password ? 'border-destructive pr-10' : 'pr-10' }), _jsx("button", { type: "button", onClick: () => setShowPassword(!showPassword), className: "absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground", children: showPassword ? _jsx(EyeOff, { className: "h-4 w-4" }) : _jsx(Eye, { className: "h-4 w-4" }) })] }), errors.password && (_jsxs("p", { className: "text-sm text-destructive flex items-center gap-1", children: [_jsx(AlertCircle, { className: "h-3 w-3" }), errors.password] })), _jsx("p", { className: "text-xs text-muted-foreground", children: "Minimum 6 characters" })] })), _jsxs("div", { className: "space-y-2", children: [_jsx(Label, { htmlFor: "firstName", children: "First Name" }), _jsx(Input, { id: "firstName", type: "text", placeholder: "John", value: firstName, onChange: (e) => setFirstName(e.target.value) })] }), _jsxs("div", { className: "space-y-2", children: [_jsx(Label, { htmlFor: "lastName", children: "Last Name" }), _jsx(Input, { id: "lastName", type: "text", placeholder: "Doe", value: lastName, onChange: (e) => setLastName(e.target.value) })] }), _jsxs("div", { className: "space-y-2", children: [_jsxs(Label, { htmlFor: "role", children: ["Role ", _jsx("span", { className: "text-destructive", children: "*" })] }), _jsxs(Select, { value: role, onValueChange: setRole, disabled: isEditingSelf || (!isOwner && user?.role === ROLES.OWNER), children: [_jsx(SelectTrigger, { children: _jsx(SelectValue, {}) }), _jsxs(SelectContent, { children: [_jsx(SelectItem, { value: ROLES.MEMBER, children: _jsxs("div", { className: "flex flex-col items-start", children: [_jsx("span", { children: "Member" }), _jsx("span", { className: "text-xs text-muted-foreground", children: "Can create and manage their own scenarios" })] }) }), _jsx(SelectItem, { value: ROLES.ADMIN, children: _jsxs("div", { className: "flex flex-col items-start", children: [_jsx("span", { children: "Admin" }), _jsx("span", { className: "text-xs text-muted-foreground", children: "Can manage services and view all data" })] }) }), isOwner && (_jsx(SelectItem, { value: ROLES.OWNER, children: _jsxs("div", { className: "flex flex-col items-start", children: [_jsx("span", { children: "Owner" }), _jsx("span", { className: "text-xs text-muted-foreground", children: "Full system access and user management" })] }) }))] })] }), isEditingSelf && (_jsx("p", { className: "text-xs text-muted-foreground", children: "You cannot change your own role" })), !isOwner && user?.role === ROLES.OWNER && (_jsx("p", { className: "text-xs text-muted-foreground", children: "Only owners can modify owner accounts" }))] }), isEditing && (_jsxs("div", { className: "flex items-center justify-between rounded-lg border p-4", children: [_jsxs("div", { className: "space-y-0.5", children: [_jsx(Label, { htmlFor: "isActive", children: "Active Status" }), _jsx("p", { className: "text-sm text-muted-foreground", children: isActive ? 'User can log in and access the system' : 'User is blocked from logging in' })] }), _jsx(Switch, { id: "isActive", checked: isActive, onCheckedChange: setIsActive, disabled: isEditingSelf })] }))] }) }));
