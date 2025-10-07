@@ -350,7 +350,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                 })}
               </div>
             </TableCell>
-            <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+            <TableCell onClick={(e) => e.stopPropagation()}>
               <div className="flex gap-1">
                 {canManageUsers && (
                   <>
