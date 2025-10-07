@@ -138,12 +138,12 @@ export function TagManager({
         renderRow={(tag) => (
           <>
             <TableCell>
-              <Badge variant="outline">
+              <Badge variant="info">
                 {tag.name}
               </Badge>
             </TableCell>
             <TableCell>
-              <Badge variant="secondary">
+              <Badge variant="success">
                 {tag.count} service{tag.count !== 1 ? 's' : ''}
               </Badge>
             </TableCell>

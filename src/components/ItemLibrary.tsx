@@ -222,7 +222,7 @@ export function ItemLibrary({
                 {displayedTags.map(tag => (
                   <Badge
                     key={tag}
-                    variant={selectedTags.includes(tag) ? "default" : "secondary"}
+                    variant={selectedTags.includes(tag) ? "default" : "info"}
                     className="text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
                     onClick={() => toggleTag(tag)}
                   >
@@ -283,7 +283,7 @@ export function ItemLibrary({
                                 {item.tags && item.tags.length > 0 && (
                                   <div className="flex flex-wrap gap-1">
                                     {item.tags.slice(0, 3).map(tag => (
-                                      <Badge key={tag} variant="secondary" className="text-xs">
+                                      <Badge key={tag} variant="info" className="text-xs">
                                         {tag}
                                       </Badge>
                                     ))}

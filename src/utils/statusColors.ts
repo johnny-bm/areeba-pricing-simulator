@@ -92,22 +92,22 @@ export function getStatusClasses(status: string | boolean, variant: 'badge' | 't
   
   const colorSchemes = {
     positive: {
-      badge: 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100 dark:bg-green-950 dark:text-green-300 dark:border-green-800 dark:hover:bg-green-900',
+      badge: 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-800 dark:bg-green-950/20 dark:text-green-300 dark:hover:bg-green-900/30',
       text: 'text-green-700 dark:text-green-300',
       background: 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800'
     },
     negative: {
-      badge: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 dark:border-red-800 dark:hover:bg-red-900',
+      badge: 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-800 dark:bg-red-950/20 dark:text-red-300 dark:hover:bg-red-900/30',
       text: 'text-red-700 dark:text-red-300',
       background: 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800'
     },
     warning: {
-      badge: 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800 dark:hover:bg-orange-900',
-      text: 'text-orange-700 dark:text-orange-300',
-      background: 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800'
+      badge: 'border-yellow-200 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-800 dark:bg-yellow-950/20 dark:text-yellow-300 dark:hover:bg-yellow-900/30',
+      text: 'text-yellow-700 dark:text-yellow-300',
+      background: 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800'
     },
     neutral: {
-      badge: 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 dark:bg-gray-950 dark:text-gray-300 dark:border-gray-800 dark:hover:bg-gray-900',
+      badge: 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-950/20 dark:text-gray-300 dark:hover:bg-gray-900/30',
       text: 'text-gray-700 dark:text-gray-300',
       background: 'bg-gray-50 dark:bg-gray-950/20 border-gray-200 dark:border-gray-800'
     }
