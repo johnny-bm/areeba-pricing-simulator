@@ -61,6 +61,12 @@ function AdminDataLoader() {
     );
   }
 
+  const { logout } = useAuthContext();
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
     <AdminInterface
       onClose={() => window.history.back()}
@@ -68,6 +74,7 @@ function AdminDataLoader() {
       categories={categories}
       onUpdateItems={setItems}
       onUpdateCategories={setCategories}
+      onLogout={handleLogout}
       currentUserId=""
       currentUserRole=""
     />
