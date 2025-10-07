@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { TableCell } from './ui/table';
-import { Plus, Edit, Trash2, User as UserIcon, Copy } from 'lucide-react';
+import { Plus, Edit, Trash2, User as UserIcon, Copy, Mail } from 'lucide-react';
 import { DataTable } from './DataTable';
 import { UserDialog } from './dialogs/UserDialog';
 import { supabase } from '../utils/supabase/client';
@@ -97,6 +97,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
 
   const handleCreateUser = async (userId: any, userData: any) => {
     try {
+      // Step 1: Create invite in database
       const { data: invite, error: inviteError } = await supabase
         .from('user_invites')
         .insert({
@@ -111,17 +112,44 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
 
       if (inviteError) throw inviteError;
 
-      toast.success('Invite created!', {
-        duration: 3000
+      // Step 2: Send email invitation
+      const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-invite', {
+        body: {
+          email: userData.email,
+          firstName: userData.first_name || '',
+          lastName: userData.last_name || '',
+          role: userData.role,
+          inviteCode: invite.invite_code,
+          appUrl: window.location.origin
+        }
       });
 
-      alert(
-        `Invite created for ${userData.email}\n\n` +
-        `Invite Code: ${invite.invite_code}\n\n` +
-        `Share this code with the user.\n` +
-        `They should go to: ${window.location.origin}/signup\n` +
-        `And enter the code to create their account.`
-      );
+      if (emailError) {
+        console.error('Email send failed:', emailError);
+        // Still show success for invite creation, but mention email issue
+        toast.success('Invite created!', {
+          description: 'Invite was created but email delivery failed. You can manually share the invite code.',
+          duration: 5000
+        });
+        
+        // Show manual sharing option
+        const manualShare = confirm(
+          `Invite created for ${userData.email}\n\n` +
+          `Email delivery failed. Would you like to copy the invite code to share manually?\n\n` +
+          `Invite Code: ${invite.invite_code}\n` +
+          `Signup URL: ${window.location.origin}/signup?invite=${invite.invite_code}`
+        );
+        
+        if (manualShare) {
+          navigator.clipboard.writeText(`${window.location.origin}/signup?invite=${invite.invite_code}`);
+          toast.info('Invite URL copied to clipboard');
+        }
+      } else {
+        toast.success('Invite sent!', {
+          description: `Invitation email sent to ${userData.email}`,
+          duration: 5000
+        });
+      }
 
       await loadUsers();
       setShowUserDialog(false);
@@ -229,6 +257,53 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
       console.error('❌ Delete failed:', error);
       toast.error('Failed to delete user', {
         description: error.message || 'Please try again',
+        duration: 5000
+      });
+    }
+  };
+
+  const handleResendInvite = async (user: User) => {
+    try {
+      // Get the invite details
+      const { data: invite, error: inviteError } = await supabase
+        .from('user_invites')
+        .select('*')
+        .eq('email', user.email)
+        .is('used_at', null)
+        .single();
+
+      if (inviteError || !invite) {
+        toast.error('No pending invite found for this user');
+        return;
+      }
+
+      // Send email invitation
+      const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-invite', {
+        body: {
+          email: user.email,
+          firstName: user.first_name || '',
+          lastName: user.last_name || '',
+          role: user.role,
+          inviteCode: invite.invite_code,
+          appUrl: window.location.origin
+        }
+      });
+
+      if (emailError) {
+        console.error('Email send failed:', emailError);
+        toast.error('Failed to resend invite email', {
+          description: emailError.message,
+          duration: 5000
+        });
+      } else {
+        toast.success('Invite resent!', {
+          description: `Invitation email resent to ${user.email}`,
+          duration: 5000
+        });
+      }
+    } catch (error: any) {
+      toast.error('Failed to resend invite', {
+        description: error.message,
         duration: 5000
       });
     }
@@ -365,6 +440,17 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                         title="Edit user"
                       >
                         <Edit className="h-3 w-3" />
+                      </Button>
+                    )}
+                    {user.is_invite && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleResendInvite(user)}
+                        title="Resend invite email"
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        <Mail className="h-3 w-3" />
                       </Button>
                     )}
                     {(isOwner || (isAdmin && user.role !== ROLES.OWNER)) && user.id !== currentUserId && (
