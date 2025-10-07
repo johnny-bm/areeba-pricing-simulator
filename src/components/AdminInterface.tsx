@@ -393,20 +393,21 @@ export function AdminInterface({
                 </p>
                 <div className="flex items-center gap-1 mt-1">
                   <Badge 
-                    variant={
+                    variant="outline"
+                    className={`text-xs ${
                       (() => {
                         const userData = JSON.parse(localStorage.getItem('user') || '{}');
                         const role = userData.role;
-                        return role === 'owner' 
-                          ? 'roleOwner'
-                          : role === 'admin'
-                          ? 'roleAdmin'
-                          : role === 'member'
-                          ? 'roleMember'
-                          : 'outline';
+                        if (role === 'owner') {
+                          return 'bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 dark:hover:bg-purple-900/30';
+                        } else if (role === 'admin') {
+                          return 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800 dark:hover:bg-blue-900/30';
+                        } else if (role === 'member') {
+                          return 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 dark:hover:bg-green-900/30';
+                        }
+                        return '';
                       })()
-                    }
-                    className="text-xs"
+                    }`}
                   >
                     {(() => {
                       const userData = JSON.parse(localStorage.getItem('user') || '{}');
