@@ -21,7 +21,6 @@ function AdminDataLoader() {
 
   useEffect(() => {
     const loadAdminData = async () => {
-      console.log('🔄 AdminDataLoader: Loading admin data...');
       try {
         setIsLoading(true);
         
@@ -31,15 +30,9 @@ function AdminDataLoader() {
           api.loadCategories()
         ]);
         
-        console.log('✅ AdminDataLoader: Loaded data:', {
-          services: servicesResponse?.length || 0,
-          categories: categoriesResponse?.length || 0
-        });
-        
         setItems(servicesResponse || []);
         setCategories(categoriesResponse || []);
       } catch (error) {
-        console.error('❌ AdminDataLoader: Failed to load data:', error);
         setError('Failed to load admin data');
       } finally {
         setIsLoading(false);
@@ -82,12 +75,8 @@ function AdminDataLoader() {
 }
 
 export function AppRouter() {
-  console.log('🔍 AppRouter rendering');
   const { isAuthenticated, isLoading, user } = useAuthContext();
   const navigate = useNavigate();
-
-  // Debug logging
-  console.log('🔍 Router Debug:', { isAuthenticated, isLoading, user: user?.email });
 
   if (isLoading) {
     return (

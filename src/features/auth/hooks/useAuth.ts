@@ -20,10 +20,8 @@ export function useAuth(): AuthState & {
   // Initialize auth state
   useEffect(() => {
     const initializeAuth = async () => {
-      console.log('🔍 Auth initialization started');
       try {
         const user = await AuthService.getCurrentUser();
-        console.log('🔍 Auth getCurrentUser result:', { user: user?.email, hasUser: !!user });
         
         if (user) {
           AuthService.storeUserData(user);
@@ -33,16 +31,13 @@ export function useAuth(): AuthState & {
             isAuthenticated: true,
             isLoading: false,
           }));
-          console.log('✅ User authenticated:', user.email);
         } else {
           setState(prev => ({
             ...prev,
             isLoading: false,
           }));
-          console.log('❌ No user found, not authenticated');
         }
       } catch (error) {
-        console.error('❌ Auth initialization error:', error);
         setState(prev => ({
           ...prev,
           error: (error as Error).message,

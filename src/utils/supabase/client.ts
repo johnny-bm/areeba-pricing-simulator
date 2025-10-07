@@ -6,33 +6,11 @@ let supabaseInstance: ReturnType<typeof createClient> | null = null;
 export const supabase = (() => {
   if (!supabaseInstance) {
     try {
-      console.log('🔐 Creating Supabase client singleton');
-      
       // Get environment variables with fallback
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     
-    console.log('🔍 Environment variables loaded:', {
-      hasUrl: !!supabaseUrl,
-      hasKey: !!supabaseAnonKey,
-      urlLength: supabaseUrl?.length || 0,
-      keyLength: supabaseAnonKey?.length || 0
-    });
-    
-    console.log('🔍 Environment check:', {
-      hasUrl: !!supabaseUrl,
-      hasKey: !!supabaseAnonKey,
-      urlLength: supabaseUrl?.length || 0,
-      keyLength: supabaseAnonKey?.length || 0,
-      urlValue: supabaseUrl,
-      keyValue: supabaseAnonKey ? `${supabaseAnonKey.substring(0, 10)}...` : 'undefined'
-    });
-    
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('❌ Missing Supabase environment variables:', {
-        VITE_SUPABASE_URL: supabaseUrl,
-        VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? '***' : 'undefined'
-      });
       throw new Error('Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
     }
     
@@ -46,7 +24,7 @@ export const supabase = (() => {
         }
       }
     } catch (error) {
-      console.warn('⚠️ Could not parse Supabase URL for storage key, using default');
+      // Use default project ID
     }
     
     supabaseInstance = createClient(
@@ -69,9 +47,8 @@ export const supabase = (() => {
       }
     );
     
-      console.log('✅ Supabase client created');
     } catch (error) {
-      console.error('❌ Failed to create Supabase client:', error);
+      console.error('Failed to create Supabase client:', error);
       throw error;
     }
   }
