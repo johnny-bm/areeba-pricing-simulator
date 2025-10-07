@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
 import { StatusBadge } from './StatusBadge';
-import { cn } from './ui/utils';
+import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Link2, ArrowRight, Zap, RotateCcw, Info, Bug } from 'lucide-react';

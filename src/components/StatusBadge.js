@@ -1,5 +1,5 @@
 import { jsx as _jsx } from "react/jsx-runtime";
-import { cn } from './ui/utils';
+import { cn } from '@/lib/utils';
 import { getStatusBadgeClasses, getStatusLabel } from '../utils/statusColors';
 /**
  * StatusBadge Component

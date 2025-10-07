@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from './ui/utils';
+import { cn } from '@/lib/utils';
 import { getStatusBadgeClasses, getStatusLabel, type StatusBadgeProps } from '../utils/statusColors';
 
 /**
