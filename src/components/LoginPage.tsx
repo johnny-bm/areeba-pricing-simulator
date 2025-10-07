@@ -72,7 +72,9 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <WordMarkRed className="h-8" />
+            <div className="h-8 w-32">
+              <WordMarkRed />
+            </div>
           </div>
           <CardTitle className="text-2xl">Welcome Back</CardTitle>
           <CardDescription>
@@ -121,6 +123,28 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
+          
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or
+                </span>
+              </div>
+            </div>
+            
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full mt-4"
+              onClick={() => navigate('/?mode=guest')}
+            >
+              Continue as Guest
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
