@@ -522,12 +522,12 @@ export function AdminInterface({
                       <TableCell>
                         <div className="flex flex-wrap gap-1 max-w-xs">
                           {config.fields?.slice(0, 3).map((field: any) => (
-                            <Badge key={field.id} variant="info" className="text-xs">
+                            <Badge key={field.id} variant="secondary" className="text-xs">
                               {field.label}
                             </Badge>
                           ))}
                           {config.fields && config.fields.length > 3 && (
-                            <Badge variant="info" className="text-xs">
+                            <Badge variant="secondary" className="text-xs">
                               +{config.fields.length - 3} more
                             </Badge>
                           )}
@@ -693,7 +693,7 @@ export function AdminInterface({
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="success">
+                        <Badge variant="default">
                           {scenario.itemCount} items
                         </Badge>
                       </TableCell>
@@ -921,7 +921,7 @@ export function AdminInterface({
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="success">
+                        <Badge variant="default">
                           {submission.servicesCount} items
                         </Badge>
                       </TableCell>

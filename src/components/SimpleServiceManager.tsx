@@ -198,7 +198,7 @@ export function SimpleServiceManager({
               </div>
             </TableCell>
             <TableCell>
-              <Badge variant="info">
+              <Badge variant="secondary">
                 {getCategoryName(service.category)}
               </Badge>
             </TableCell>
@@ -218,12 +218,12 @@ export function SimpleServiceManager({
             <TableCell>
               <div className="flex flex-wrap gap-1 max-w-xs">
                 {service.tags?.slice(0, 2).map(tag => (
-                  <Badge key={tag} variant="info" className="text-xs">
+                  <Badge key={tag} variant="secondary" className="text-xs">
                     {tag}
                   </Badge>
                 ))}
                 {service.tags && service.tags.length > 2 && (
-                  <Badge variant="info" className="text-xs">
+                  <Badge variant="secondary" className="text-xs">
                     +{service.tags.length - 2} more
                   </Badge>
                 )}

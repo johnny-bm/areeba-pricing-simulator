@@ -35,7 +35,7 @@ export function SimpleTagsInput({ tags = [], onAddTag, onRemoveTag, placeholder 
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {tags.map((tag, index) => (
-            <Badge key={`${tag}-${index}`} variant="info" className="text-xs">
+            <Badge key={`${tag}-${index}`} variant="secondary" className="text-xs">
               {tag}
               <Button
                 size="sm"
