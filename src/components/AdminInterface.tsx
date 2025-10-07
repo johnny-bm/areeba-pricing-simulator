@@ -392,23 +392,26 @@ export function AdminInterface({
                   })()}
                 </p>
                 <div className="flex items-center gap-1 mt-1">
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    (() => {
-                      const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                      const role = userData.role;
-                      return role === 'owner' 
-                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
-                        : role === 'admin'
-                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300'
-                        : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
-                    })()
-                  }`}>
+                  <Badge 
+                    variant={
+                      (() => {
+                        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+                        const role = userData.role;
+                        return role === 'owner' 
+                          ? 'default'
+                          : role === 'admin'
+                          ? 'secondary'
+                          : 'outline';
+                      })()
+                    }
+                    className="text-xs"
+                  >
                     {(() => {
                       const userData = JSON.parse(localStorage.getItem('user') || '{}');
                       const role = userData.role || 'user';
                       return role.charAt(0).toUpperCase() + role.slice(1);
                     })()}
-                  </span>
+                  </Badge>
                 </div>
               </div>
             </div>
