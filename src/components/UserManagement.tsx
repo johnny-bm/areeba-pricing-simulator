@@ -38,6 +38,15 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
   const isOwner = currentUserRole === ROLES.OWNER;
   const isAdmin = currentUserRole === ROLES.ADMIN;
   const canManageUsers = isOwner || isAdmin;
+  
+  // Debug logging
+  console.log('UserManagement Debug:', {
+    currentUserRole,
+    isOwner,
+    isAdmin,
+    canManageUsers,
+    usersCount: users.length
+  });
 
   // Load users
   const loadUsers = async () => {
@@ -352,7 +361,8 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
             </TableCell>
             <TableCell onClick={(e) => e.stopPropagation()}>
               <div className="flex gap-1">
-                {canManageUsers && (
+                {console.log('Actions Debug:', { canManageUsers, userRole: user.role, isInvite: user.is_invite, userId: user.id, currentUserId })}
+                {canManageUsers ? (
                   <>
                     {!user.is_invite && (
                       <Button
@@ -379,6 +389,8 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                       </Button>
                     )}
                   </>
+                ) : (
+                  <span className="text-xs text-muted-foreground">No permissions</span>
                 )}
               </div>
             </TableCell>
