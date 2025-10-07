@@ -302,6 +302,30 @@ export function AdminInterface({
             </div>
           </div>
           
+          {/* Back to Simulators - at the top under logo */}
+          <Button
+            onClick={handleClose}
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-2"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            🔥 Back to Simulators (UPDATED)
+          </Button>
+          
+          {/* Logout button - below Back to Simulators */}
+          {onLogout && (
+            <Button
+              onClick={onLogout}
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-4"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          )}
+          
           {/* Simulator Selector */}
           <div className="space-y-2">
             <label className="text-xs text-sidebar-foreground/70 uppercase tracking-wide">
@@ -405,30 +429,6 @@ export function AdminInterface({
               </div>
             </div>
           </div>
-          
-          {/* Back to Simulators - at the top under logo */}
-          <Button
-            onClick={handleClose}
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            🔥 Back to Simulators (UPDATED)
-          </Button>
-          
-          {/* Logout button - below Back to Simulators */}
-          {onLogout && (
-            <Button
-              onClick={onLogout}
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
-          )}
         </div>
       </div>
 
