@@ -18,6 +18,9 @@ function AdminDataLoader() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Move useAuthContext to the top to fix hooks order
+  const { logout } = useAuthContext();
 
   useEffect(() => {
     const loadAdminData = async () => {
@@ -60,8 +63,6 @@ function AdminDataLoader() {
       </div>
     );
   }
-
-  const { logout } = useAuthContext();
 
   const handleLogout = async () => {
     await logout();
