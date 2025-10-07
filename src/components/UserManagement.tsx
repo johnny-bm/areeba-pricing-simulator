@@ -233,16 +233,16 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
     }
   };
 
-  const getRoleBadgeColor = (role: string) => {
+  const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case ROLES.OWNER:
-        return 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300';
+        return 'default';
       case ROLES.ADMIN:
-        return 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300';
+        return 'secondary';
       case ROLES.MEMBER:
-        return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+        return 'outline';
       default:
-        return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+        return 'outline';
     }
   };
 
@@ -325,13 +325,13 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
               </div>
             </td>
             <td className="px-6 py-4">
-              <Badge className={getRoleBadgeColor(user.role)}>
+              <Badge variant={getRoleBadgeVariant(user.role)}>
                 {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
               </Badge>
             </td>
             <td className="px-6 py-4">
               {user.is_invite ? (
-                <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300">
+                <Badge variant="outline">
                   Invite Sent
                 </Badge>
               ) : (

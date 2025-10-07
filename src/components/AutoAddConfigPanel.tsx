@@ -410,21 +410,16 @@ export function AutoAddConfigPanel({
                                 <div className="font-medium">{service.name}</div>
                                 <div className="flex items-center gap-2">
                                   {mapping.autoAdd && (
-                                    <span className={cn(
-                                      "inline-flex items-center rounded-md text-xs px-2 py-1 font-medium transition-colors",
-                                      isActive 
-                                        ? "bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 dark:bg-green-950 dark:text-green-300 dark:border-green-800 dark:hover:bg-green-900"
-                                        : "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 dark:border-red-800 dark:hover:bg-red-900"
-                                    )}>
+                                    <Badge variant={isActive ? "default" : "destructive"} className="text-xs">
                                       <Zap className="h-3 w-3 mr-1" />
                                       Auto-Add
-                                    </span>
+                                    </Badge>
                                   )}
                                   {mapping.syncQuantity && (
-                                    <span className="inline-flex items-center rounded-md text-xs px-2 py-1 font-medium transition-colors bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800 dark:hover:bg-blue-900">
+                                    <Badge variant="secondary" className="text-xs">
                                       <RotateCcw className="h-3 w-3 mr-1" />
                                       Sync
-                                    </span>
+                                    </Badge>
                                   )}
                                 </div>
                               </div>

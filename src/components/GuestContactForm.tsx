@@ -77,10 +77,10 @@ export const GuestContactForm: React.FC<GuestContactFormProps> = ({ onSubmit }) 
                 id="firstName"
                 value={formData.firstName}
                 onChange={(e) => handleChange('firstName', e.target.value)}
-                className={errors.firstName ? 'border-red-500' : ''}
+                className={errors.firstName ? 'border-destructive' : ''}
               />
               {errors.firstName && (
-                <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
+                <p className="text-destructive text-sm mt-1">{errors.firstName}</p>
               )}
             </div>
 
@@ -90,10 +90,10 @@ export const GuestContactForm: React.FC<GuestContactFormProps> = ({ onSubmit }) 
                 id="lastName"
                 value={formData.lastName}
                 onChange={(e) => handleChange('lastName', e.target.value)}
-                className={errors.lastName ? 'border-red-500' : ''}
+                className={errors.lastName ? 'border-destructive' : ''}
               />
               {errors.lastName && (
-                <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
+                <p className="text-destructive text-sm mt-1">{errors.lastName}</p>
               )}
             </div>
           </div>
@@ -105,10 +105,10 @@ export const GuestContactForm: React.FC<GuestContactFormProps> = ({ onSubmit }) 
               type="email"
               value={formData.email}
               onChange={(e) => handleChange('email', e.target.value)}
-              className={errors.email ? 'border-red-500' : ''}
+                className={errors.email ? 'border-destructive' : ''}
             />
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              <p className="text-destructive text-sm mt-1">{errors.email}</p>
             )}
           </div>
 
@@ -119,10 +119,10 @@ export const GuestContactForm: React.FC<GuestContactFormProps> = ({ onSubmit }) 
               type="tel"
               value={formData.phoneNumber}
               onChange={(e) => handleChange('phoneNumber', e.target.value)}
-              className={errors.phoneNumber ? 'border-red-500' : ''}
+              className={errors.phoneNumber ? 'border-destructive' : ''}
             />
             {errors.phoneNumber && (
-              <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
+              <p className="text-destructive text-sm mt-1">{errors.phoneNumber}</p>
             )}
           </div>
 
@@ -132,10 +132,10 @@ export const GuestContactForm: React.FC<GuestContactFormProps> = ({ onSubmit }) 
               id="companyName"
               value={formData.companyName}
               onChange={(e) => handleChange('companyName', e.target.value)}
-              className={errors.companyName ? 'border-red-500' : ''}
+              className={errors.companyName ? 'border-destructive' : ''}
             />
             {errors.companyName && (
-              <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>
+              <p className="text-destructive text-sm mt-1">{errors.companyName}</p>
             )}
           </div>
 
