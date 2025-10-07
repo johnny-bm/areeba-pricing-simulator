@@ -93,7 +93,7 @@ export function ConnectionDiagnostics() {
       case 'success':
         return <CheckCircle className="h-4 w-4 text-green-600" />;
       case 'failed':
-        return <XCircle className="h-4 w-4 text-red-600" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       case 'checking':
         return <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />;
       default:
@@ -128,7 +128,7 @@ export function ConnectionDiagnostics() {
                 {publicAnonKey ? (
                   <span className="text-green-600">✓ Configured</span>
                 ) : (
-                  <span className="text-red-600">✗ Missing</span>
+                  <span className="text-destructive">✗ Missing</span>
                 )}
               </p>
             </div>

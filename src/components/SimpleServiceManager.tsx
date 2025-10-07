@@ -251,7 +251,7 @@ export function SimpleServiceManager({
                   size="sm"
                   variant="ghost"
                   onClick={() => handleQuickDelete(service)}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-destructive hover:text-destructive/80"
                   title="Delete service"
                 >
                   <Trash2 className="h-3 w-3" />

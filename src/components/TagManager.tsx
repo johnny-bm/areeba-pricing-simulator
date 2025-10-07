@@ -175,7 +175,7 @@ export function TagManager({
                   size="sm"
                   variant="ghost"
                   onClick={() => handleQuickDelete(tag.name)}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-destructive hover:text-destructive/80"
                   title="Delete tag"
                 >
                   <Trash2 className="h-3 w-3" />

@@ -187,7 +187,7 @@ export function CategoryManager({
                   size="sm"
                   variant="ghost"
                   onClick={() => handleQuickDelete(category)}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-destructive hover:text-destructive/80"
                   title="Delete category"
                 >
                   <Trash2 className="h-3 w-3" />

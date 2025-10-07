@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { TableCell } from './ui/table';
 import { Plus, Edit, Trash2, User as UserIcon, Copy } from 'lucide-react';
 import { DataTable } from './DataTable';
 import { UserDialog } from './dialogs/UserDialog';
@@ -298,7 +299,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
         isLoading={isLoading}
         renderRow={(user) => (
           <>
-            <td className="px-6 py-4">
+            <TableCell>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <UserIcon className="h-5 w-5 text-primary" />
@@ -323,13 +324,13 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                   )}
                 </div>
               </div>
-            </td>
-            <td className="px-6 py-4">
+            </TableCell>
+            <TableCell>
               <Badge variant={getRoleBadgeVariant(user.role)}>
                 {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
               </Badge>
-            </td>
-            <td className="px-6 py-4">
+            </TableCell>
+            <TableCell>
               {user.is_invite ? (
                 <Badge variant="outline">
                   Invite Sent
@@ -339,8 +340,8 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                   {user.is_active ? 'Active' : 'Inactive'}
                 </Badge>
               )}
-            </td>
-            <td className="px-6 py-4">
+            </TableCell>
+            <TableCell>
               <div className="text-sm">
                 {new Date(user.created_at).toLocaleDateString('en-US', {
                   year: 'numeric',
@@ -348,7 +349,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                   day: 'numeric'
                 })}
               </div>
-            </td>
+            </TableCell>
             <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
               <div className="flex gap-1">
                 {canManageUsers && (
@@ -372,7 +373,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                         variant="ghost"
                         onClick={() => handleDeleteUser(user)}
                         title="Delete user"
-                        className="text-destructive hover:text-destructive"
+                        className="text-destructive hover:text-destructive/80"
                       >
                         <Trash2 className="h-3 w-3" />
                       </Button>
@@ -380,7 +381,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                   </>
                 )}
               </div>
-            </td>
+            </TableCell>
           </>
         )}
       />
