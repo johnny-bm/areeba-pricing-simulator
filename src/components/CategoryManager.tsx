@@ -18,6 +18,13 @@ export function CategoryManager({
   services,
   onUpdateCategories
 }: CategoryManagerProps) {
+  // Debug: Log received data
+  console.log('CategoryManager data:', { 
+    categories: categories?.length || 0, 
+    services: services?.length || 0,
+    categoriesSample: categories?.slice(0, 2),
+    servicesSample: services?.slice(0, 2)
+  });
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [isCreating, setIsCreating] = useState(false);

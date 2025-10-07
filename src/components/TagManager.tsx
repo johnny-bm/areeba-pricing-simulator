@@ -22,6 +22,11 @@ export function TagManager({
   services,
   onUpdateServices
 }: TagManagerProps) {
+  // Debug: Log received data
+  console.log('TagManager data:', { 
+    services: services?.length || 0,
+    servicesSample: services?.slice(0, 2)
+  });
   const [isTagDialogOpen, setIsTagDialogOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState<TagData | null>(null);
   const [isCreatingTag, setIsCreatingTag] = useState(false);

@@ -28,6 +28,13 @@ export function SimpleServiceManager({
   onUpdateServices,
   onRefresh
 }: SimpleServiceManagerProps) {
+  // Debug: Log received data
+  console.log('SimpleServiceManager data:', { 
+    services: services?.length || 0, 
+    categories: categories?.length || 0,
+    servicesSample: services?.slice(0, 2),
+    categoriesSample: categories?.slice(0, 2)
+  });
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingService, setEditingService] = useState<PricingItem | null>(null);
   const [isCreating, setIsCreating] = useState(false);

@@ -122,10 +122,35 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
     checkAuth();
   }, []);
 
+  // Test API endpoints directly
+  const testApiEndpoints = async () => {
+    console.log('🧪 Testing API endpoints directly...');
+    
+    try {
+      console.log('🧪 Testing services endpoint...');
+      const servicesTest = await api.loadPricingItems();
+      console.log('🧪 Services test result:', servicesTest?.length || 0, servicesTest?.slice(0, 1));
+    } catch (error) {
+      console.error('🧪 Services test failed:', error);
+    }
+    
+    try {
+      console.log('🧪 Testing categories endpoint...');
+      const categoriesTest = await api.loadCategories();
+      console.log('🧪 Categories test result:', categoriesTest?.length || 0, categoriesTest?.slice(0, 1));
+    } catch (error) {
+      console.error('🧪 Categories test failed:', error);
+    }
+  };
+
   // Load initial data
   useEffect(() => {
     const loadInitialData = async () => {
       console.log('🚀 loadInitialData function started');
+      
+      // Test API endpoints first
+      await testApiEndpoints();
+      
       try {
         setIsLoading(true);
         console.log('🔄 setIsLoading(true) called');
@@ -136,9 +161,11 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
           console.log('🔄 About to call api.loadPricingItems()...');
           const servicesResponse = await api.loadPricingItems();
           console.log('✅ Services API call completed:', servicesResponse?.length || 0);
+          console.log('🔍 Services response sample:', servicesResponse?.slice(0, 2));
           setPricingServices(servicesResponse || []);
         } catch (error) {
           console.error('❌ Failed to load services:', error);
+          console.error('❌ Services error details:', error);
         }
         
         // Load categories
@@ -147,9 +174,11 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
           console.log('🔄 About to call api.loadCategories()...');
           const categoriesResponse = await api.loadCategories();
           console.log('✅ Categories API call completed:', categoriesResponse?.length || 0);
+          console.log('🔍 Categories response sample:', categoriesResponse?.slice(0, 2));
           setCategories(deduplicateCategories(categoriesResponse || []));
         } catch (error) {
           console.error('❌ Failed to load categories:', error);
+          console.error('❌ Categories error details:', error);
         }
         
         // Load configurations
