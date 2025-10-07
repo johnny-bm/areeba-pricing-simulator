@@ -414,7 +414,7 @@ export function AdminInterface({
             className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Simulators
+            🔥 Back to Simulators (UPDATED)
           </Button>
           
           {/* Logout button - below Back to Simulators */}
