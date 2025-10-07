@@ -113,6 +113,15 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
       if (inviteError) throw inviteError;
 
       // Step 2: Send email invitation
+      console.log('📧 Attempting to send email invitation...', {
+        email: userData.email,
+        firstName: userData.first_name || '',
+        lastName: userData.last_name || '',
+        role: userData.role,
+        inviteCode: invite.invite_code,
+        appUrl: window.location.origin
+      });
+
       const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-invite', {
         body: {
           email: userData.email,
@@ -123,6 +132,8 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
           appUrl: window.location.origin
         }
       });
+
+      console.log('📧 Email result:', { emailResult, emailError });
 
       if (emailError) {
         console.error('Email send failed:', emailError);
