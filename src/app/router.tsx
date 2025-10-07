@@ -20,7 +20,7 @@ function AdminDataLoader() {
   const [error, setError] = useState<string | null>(null);
   
   // Move useAuthContext to the top to fix hooks order
-  const { logout } = useAuthContext();
+  const { logout, user } = useAuthContext();
 
   useEffect(() => {
     const loadAdminData = async () => {
@@ -76,8 +76,8 @@ function AdminDataLoader() {
       onUpdateItems={setItems}
       onUpdateCategories={setCategories}
       onLogout={handleLogout}
-      currentUserId=""
-      currentUserRole=""
+      currentUserId={user?.id || ""}
+      currentUserRole={user?.role || ""}
     />
   );
 }
