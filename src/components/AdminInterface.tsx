@@ -315,9 +315,6 @@ export function AdminInterface({
           
           {/* Simulator Selector */}
           <div className="space-y-2">
-            <label className="text-xs text-sidebar-foreground/70 uppercase tracking-wide">
-              Simulator
-            </label>
             <Select value={selectedSimulator} onValueChange={setSelectedSimulator}>
               <SelectTrigger className="w-full bg-sidebar-accent border-sidebar-border text-sidebar-foreground">
                 <SelectValue />
