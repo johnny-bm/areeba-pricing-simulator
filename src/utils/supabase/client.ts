@@ -43,6 +43,12 @@ export const supabase = (() => {
           headers: {
             'X-Client-Info': 'areeba-pricing-simulator'
           }
+        },
+        // New API optimizations
+        realtime: {
+          params: {
+            eventsPerSecond: 10
+          }
         }
       }
     );
