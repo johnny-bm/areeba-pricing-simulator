@@ -27,7 +27,7 @@ export function UserManagement({ currentUserId, currentUserRole }) {
                 .rpc('get_all_user_profiles');
             if (usersError)
                 throw usersError;
-            // Load pending invites (not used yet)
+            // Load pending invites (not used yet and not corresponding to existing users)
             const { data: invitesData, error: invitesError } = await supabase
                 .from('user_invites')
                 .select('*')
@@ -35,8 +35,15 @@ export function UserManagement({ currentUserId, currentUserRole }) {
                 .order('created_at', { ascending: false });
             if (invitesError)
                 throw invitesError;
+            
+            // Filter out invites that correspond to existing users
+            const existingUserEmails = new Set((usersData || []).map(user => user.email));
+            const filteredInvites = (invitesData || []).filter(invite => 
+                !existingUserEmails.has(invite.email)
+            );
+            
             // Convert invites to user format for display
-            const pendingInvites = (invitesData || []).map((invite) => ({
+            const pendingInvites = filteredInvites.map((invite) => ({
                 id: invite.id,
                 email: invite.email,
                 first_name: invite.first_name,
@@ -51,7 +58,7 @@ export function UserManagement({ currentUserId, currentUserRole }) {
             }));
             // Combine users and pending invites
             const allUsers = [...(usersData || []), ...pendingInvites];
-            console.log('✅ Loaded:', usersData?.length || 0, 'users,', invitesData?.length || 0, 'pending invites');
+            console.log('✅ Loaded:', usersData?.length || 0, 'users,', pendingInvites.length, 'pending invites');
             setUsers(allUsers);
         }
         catch (error) {

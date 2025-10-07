@@ -59,8 +59,14 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
 
       if (invitesError) throw invitesError;
 
+      // Filter out invites that correspond to existing users
+      const existingUserEmails = new Set((usersData || []).map(user => user.email));
+      const filteredInvites = (invitesData || []).filter((invite: any) => 
+        !existingUserEmails.has(invite.email)
+      );
+
       // Convert invites to user format for display
-      const pendingInvites = (invitesData || []).map((invite: any) => ({
+      const pendingInvites = filteredInvites.map((invite: any) => ({
         id: invite.id,
         email: invite.email,
         first_name: invite.first_name,
@@ -77,7 +83,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
       // Combine users and pending invites
       const allUsers = [...(usersData || []), ...pendingInvites];
 
-      console.log('✅ Loaded:', usersData?.length || 0, 'users,', invitesData?.length || 0, 'pending invites');
+      console.log('✅ Loaded:', usersData?.length || 0, 'users,', pendingInvites.length, 'pending invites');
       setUsers(allUsers);
     } catch (error: any) {
       console.error('❌ Failed to load users:', error);
