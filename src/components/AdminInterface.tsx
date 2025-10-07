@@ -406,29 +406,29 @@ export function AdminInterface({
             </div>
           </div>
           
-          {/* Existing buttons below */}
-          <div className="space-y-2">
+          {/* Logout button - prominent placement */}
+          {onLogout && (
             <Button
-              onClick={handleClose}
+              onClick={onLogout}
               variant="ghost"
               size="sm"
-              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-4"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Simulators
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
             </Button>
-            {onLogout && (
-              <Button
-                onClick={onLogout}
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
-            )}
-          </div>
+          )}
+          
+          {/* Back to Simulators - moved under logo */}
+          <Button
+            onClick={handleClose}
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Simulators
+          </Button>
         </div>
       </div>
 
