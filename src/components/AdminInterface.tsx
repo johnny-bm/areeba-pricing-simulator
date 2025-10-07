@@ -398,9 +398,11 @@ export function AdminInterface({
                         const userData = JSON.parse(localStorage.getItem('user') || '{}');
                         const role = userData.role;
                         return role === 'owner' 
-                          ? 'default'
+                          ? 'roleOwner'
                           : role === 'admin'
-                          ? 'secondary'
+                          ? 'roleAdmin'
+                          : role === 'member'
+                          ? 'roleMember'
                           : 'outline';
                       })()
                     }

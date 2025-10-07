@@ -237,11 +237,11 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case ROLES.OWNER:
-        return 'default';
+        return 'roleOwner';
       case ROLES.ADMIN:
-        return 'secondary';
+        return 'roleAdmin';
       case ROLES.MEMBER:
-        return 'outline';
+        return 'roleMember';
       default:
         return 'outline';
     }
