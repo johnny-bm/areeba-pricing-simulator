@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Plus, Edit, Trash2, User as UserIcon, Mail } from 'lucide-react';
 import { DataTable } from './DataTable';
-import { UserDialog } from './dialogs/UserDialog';
+import { UserDialog } from './dialogs/UserDialog.tsx';
 import { supabase } from '../utils/supabase/client';
 import { TABLES, ROLES } from '../config/database';
 import { toast } from 'sonner';
