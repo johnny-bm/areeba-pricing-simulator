@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
+import { StandardDialog } from "../StandardDialog";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Separator } from "../ui/separator";
@@ -56,17 +56,27 @@ export function ScenarioSummaryDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-6 w-6 text-green-600" />
-            <DialogTitle>Scenario Saved Successfully!</DialogTitle>
-          </div>
-          <DialogDescription>
-            Your pricing scenario has been saved to the database.
-          </DialogDescription>
-        </DialogHeader>
+    <StandardDialog
+      isOpen={open}
+      onClose={() => onOpenChange(false)}
+      title="Scenario Saved Successfully!"
+      description="Your pricing scenario has been saved to the database."
+      size="lg"
+      secondaryActions={[
+        {
+          label: 'Close',
+          onClick: () => onOpenChange(false)
+        }
+      ]}
+      primaryAction={{
+        label: 'Download PDF',
+        onClick: () => {
+          onDownloadPDF();
+          onOpenChange(false);
+        },
+        icon: <Download className="h-4 w-4" />
+      }}
+    >
 
         <div className="space-y-4">
           {/* Scenario Details */}
@@ -180,27 +190,6 @@ export function ScenarioSummaryDialog({
             </CardContent>
           </Card>
         </div>
-
-        <DialogFooter className="flex flex-col sm:flex-row gap-2">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="w-full sm:w-auto"
-          >
-            Close
-          </Button>
-          <Button
-            onClick={() => {
-              onDownloadPDF();
-              onOpenChange(false);
-            }}
-            className="w-full sm:w-auto"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Download PDF
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    </StandardDialog>
   );
 }

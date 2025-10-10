@@ -9,9 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { Avatar, AvatarFallback } from './ui/avatar';
 import { User, LogOut, Settings } from 'lucide-react';
 import { supabase } from '../utils/supabase/client';
 import { ROLES } from '../config/database';
+import { getAvatarProps } from '../utils/avatarColors';
 
 interface UserProfileHeaderProps {
   onLogout: () => void;
@@ -29,6 +31,7 @@ export function UserProfileHeader({ onLogout }: UserProfileHeaderProps) {
     ? `${first_name || ''} ${last_name || ''}`.trim()
     : email || 'User';
   const isAdminOrOwner = role === ROLES.ADMIN || role === ROLES.OWNER;
+  const avatarProps = getAvatarProps(displayName);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -57,7 +60,11 @@ export function UserProfileHeader({ onLogout }: UserProfileHeaderProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="gap-2">
-          <User className="h-4 w-4" />
+          <Avatar className="h-6 w-6">
+            <AvatarFallback className={`text-xs font-medium ${avatarProps.bgClass} ${avatarProps.textClass}`}>
+              {avatarProps.initials}
+            </AvatarFallback>
+          </Avatar>
           <span className="hidden sm:inline">{displayName}</span>
         </Button>
       </DropdownMenuTrigger>

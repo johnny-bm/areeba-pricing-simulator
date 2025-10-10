@@ -53,11 +53,7 @@ export function ScenarioBuilder({
 
   // Helper function to get the current calculated quantity for auto-synced items
   const getCurrentQuantity = (selectedItem: SelectedItem): number => {
-    const quantityFields = selectedItem.item.quantitySourceFields || [];
-    if (quantityFields.length > 0) {
-      const calculatedQuantity = getConfigBasedQuantity(selectedItem.item, clientConfig);
-      return calculatedQuantity;
-    }
+    // Always return the actual selected quantity, not recalculate from config
     return selectedItem.quantity;
   };
 
@@ -107,6 +103,12 @@ export function ScenarioBuilder({
 
   const handleUpdateEditingItem = (updates: Partial<Omit<SelectedItem, 'id' | 'item'>>) => {
     if (editingItem) {
+      // If quantity is being updated and this is a tiered pricing item, recalculate unit price
+      if (updates.quantity !== undefined && editingItem.item.pricingType === 'tiered') {
+        const newUnitPrice = getEffectiveUnitPrice(editingItem.item, updates.quantity);
+        updates.unitPrice = newUnitPrice;
+      }
+      
       onUpdateItem(editingItem.id, updates);
       // Update local editing state
       setEditingItem({ ...editingItem, ...updates });

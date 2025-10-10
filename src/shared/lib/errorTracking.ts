@@ -47,9 +47,59 @@ class ErrorTrackingService {
   }
 
   /**
+   * Check if error should be ignored
+   */
+  private shouldIgnoreError(error: Error): boolean {
+    const message = error.message.toLowerCase();
+    const stack = error.stack?.toLowerCase() || '';
+    
+    // Ignore browser extension errors
+    if (message.includes('chrome-extension://') || 
+        message.includes('moz-extension://') ||
+        message.includes('safari-extension://') ||
+        stack.includes('chrome-extension://') ||
+        stack.includes('moz-extension://') ||
+        stack.includes('safari-extension://')) {
+      return true;
+    }
+    
+    // Ignore Grammarly errors
+    if (message.includes('grammarly') || stack.includes('grammarly')) {
+      return true;
+    }
+    
+    // Ignore shadow DOM errors from extensions
+    if (message.includes('shadow root') && message.includes('already hosts')) {
+      return true;
+    }
+    
+    // Ignore poetry.js errors (likely from extensions)
+    if (stack.includes('poetry.js')) {
+      return true;
+    }
+    
+    // Ignore extension CSS loading errors
+    if (message.includes('net::err_file_not_found') && 
+        (message.includes('chrome-extension://') || message.includes('moz-extension://'))) {
+      return true;
+    }
+    
+    // Ignore aria-hidden accessibility warnings from extensions
+    if (message.includes('blocked aria-hidden') && message.includes('descendant retained focus')) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  /**
    * Track custom errors
    */
   trackError(error: Error, context: Partial<ErrorContext> = {}, severity: ErrorReport['severity'] = 'medium') {
+    // Skip ignored errors
+    if (this.shouldIgnoreError(error)) {
+      return;
+    }
     const errorReport: ErrorReport = {
       message: error.message,
       stack: error.stack,
@@ -147,19 +197,20 @@ class ErrorTrackingService {
 
     // Monitor long tasks
     if ('PerformanceObserver' in window) {
-      const observer = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          if (entry.duration > 50) { // Tasks longer than 50ms
-            this.trackPerformanceError(
-              new Error('Long task detected'),
-              'long-task',
-              entry.duration
-            );
-          }
-        }
-      });
+      // Disabled long task monitoring to reduce console noise
+      // const observer = new PerformanceObserver((list) => {
+      //   for (const entry of list.getEntries()) {
+      //     if (entry.duration > 100) { // Tasks longer than 100ms
+      //       this.trackPerformanceError(
+      //         new Error('Long task detected'),
+      //         'long-task',
+      //         entry.duration
+      //       );
+      //     }
+      //   }
+      // });
 
-      observer.observe({ entryTypes: ['longtask'] });
+      // observer.observe({ entryTypes: ['longtask'] });
     }
   }
 
@@ -182,7 +233,7 @@ class ErrorTrackingService {
    * Send error to tracking service
    */
   private async sendToService(errorReport: ErrorReport) {
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.PROD) {
       try {
         // TODO: Send to your error tracking service (e.g., Sentry, LogRocket, etc.)
         console.log('Error sent to tracking service:', errorReport);

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
+import { StandardDialog } from '../StandardDialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
-import { Save, X, Trash2, Copy } from 'lucide-react';
+import { Trash2, Copy } from 'lucide-react';
 import { PricingItem, PricingTier, Category, ConfigurationDefinition } from '../../types/pricing';
 import { MultiSelectInput } from '../MultiSelectInput';
 import { TieredPricingEditor } from '../TieredPricingEditor';
@@ -273,26 +273,45 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
   const isValid = formData.name?.trim() && formData.description?.trim() && formData.category && formData.unit;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[90vw] max-w-[960px] sm:max-w-[960px] h-[90vh] flex flex-col p-0 gap-0">
-        {/* Sticky Header */}
-        <div className="flex-shrink-0 bg-background border-b px-6 pt-6 pb-4">
-          <DialogHeader>
-            <DialogTitle>
-              {isCreating ? 'Create New Service' : 'Edit Service'}
-            </DialogTitle>
-            <DialogDescription>
-              {isCreating 
-                ? 'Add a new pricing service to the system with configurable options and tiered pricing support.'
-                : 'Modify the selected pricing service settings, pricing tiers, and configuration options.'
-              }
-            </DialogDescription>
-          </DialogHeader>
-        </div>
-        
-        {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
-          <div className="space-y-4">
+    <StandardDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      title={isCreating ? 'Create New Service' : 'Edit Service'}
+      description={
+        isCreating 
+          ? 'Add a new pricing service to the system with configurable options and tiered pricing support.'
+          : 'Modify the selected pricing service settings, pricing tiers, and configuration options.'
+      }
+      size="lg"
+      destructiveActions={!isCreating && item && onDelete ? [{
+        label: isDeleting ? 'Deleting...' : 'Delete',
+        onClick: handleDelete,
+        loading: isDeleting,
+        disabled: isSaving || isDuplicating,
+        icon: <Trash2 className="h-4 w-4" />
+      }] : []}
+      secondaryActions={[
+        ...(!isCreating && item && onDuplicate ? [{
+          label: isDuplicating ? 'Duplicating...' : 'Duplicate',
+          onClick: handleDuplicate,
+          loading: isDuplicating,
+          disabled: isSaving || isDeleting,
+          icon: <Copy className="h-4 w-4" />
+        }] : []),
+        {
+          label: 'Cancel',
+          onClick: onClose,
+          disabled: isSaving || isDeleting || isDuplicating
+        }
+      ]}
+      primaryAction={{
+        label: isSaving ? 'Saving...' : 'Save Service',
+        onClick: handleSave,
+        loading: isSaving,
+        disabled: !isValid || isDeleting || isDuplicating
+      }}
+    >
+      <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="item-name">Service Name *</Label>
@@ -478,50 +497,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
             emptyMessage="No configuration fields available. Create configuration fields in the admin panel."
             multiple={true}
           />
-          </div>
         </div>
-
-        {/* Sticky Footer */}
-        <div className="flex-shrink-0 bg-background border-t px-6 py-4">
-          <div className="flex gap-2">
-            <Button 
-              onClick={handleSave} 
-              disabled={!isValid || isSaving || isDeleting || isDuplicating}
-              className="flex-1"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              {isSaving ? 'Saving...' : 'Save Service'}
-            </Button>
-            
-            {!isCreating && item && onDuplicate && (
-              <Button 
-                onClick={handleDuplicate} 
-                variant="outline"
-                disabled={isSaving || isDeleting || isDuplicating}
-              >
-                <Copy className="h-4 w-4 mr-2" />
-                {isDuplicating ? 'Duplicating...' : 'Duplicate'}
-              </Button>
-            )}
-            
-            {!isCreating && item && onDelete && (
-              <Button 
-                onClick={handleDelete} 
-                variant="destructive"
-                disabled={isSaving || isDeleting || isDuplicating}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                {isDeleting ? 'Deleting...' : 'Delete'}
-              </Button>
-            )}
-            
-            <Button onClick={onClose} variant="outline">
-              <X className="h-4 w-4 mr-2" />
-              Cancel
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+    </StandardDialog>
   );
 }

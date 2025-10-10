@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from "./ui/card";
 import { Separator } from "./ui/separator";
 import { Label } from "./ui/label";
@@ -12,6 +12,7 @@ import { isOneTimeUnit } from "../utils/unitClassification";
 import { CardHeaderWithCollapse } from "./CardHeaderWithCollapse";
 import { Save, ChevronDown, ChevronUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
+import { ColorIndicator } from "./ui/color-indicator";
 
 interface FeeSummaryProps {
   selectedItems: SelectedItem[];
@@ -50,8 +51,18 @@ export function FeeSummary({
   const [showCategoryBreakdown, setShowCategoryBreakdown] = useState(false);
   const [showDiscountDetails, setShowDiscountDetails] = useState(false);
 
+
   const calculateRowTotal = (item: SelectedItem) => {
     if (item.isFree) return 0;
+    
+    // For tiered pricing items, use calculateTieredPrice to get the correct total
+    let subtotal = 0;
+    if (item.item.pricingType === 'tiered' && item.item.tiers && item.item.tiers.length > 0) {
+      const tieredResult = calculateTieredPrice(item.item, item.quantity);
+      subtotal = tieredResult.totalPrice;
+    } else {
+      subtotal = item.quantity * item.unitPrice;
+    }
     
     const discountApplication = item.discountApplication || 'total';
     
@@ -67,8 +78,6 @@ export function FeeSummary({
       effectiveUnitPrice = Math.max(0, effectiveUnitPrice);
       return effectiveUnitPrice * item.quantity;
     } else {
-      const subtotal = item.quantity * item.unitPrice;
-      
       let discountAmount = 0;
       if (item.discountType === 'percentage') {
         discountAmount = subtotal * (item.discount / 100);
@@ -126,7 +135,16 @@ export function FeeSummary({
 
   const rowDiscountTotal = selectedItems.reduce((sum, item) => {
     if (item.isFree) return sum;
-    const beforeDiscount = item.quantity * item.unitPrice;
+    
+    // Calculate before discount total using the same logic as calculateRowTotal
+    let beforeDiscount = 0;
+    if (item.item.pricingType === 'tiered' && item.item.tiers && item.item.tiers.length > 0) {
+      const tieredResult = calculateTieredPrice(item.item, item.quantity);
+      beforeDiscount = tieredResult.totalPrice;
+    } else {
+      beforeDiscount = item.quantity * item.unitPrice;
+    }
+    
     const afterDiscount = calculateRowTotal(item);
     return sum + (beforeDiscount - afterDiscount);
   }, 0);
@@ -161,14 +179,27 @@ export function FeeSummary({
 
   // Calculate savings
   const totalOriginalPrice = selectedItems.reduce((sum, item) => {
-    return sum + (item.quantity * item.unitPrice);
+    if (item.item.pricingType === 'tiered' && item.item.tiers && item.item.tiers.length > 0) {
+      const tieredResult = calculateTieredPrice(item.item, item.quantity);
+      return sum + tieredResult.totalPrice;
+    } else {
+      return sum + (item.quantity * item.unitPrice);
+    }
   }, 0);
   
   const totalFinalPrice = oneTimeFinal + monthlyFinal;
   const totalSavings = totalOriginalPrice - totalFinalPrice;
   
   const freeSavings = selectedItems.reduce((sum, item) => {
-    return sum + (item.isFree ? (item.quantity * item.unitPrice) : 0);
+    if (item.isFree) {
+      if (item.item.pricingType === 'tiered' && item.item.tiers && item.item.tiers.length > 0) {
+        const tieredResult = calculateTieredPrice(item.item, item.quantity);
+        return sum + tieredResult.totalPrice;
+      } else {
+        return sum + (item.quantity * item.unitPrice);
+      }
+    }
+    return sum;
   }, 0);
   
   const discountSavings = totalSavings - freeSavings;
@@ -263,16 +294,16 @@ export function FeeSummary({
                   return (
                     <div key={category.id} className="flex justify-between items-center text-sm px-2">
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <div 
-                          className="w-2 h-2 rounded-full flex-shrink-0" 
-                          style={{ backgroundColor: category.color }}
+                        <ColorIndicator 
+                          color={category.color}
+                          size="sm"
                         />
                         <span className="text-xs">
                           {category.name} ({items.length}
-                          {!isGuestMode && freeItemsCount > 0 && <span className="text-green-600 ml-1">· {freeItemsCount} free</span>})
+                          {!isGuestMode && freeItemsCount > 0 && <span className="text-emerald-600 ml-1">· {freeItemsCount} free</span>})
                         </span>
                       </div>
-                      <span className={`text-xs ${!isGuestMode && categoryTotal === 0 && freeItemsCount > 0 ? "text-green-600" : ""}`}>
+                      <span className={`text-xs ${!isGuestMode && categoryTotal === 0 && freeItemsCount > 0 ? "text-emerald-600" : ""}`}>
                         {formatPrice(categoryTotal)}
                       </span>
                     </div>
@@ -328,11 +359,11 @@ export function FeeSummary({
           {/* Simplified Savings Summary - Single Row - Hidden in guest mode */}
           {!isGuestMode && totalSavings > 0 && (
             <>
-              <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-950/20 rounded border border-green-200 dark:border-green-800">
-                <span className="text-sm text-green-700 dark:text-green-300">
+              <div className="flex items-center justify-between p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded border border-emerald-200 dark:border-emerald-800">
+                <span className="text-sm text-emerald-700 dark:text-emerald-300">
                   💰 Total Savings ({savingsRate.toFixed(1)}% off)
                 </span>
-                <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
                   {formatPrice(totalSavings)}
                 </span>
               </div>
@@ -346,7 +377,7 @@ export function FeeSummary({
             {(oneTimeFinal > 0 || oneTimeItems.length > 0) && (
               <div className="flex justify-between items-center p-2 bg-primary/5 rounded">
                 <span className="text-sm font-medium">One-time Total</span>
-                <span className={`text-sm font-medium ${!isGuestMode && oneTimeFinal === 0 ? 'text-green-600' : ''}`}>
+                <span className={`text-sm font-medium ${!isGuestMode && oneTimeFinal === 0 ? 'text-emerald-600' : ''}`}>
                   {formatPrice(oneTimeFinal)}
                   {!isGuestMode && oneTimeFinal === 0 && oneTimeItems.some(item => item.isFree) && 
                     <span className="text-xs ml-1">(free)</span>
@@ -358,7 +389,7 @@ export function FeeSummary({
             {(monthlyFinal > 0 || monthlyItems.length > 0) && (
               <div className="flex justify-between items-center p-2 bg-primary/5 rounded">
                 <span className="text-sm font-medium">Monthly Total</span>
-                <span className={`text-sm font-medium ${!isGuestMode && monthlyFinal === 0 ? 'text-green-600' : ''}`}>
+                <span className={`text-sm font-medium ${!isGuestMode && monthlyFinal === 0 ? 'text-emerald-600' : ''}`}>
                   {formatPrice(monthlyFinal)}
                   {!isGuestMode && monthlyFinal === 0 && monthlyItems.some(item => item.isFree) && 
                     <span className="text-xs ml-1">(free)</span>
@@ -373,7 +404,7 @@ export function FeeSummary({
                   <span className="text-sm font-medium">Yearly Total</span>
                   <span className="text-xs text-muted-foreground">Monthly × 12</span>
                 </div>
-                <span className={`font-bold ${!isGuestMode && yearlyFinal === 0 ? 'text-green-600' : 'text-primary'}`}>
+                <span className={`font-bold ${!isGuestMode && yearlyFinal === 0 ? 'text-emerald-600' : 'text-primary'}`}>
                   {formatPrice(yearlyFinal)}
                   {!isGuestMode && yearlyFinal === 0 && monthlyItems.some(item => item.isFree) && 
                     <span className="text-xs ml-1">(free)</span>
@@ -385,7 +416,7 @@ export function FeeSummary({
           
           {/* Guest mode blur overlay */}
           {isGuestMode && !guestContactSubmitted && (
-            <div className="absolute inset-0 backdrop-blur-md bg-white/30 dark:bg-black/30 flex items-center justify-center rounded-lg">
+            <div className="absolute inset-0 backdrop-blur-md bg-background/30 dark:bg-background/30 flex items-center justify-center rounded-lg">
               <Button 
                 size="lg"
                 onClick={onShowGuestContactForm}
@@ -404,7 +435,7 @@ export function FeeSummary({
               <span className="text-sm font-medium">Total Project Cost</span>
               <div className="text-xs text-muted-foreground">One-time + First year</div>
             </div>
-            <span className={`font-bold ${!isGuestMode && oneTimeFinal + yearlyFinal === 0 ? 'text-green-600' : ''}`}>
+            <span className={`font-bold ${!isGuestMode && oneTimeFinal + yearlyFinal === 0 ? 'text-emerald-600' : ''}`}>
               {formatPrice(oneTimeFinal + yearlyFinal)}
               {!isGuestMode && oneTimeFinal + yearlyFinal === 0 && selectedItems.some(item => item.isFree) && 
                 <span className="text-xs ml-1">(free)</span>

@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../features/auth';
 import { ErrorBoundary } from '../shared/components/ErrorBoundary';
+import { ThemeProvider } from '../contexts/ThemeContext';
 import { analytics } from '../shared/lib/analytics';
 import { errorTracking } from '../shared/lib/errorTracking';
 import { performanceService } from '../shared/lib/performance';
@@ -32,10 +33,17 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
+        <ThemeProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ThemeProvider>
       </BrowserRouter>
     </ErrorBoundary>
   );

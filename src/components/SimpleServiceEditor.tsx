@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
+import { StandardDialog } from './StandardDialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -69,6 +69,7 @@ export function SimpleServiceEditor({
 
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
   const [configurations, setConfigurations] = useState<ConfigurationDefinition[]>([]);
   const [existingTags, setExistingTags] = useState<string[]>([]);
   const [temporaryTags, setTemporaryTags] = useState<string[]>([]);
@@ -243,26 +244,69 @@ export function SimpleServiceEditor({
 
   const isValid = formData.name?.trim() && formData.description?.trim() && formData.category && formData.unit && categories.length > 0;
 
+  const handleDuplicate = async () => {
+    if (!service) return;
+    
+    try {
+      setIsDuplicating(true);
+      // Create a duplicate with a new name
+      const duplicateService = {
+        ...service,
+        id: `${service.id}_copy_${Date.now()}`,
+        name: `${service.name} (Copy)`,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      await onSave(duplicateService);
+      onClose();
+    } catch (error) {
+      console.error('Failed to duplicate service:', error);
+      alert(`Failed to duplicate service: ${(error as Error).message || 'Unknown error'}`);
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[90vw] max-w-[960px] sm:max-w-[960px] h-[90vh] flex flex-col p-0 gap-0">
-        {/* Sticky Header */}
-        <div className="flex-shrink-0 bg-background border-b px-6 pt-6 pb-4">
-          <DialogHeader>
-            <DialogTitle>
-              {isCreating ? 'Create New Service' : 'Edit Service'}
-            </DialogTitle>
-            <DialogDescription>
-              {isCreating 
-                ? 'Add a new pricing service to the system with configurable options and tiered pricing support.'
-                : 'Modify the selected pricing service settings, pricing tiers, and configuration options.'
-              }
-            </DialogDescription>
-          </DialogHeader>
-        </div>
-        
-        {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
+    <StandardDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      title={isCreating ? 'Create New Service' : 'Edit Service'}
+      description={
+        isCreating 
+          ? 'Add a new pricing service to the system with configurable options and tiered pricing support.'
+          : 'Modify the selected pricing service settings, pricing tiers, and configuration options.'
+      }
+      size="lg"
+      destructiveActions={!isCreating && service && onDelete ? [{
+        label: isDeleting ? 'Deleting...' : 'Delete',
+        onClick: handleDelete,
+        loading: isDeleting,
+        disabled: isSaving || isDuplicating,
+        icon: <Trash2 className="h-4 w-4" />
+      }] : []}
+      secondaryActions={[
+        ...(!isCreating && service ? [{
+          label: isDuplicating ? 'Duplicating...' : 'Duplicate',
+          onClick: handleDuplicate,
+          loading: isDuplicating,
+          disabled: isSaving || isDeleting,
+          icon: <Copy className="h-4 w-4" />
+        }] : []),
+        {
+          label: 'Cancel',
+          onClick: onClose,
+          disabled: isSaving || isDeleting || isDuplicating
+        }
+      ]}
+      primaryAction={{
+        label: isSaving ? 'Saving...' : 'Save Service',
+        onClick: handleSave,
+        loading: isSaving,
+        disabled: !isValid || isDeleting || isDuplicating
+      }}
+    >
+      <div className="space-y-6">
           <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -450,46 +494,6 @@ export function SimpleServiceEditor({
           />
           </div>
         </div>
-
-        {/* Sticky Footer */}
-        <div className="flex-shrink-0 bg-background border-t px-6 py-4">
-          <div className="flex gap-2">
-            <Button 
-              onClick={handleSave} 
-              disabled={!isValid || isSaving || isDeleting || parentIsSaving}
-              className="flex-1 relative"
-            >
-              {(isSaving || parentIsSaving) ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  {parentSaveProgress || 'Saving...'}
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Service
-                </>
-              )}
-            </Button>
-            
-            {!isCreating && service && onDelete && (
-              <Button 
-                onClick={handleDelete} 
-                variant="destructive"
-                disabled={isSaving || isDeleting}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                {isDeleting ? 'Deleting...' : 'Delete'}
-              </Button>
-            )}
-            
-            <Button onClick={onClose} variant="outline">
-              <X className="h-4 w-4 mr-2" />
-              Cancel
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+    </StandardDialog>
   );
 }

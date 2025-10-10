@@ -266,11 +266,16 @@ export function DataTable<T>({
           {/* Main Content Card */}
           <div className="border rounded-lg overflow-hidden">
             {/* Header */}
-            <div className="flex justify-between items-center px-4 py-3 border-b bg-background">
-              <h2 className="text-lg">{title}</h2>
-              <div className="[&>button]:h-8 [&>button]:text-sm">
-                {actionButton}
+            <div className="px-4 py-3 border-b bg-background">
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg">{title}</h2>
+                <div className="[&>button]:h-8 [&>button]:text-sm">
+                  {actionButton}
+                </div>
               </div>
+              {description && (
+                <p className="text-sm text-muted-foreground mt-1">{description}</p>
+              )}
             </div>
             {/* Search and Filters */}
             {(searchFields.length > 0 || filterOptions.length > 0) && (

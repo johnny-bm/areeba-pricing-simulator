@@ -9,6 +9,7 @@ import { ForgotPasswordPage } from '../components/ForgotPasswordPage';
 import { ResetPasswordPage } from '../components/ResetPasswordPage';
 import { PricingSimulator } from '../components/PricingSimulator';
 import { AdminInterface } from '../components/AdminInterface';
+import { PdfBuilderAdmin } from '../features/pdfBuilder';
 import { api } from '../utils/api';
 import { PricingItem, Category } from '../types/pricing';
 
@@ -73,8 +74,8 @@ function AdminDataLoader() {
       onClose={() => window.history.back()}
       items={items}
       categories={categories}
-      onUpdateItems={setItems}
-      onUpdateCategories={setCategories}
+      onUpdateItems={async (items) => setItems(items)}
+      onUpdateCategories={async (categories) => setCategories(categories)}
       onLogout={handleLogout}
       currentUserId={user?.id || ""}
       currentUserRole={user?.role || ""}
@@ -102,7 +103,7 @@ export function AppRouter() {
         element={
           isAuthenticated ? (
             <SimulatorLanding 
-              onSelectSimulator={(simulatorId: string) => navigate(ROUTES.SIMULATOR)} 
+              onSelectSimulator={(simulatorSlug: string) => navigate(`${ROUTES.SIMULATOR}/${simulatorSlug}`)} 
               onLogout={() => navigate(ROUTES.LOGIN)} 
             />
           ) : (
@@ -117,13 +118,137 @@ export function AppRouter() {
       
       {/* Protected routes */}
       <Route 
-        path={ROUTES.SIMULATOR} 
+        path={`${ROUTES.SIMULATOR}/:simulatorType?`} 
         element={
           isAuthenticated ? <PricingSimulator /> : <Navigate to={ROUTES.LOGIN} />
         } 
       />
       <Route 
         path={ROUTES.ADMIN} 
+        element={<Navigate to={ROUTES.ADMIN_SIMULATORS} replace />} 
+      />
+      
+      {/* Simulator-specific admin routes */}
+      <Route 
+        path="/admin/:simulator/dashboard" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path="/admin/:simulator/info" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path="/admin/:simulator/client-fields" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path="/admin/:simulator/categories" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path="/admin/:simulator/services" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path="/admin/:simulator/tags" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      
+      {/* Global admin routes */}
+      <Route 
+        path={ROUTES.ADMIN_SIMULATORS} 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path={ROUTES.ADMIN_HISTORY} 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path={ROUTES.ADMIN_GUEST_SUBMISSIONS} 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path={ROUTES.ADMIN_USERS} 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      
+      {/* PDF Builder routes */}
+      <Route 
+        path="/admin/pdf-builder/sections" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path="/admin/pdf-builder/templates" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path="/admin/pdf-builder/versions" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path="/admin/pdf-builder/generated" 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path="/admin/pdf-builder" 
+        element={<Navigate to="/admin/pdf-builder/sections" replace />} 
+      />
+      
+      {/* Legacy routes (for backward compatibility) */}
+      <Route 
+        path={ROUTES.ADMIN_CONFIGURATION} 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path={ROUTES.ADMIN_CATEGORIES} 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path={ROUTES.ADMIN_SERVICES} 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path={ROUTES.ADMIN_TAGS} 
+        element={
+          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+        } 
+      />
+      <Route 
+        path={ROUTES.ADMIN_SCENARIOS} 
         element={
           isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
         } 
@@ -137,3 +262,4 @@ export function AppRouter() {
     </Routes>
   );
 }
+

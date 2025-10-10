@@ -13,6 +13,8 @@ import { LogOut, User, Settings } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { AUTH_ROLES } from '../constants';
 import { ROUTES } from '../../../config/routes';
+import { getAvatarProps } from '../../../utils/avatarColors';
+import { ThemeToggle } from '../../../components/ThemeToggle';
 
 interface UserProfileProps {
   onLogout: () => void;
@@ -46,22 +48,15 @@ export function UserProfile({ onLogout }: UserProfileProps) {
     }
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  const avatarProps = getAvatarProps(displayName);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="text-xs">
-              {getInitials(displayName)}
+            <AvatarFallback className={`text-xs font-medium ${avatarProps.bgClass} ${avatarProps.textClass}`}>
+              {avatarProps.initials}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -84,6 +79,11 @@ export function UserProfile({ onLogout }: UserProfileProps) {
           <Settings className="mr-2 h-4 w-4" />
           <span>Admin Panel</span>
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <div className="flex items-center justify-between px-2 py-1.5">
+          <span className="text-sm text-muted-foreground">Theme</span>
+          <ThemeToggle />
+        </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleLogout}

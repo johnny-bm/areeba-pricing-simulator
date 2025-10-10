@@ -68,7 +68,7 @@ export const api = {
         const timeoutMs = i === 0 ? 15000 : 10000;
         const response = await createApiRequest(`${API_BASE_URL}/health`, { method: 'GET' }, timeoutMs);
         if (response.ok) {
-          console.log(`✅ Health check passed on attempt ${i + 1}`);
+          // // console.log(`✅ Health check passed on attempt ${i + 1}`);
           return true;
         }
       } catch (error: any) {
@@ -102,7 +102,7 @@ export const api = {
   // Load services
   async loadPricingItems(): Promise<PricingItem[]> {
     try {
-      console.log('📡 Loading services from database...');
+      // // console.log('📡 Loading services from database...');
       const response = await createApiRequest(`${API_BASE_URL}/services`);
       
       if (!response.ok) {
@@ -112,7 +112,7 @@ export const api = {
       const data = await response.json();
       const services = data.items || [];
       
-      console.log(`✅ Loaded ${services.length} services`);
+      // console.log(`✅ Loaded ${services.length} services`);
       return services;
     } catch (error) {
       console.error('❌ Failed to load services:', error);
@@ -125,10 +125,31 @@ export const api = {
     return this.loadPricingItems();
   },
 
+  // Load services for a specific simulator
+  async loadSimulatorServices(simulatorId: string): Promise<PricingItem[]> {
+    try {
+      // console.log(`📡 Loading services for simulator ${simulatorId}...`);
+      const response = await createApiRequest(`${API_BASE_URL}/services?simulator_id=${simulatorId}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load simulator services: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const services = data.items || [];
+      
+      // console.log(`✅ Loaded ${services.length} services for simulator`);
+      return services;
+    } catch (error) {
+      console.error('❌ Failed to load simulator services:', error);
+      throw error;
+    }
+  },
+
   // Save services
   async savePricingItems(items: PricingItem[]): Promise<void> {
     try {
-      console.log(`📡 Saving ${items.length} services...`);
+      // console.log(`📡 Saving ${items.length} services...`);
       const response = await createApiRequest(`${API_BASE_URL}/services`, {
         method: 'POST',
         body: JSON.stringify({ items }),
@@ -139,7 +160,7 @@ export const api = {
         throw new Error(errorData.error || `Failed to save services: ${response.status}`);
       }
       
-      console.log('✅ Services saved successfully');
+      // console.log('✅ Services saved successfully');
     } catch (error) {
       console.error('❌ Failed to save services:', error);
       throw error;
@@ -149,7 +170,7 @@ export const api = {
   // Load categories
   async loadCategories(): Promise<Category[]> {
     try {
-      console.log('📡 Loading categories from database...');
+      // console.log('📡 Loading categories from database...');
       const response = await createApiRequest(`${API_BASE_URL}/categories`);
       
       if (!response.ok) {
@@ -159,7 +180,7 @@ export const api = {
       const data = await response.json();
       const categories = data.categories || [];
       
-      console.log(`✅ Loaded ${categories.length} categories`);
+      // console.log(`✅ Loaded ${categories.length} categories`);
       return categories;
     } catch (error) {
       console.error('❌ Failed to load categories:', error);
@@ -170,7 +191,7 @@ export const api = {
   // Save categories
   async saveCategories(categories: Category[]): Promise<void> {
     try {
-      console.log(`📡 Saving ${categories.length} categories...`);
+      // console.log(`📡 Saving ${categories.length} categories...`);
       const response = await createApiRequest(`${API_BASE_URL}/categories`, {
         method: 'POST',
         body: JSON.stringify({ categories }),
@@ -181,7 +202,7 @@ export const api = {
         throw new Error(errorData.error || `Failed to save categories: ${response.status}`);
       }
       
-      console.log('✅ Categories saved successfully');
+      // console.log('✅ Categories saved successfully');
     } catch (error) {
       console.error('❌ Failed to save categories:', error);
       throw error;
@@ -191,7 +212,7 @@ export const api = {
   // Load tags
   async loadTags(): Promise<Tag[]> {
     try {
-      console.log('📡 Loading tags from database...');
+      // console.log('📡 Loading tags from database...');
       const response = await createApiRequest(`${API_BASE_URL}/tags`);
       
       if (!response.ok) {
@@ -201,7 +222,7 @@ export const api = {
       const data = await response.json();
       const tags = data.tags || [];
       
-      console.log(`✅ Loaded ${tags.length} tags`);
+      // console.log(`✅ Loaded ${tags.length} tags`);
       return tags;
     } catch (error) {
       console.error('❌ Failed to load tags:', error);
@@ -212,7 +233,7 @@ export const api = {
   // Save tags
   async saveTags(tags: Tag[]): Promise<void> {
     try {
-      console.log(`📡 Saving ${tags.length} tags...`);
+      // console.log(`📡 Saving ${tags.length} tags...`);
       const response = await createApiRequest(`${API_BASE_URL}/tags`, {
         method: 'POST',
         body: JSON.stringify({ tags }),
@@ -223,7 +244,7 @@ export const api = {
         throw new Error(errorData.error || `Failed to save tags: ${response.status}`);
       }
       
-      console.log('✅ Tags saved successfully');
+      // console.log('✅ Tags saved successfully');
     } catch (error) {
       console.error('❌ Failed to save tags:', error);
       throw error;
@@ -233,7 +254,7 @@ export const api = {
   // Load configurations
   async loadConfigurations(): Promise<ConfigurationDefinition[]> {
     try {
-      console.log('📡 Loading configurations from database...');
+      // console.log('📡 Loading configurations from database...');
       const response = await createApiRequest(`${API_BASE_URL}/configurations`);
       
       if (!response.ok) {
@@ -243,7 +264,7 @@ export const api = {
       const data = await response.json();
       const configurations = data.configurations || [];
       
-      console.log(`✅ Loaded ${configurations.length} configurations`);
+      // console.log(`✅ Loaded ${configurations.length} configurations`);
       return configurations;
     } catch (error) {
       console.error('❌ Failed to load configurations:', error);
@@ -254,7 +275,7 @@ export const api = {
   // Save configurations
   async saveConfigurations(configurations: ConfigurationDefinition[]): Promise<void> {
     try {
-      console.log(`📡 Saving ${configurations.length} configurations...`);
+      // console.log(`📡 Saving ${configurations.length} configurations...`);
       const response = await createApiRequest(`${API_BASE_URL}/configurations`, {
         method: 'POST',
         body: JSON.stringify({ configurations }),
@@ -265,7 +286,7 @@ export const api = {
         throw new Error(errorData.error || `Failed to save configurations: ${response.status}`);
       }
       
-      console.log('✅ Configurations saved successfully');
+      // console.log('✅ Configurations saved successfully');
     } catch (error) {
       console.error('❌ Failed to save configurations:', error);
       throw error;
@@ -275,7 +296,7 @@ export const api = {
   // Save scenario data
   async saveScenarioData(data: ScenarioData): Promise<void> {
     try {
-      console.log('📡 Saving scenario data...');
+      // console.log('📡 Saving scenario data...');
       const response = await createApiRequest(`${API_BASE_URL}/scenarios`, {
         method: 'POST',
         body: JSON.stringify(data),
@@ -286,7 +307,7 @@ export const api = {
         throw new Error(errorData.error || `Failed to save scenario: ${response.status}`);
       }
       
-      console.log('✅ Scenario saved successfully');
+      // console.log('✅ Scenario saved successfully');
     } catch (error) {
       console.error('❌ Failed to save scenario:', error);
       throw error;
@@ -311,7 +332,7 @@ async saveGuestScenario(data: {
   summary: any;
 }): Promise<{ success: boolean; submissionCode: string; scenarioId: string }> {
   try {
-    console.log('📡 Saving guest scenario data...');
+    // console.log('📡 Saving guest scenario data...');
     const response = await createApiRequest(`${API_BASE_URL}/guest-scenarios`, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -323,7 +344,7 @@ async saveGuestScenario(data: {
     }
     
     const result = await response.json();
-    console.log('✅ Guest scenario saved successfully');
+    // console.log('✅ Guest scenario saved successfully');
     return result;
   } catch (error) {
     console.error('❌ Failed to save guest scenario:', error);
@@ -334,7 +355,7 @@ async saveGuestScenario(data: {
   // Load scenarios
   async loadScenarios(): Promise<ScenarioData[]> {
     try {
-      console.log('📡 Loading scenarios from database...');
+      // console.log('📡 Loading scenarios from database...');
       const response = await createApiRequest(`${API_BASE_URL}/scenarios`);
       
       if (!response.ok) {
@@ -344,7 +365,7 @@ async saveGuestScenario(data: {
       const data = await response.json();
       const scenarios = data.scenarios || [];
       
-      console.log(`✅ Loaded ${scenarios.length} scenarios`);
+      // console.log(`✅ Loaded ${scenarios.length} scenarios`);
       return scenarios;
     } catch (error) {
       console.error('❌ Failed to load scenarios:', error);
@@ -355,7 +376,7 @@ async saveGuestScenario(data: {
   // Get scenario data by ID
   async getScenarioData(scenarioId: string): Promise<ScenarioData | null> {
     try {
-      console.log(`📡 Loading scenario data for ID: ${scenarioId}`);
+      // console.log(`📡 Loading scenario data for ID: ${scenarioId}`);
       const response = await createApiRequest(`${API_BASE_URL}/scenarios/${scenarioId}`);
       
       if (!response.ok) {
@@ -367,7 +388,7 @@ async saveGuestScenario(data: {
       }
       
       const data = await response.json();
-      console.log(`✅ Loaded scenario data for ${scenarioId}`);
+      // console.log(`✅ Loaded scenario data for ${scenarioId}`);
       return data.scenario || null;
     } catch (error) {
       console.error(`❌ Failed to load scenario ${scenarioId}:`, error);
@@ -378,7 +399,7 @@ async saveGuestScenario(data: {
   // Load guest submissions
   async loadGuestSubmissions(): Promise<any[]> {
     try {
-      console.log('📡 Loading guest submissions from database...');
+      // console.log('📡 Loading guest submissions from database...');
       const response = await createApiRequest(`${API_BASE_URL}/guest-submissions`);
       
       if (!response.ok) {
@@ -388,7 +409,7 @@ async saveGuestScenario(data: {
       const data = await response.json();
       const submissions = data.submissions || [];
       
-      console.log(`✅ Loaded ${submissions.length} guest submissions`);
+      // console.log(`✅ Loaded ${submissions.length} guest submissions`);
       return submissions;
     } catch (error) {
       console.error('❌ Failed to load guest submissions:', error);
@@ -399,7 +420,7 @@ async saveGuestScenario(data: {
   // Get guest scenario data by ID
   async getGuestScenarioData(submissionId: string): Promise<any | null> {
     try {
-      console.log(`📡 Loading guest scenario data for ID: ${submissionId}`);
+      // console.log(`📡 Loading guest scenario data for ID: ${submissionId}`);
       const response = await createApiRequest(`${API_BASE_URL}/guest-submissions/${submissionId}`);
       
       if (!response.ok) {
@@ -411,7 +432,7 @@ async saveGuestScenario(data: {
       }
       
       const data = await response.json();
-      console.log(`✅ Loaded guest scenario data for ${submissionId}`);
+      // console.log(`✅ Loaded guest scenario data for ${submissionId}`);
       return data.submission || null;
     } catch (error) {
       console.error(`❌ Failed to load guest scenario ${submissionId}:`, error);
@@ -422,7 +443,7 @@ async saveGuestScenario(data: {
   // Delete scenario
   async deleteScenario(scenarioId: string): Promise<void> {
     try {
-      console.log(`📡 Deleting scenario ${scenarioId}...`);
+      // console.log(`📡 Deleting scenario ${scenarioId}...`);
       const response = await createApiRequest(`${API_BASE_URL}/scenarios/${scenarioId}`, {
         method: 'DELETE',
       });
@@ -432,7 +453,7 @@ async saveGuestScenario(data: {
         throw new Error(errorData.error || `Failed to delete scenario: ${response.status}`);
       }
       
-      console.log('✅ Scenario deleted successfully');
+      // console.log('✅ Scenario deleted successfully');
     } catch (error) {
       console.error('❌ Failed to delete scenario:', error);
       throw error;
@@ -556,7 +577,7 @@ async saveGuestScenario(data: {
   // Create pricing item
   async createPricingItem(item: Partial<PricingItem>): Promise<PricingItem> {
     try {
-      console.log('📡 Creating pricing item...');
+      // console.log('📡 Creating pricing item...');
       const response = await createApiRequest(`${API_BASE_URL}/services`, {
         method: 'POST',
         body: JSON.stringify(item),
@@ -568,7 +589,7 @@ async saveGuestScenario(data: {
       }
       
       const data = await response.json();
-      console.log('✅ Pricing item created successfully');
+      // console.log('✅ Pricing item created successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to create pricing item:', error);
@@ -579,7 +600,7 @@ async saveGuestScenario(data: {
   // Update pricing item
   async updatePricingItem(id: string, updates: Partial<PricingItem>): Promise<PricingItem> {
     try {
-      console.log(`📡 Updating pricing item ${id}...`);
+      // console.log(`📡 Updating pricing item ${id}...`);
       const response = await createApiRequest(`${API_BASE_URL}/services/${id}`, {
         method: 'PUT',
         body: JSON.stringify(updates),
@@ -591,7 +612,7 @@ async saveGuestScenario(data: {
       }
       
       const data = await response.json();
-      console.log('✅ Pricing item updated successfully');
+      // console.log('✅ Pricing item updated successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to update pricing item:', error);
@@ -602,7 +623,7 @@ async saveGuestScenario(data: {
   // Delete pricing item
   async deletePricingItem(id: string): Promise<void> {
     try {
-      console.log(`📡 Deleting pricing item ${id}...`);
+      // console.log(`📡 Deleting pricing item ${id}...`);
       const response = await createApiRequest(`${API_BASE_URL}/services/${id}`, {
         method: 'DELETE',
       });
@@ -612,7 +633,7 @@ async saveGuestScenario(data: {
         throw new Error(errorData.error || `Failed to delete pricing item: ${response.status}`);
       }
       
-      console.log('✅ Pricing item deleted successfully');
+      // console.log('✅ Pricing item deleted successfully');
     } catch (error) {
       console.error('❌ Failed to delete pricing item:', error);
       throw error;
@@ -622,7 +643,7 @@ async saveGuestScenario(data: {
   // Create category
   async createCategory(category: Partial<Category>): Promise<Category> {
     try {
-      console.log('📡 Creating category...');
+      // console.log('📡 Creating category...');
       const response = await createApiRequest(`${API_BASE_URL}/categories`, {
         method: 'POST',
         body: JSON.stringify(category),
@@ -634,7 +655,7 @@ async saveGuestScenario(data: {
       }
       
       const data = await response.json();
-      console.log('✅ Category created successfully');
+      // console.log('✅ Category created successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to create category:', error);
@@ -645,7 +666,7 @@ async saveGuestScenario(data: {
   // Update category
   async updateCategory(id: string, updates: Partial<Category>): Promise<Category> {
     try {
-      console.log(`📡 Updating category ${id}...`);
+      // console.log(`📡 Updating category ${id}...`);
       const response = await createApiRequest(`${API_BASE_URL}/categories/${id}`, {
         method: 'PUT',
         body: JSON.stringify(updates),
@@ -657,7 +678,7 @@ async saveGuestScenario(data: {
       }
       
       const data = await response.json();
-      console.log('✅ Category updated successfully');
+      // console.log('✅ Category updated successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to update category:', error);
@@ -668,7 +689,7 @@ async saveGuestScenario(data: {
   // Delete category
   async deleteCategory(id: string): Promise<void> {
     try {
-      console.log(`📡 Deleting category ${id}...`);
+      // console.log(`📡 Deleting category ${id}...`);
       const response = await createApiRequest(`${API_BASE_URL}/categories/${id}`, {
         method: 'DELETE',
       });
@@ -678,7 +699,7 @@ async saveGuestScenario(data: {
         throw new Error(errorData.error || `Failed to delete category: ${response.status}`);
       }
       
-      console.log('✅ Category deleted successfully');
+      // console.log('✅ Category deleted successfully');
     } catch (error) {
       console.error('❌ Failed to delete category:', error);
       throw error;
@@ -688,7 +709,7 @@ async saveGuestScenario(data: {
   // Get tags
   async getTags(): Promise<Tag[]> {
     try {
-      console.log('📡 Loading tags from database...');
+      // console.log('📡 Loading tags from database...');
       const response = await createApiRequest(`${API_BASE_URL}/tags`);
       
       if (!response.ok) {
@@ -698,7 +719,7 @@ async saveGuestScenario(data: {
       const data = await response.json();
       const tags = data.tags || [];
       
-      console.log(`✅ Loaded ${tags.length} tags`);
+      // console.log(`✅ Loaded ${tags.length} tags`);
       return tags;
     } catch (error) {
       console.error('❌ Failed to load tags:', error);
@@ -709,7 +730,7 @@ async saveGuestScenario(data: {
   // Create tag
   async createTag(tag: Partial<Tag>): Promise<Tag> {
     try {
-      console.log('📡 Creating tag...');
+      // console.log('📡 Creating tag...');
       const response = await createApiRequest(`${API_BASE_URL}/tags`, {
         method: 'POST',
         body: JSON.stringify(tag),
@@ -721,7 +742,7 @@ async saveGuestScenario(data: {
       }
       
       const data = await response.json();
-      console.log('✅ Tag created successfully');
+      // console.log('✅ Tag created successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to create tag:', error);
@@ -732,7 +753,7 @@ async saveGuestScenario(data: {
   // Update tag
   async updateTag(id: string, updates: Partial<Tag>): Promise<Tag> {
     try {
-      console.log(`📡 Updating tag ${id}...`);
+      // console.log(`📡 Updating tag ${id}...`);
       const response = await createApiRequest(`${API_BASE_URL}/tags/${id}`, {
         method: 'PUT',
         body: JSON.stringify(updates),
@@ -744,7 +765,7 @@ async saveGuestScenario(data: {
       }
       
       const data = await response.json();
-      console.log('✅ Tag updated successfully');
+      // console.log('✅ Tag updated successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to update tag:', error);
@@ -755,7 +776,7 @@ async saveGuestScenario(data: {
   // Delete tag
   async deleteTag(id: string): Promise<void> {
     try {
-      console.log(`📡 Deleting tag ${id}...`);
+      // console.log(`📡 Deleting tag ${id}...`);
       const response = await createApiRequest(`${API_BASE_URL}/tags/${id}`, {
         method: 'DELETE',
       });
@@ -765,7 +786,7 @@ async saveGuestScenario(data: {
         throw new Error(errorData.error || `Failed to delete tag: ${response.status}`);
       }
       
-      console.log('✅ Tag deleted successfully');
+      // console.log('✅ Tag deleted successfully');
     } catch (error) {
       console.error('❌ Failed to delete tag:', error);
       throw error;

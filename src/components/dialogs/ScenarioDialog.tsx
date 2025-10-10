@@ -124,7 +124,7 @@ export function ScenarioDialog({ isOpen, onClose, scenario }: ScenarioDialogProp
         </div>
       }
       description={`Created on ${formatDate(scenario.createdAt)}`}
-      size="xl"
+      size="lg"
       primaryAction={{
         label: isDownloading ? 'Generating...' : 'Download PDF',
         onClick: handleDownloadPDF,

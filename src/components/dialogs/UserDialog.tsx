@@ -140,7 +140,7 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
           ? 'Update user information and permissions' 
           : 'Send an invitation email to create a new user account with specified role and permissions'
       }
-      size="md"
+      size="lg"
       destructiveActions={isEditing && onDelete && !isEditingSelf && (isOwner || user.role !== ROLES.OWNER) ? [{
         label: 'Delete User',
         onClick: handleDelete,

@@ -1,8 +1,7 @@
 import { ClientConfig, DynamicClientConfig, SelectedItem, Category, ConfigurationDefinition } from '../types/pricing';
 import { formatPrice } from './formatters';
 import { calculateTieredPrice } from './tieredPricing';
-
-const APP_VERSION = '1.1.0';
+import { VersionService } from './versionService';
 
 interface PDFData {
   config: DynamicClientConfig;
@@ -13,6 +12,12 @@ interface PDFData {
   globalDiscount: number;
   globalDiscountType: 'percentage' | 'fixed';
   globalDiscountApplication: 'none' | 'both' | 'monthly' | 'onetime';
+  simulator?: {
+    id: string;
+    name: string;
+    description?: string;
+    urlSlug: string;
+  };
   summary: {
     oneTimeTotal: number;
     monthlyTotal: number;
@@ -21,7 +26,10 @@ interface PDFData {
   };
 }
 
-export function downloadPDF(data: PDFData) {
+export async function downloadPDF(data: PDFData) {
+  // Get current system version
+  const systemVersion = await VersionService.getCurrentVersion();
+  
   // Validate input data and provide fallbacks
   const safeData: PDFData = {
     config: data.config || { clientName: '', projectName: '', preparedBy: '', configValues: {} },
@@ -32,6 +40,7 @@ export function downloadPDF(data: PDFData) {
     globalDiscount: data.globalDiscount || 0,
     globalDiscountType: data.globalDiscountType || 'percentage',
     globalDiscountApplication: data.globalDiscountApplication || 'none',
+    simulator: data.simulator,
     summary: data.summary || {
       oneTimeTotal: 0,
       monthlyTotal: 0,
@@ -41,7 +50,7 @@ export function downloadPDF(data: PDFData) {
   };
   
   // Create HTML content for the PDF
-  const htmlContent = generateHTMLReport(safeData);
+  const htmlContent = generateHTMLReport(safeData, systemVersion);
   
   // Create a new window/tab and print it
   const printWindow = window.open('', '_blank');
@@ -55,17 +64,8 @@ export function downloadPDF(data: PDFData) {
         printWindow.focus();
         printWindow.print();
         
-        // Close the window after printing (user can cancel)
-        printWindow.onafterprint = () => {
-          printWindow.close();
-        };
-        
-        // Fallback: close window after 30 seconds if user doesn't close it
-        setTimeout(() => {
-          if (!printWindow.closed) {
-            printWindow.close();
-          }
-        }, 30000);
+        // Keep the window open - don't auto-close
+        // User can manually close when done
       } catch (error) {
         console.error('Error printing PDF:', error);
         // Fallback: just leave the window open for manual printing
@@ -192,9 +192,12 @@ function generateGlobalDiscountHTML(data: PDFData): string {
       break;
   }
 
+  const discountValue = typeof data.globalDiscount === 'number' ? data.globalDiscount : 0;
+  const discountType = data.globalDiscountType || 'percentage';
+  
   return `
     <div style="margin-top: 16px; padding: 8px; background: #fef3c7; border-radius: 4px;">
-      <strong>Global Discount Applied:</strong> ${data.globalDiscount}${data.globalDiscountType === 'percentage' ? '%' : '$'}${applicationText}
+      <strong>Global Discount Applied:</strong> ${discountValue}${discountType === 'percentage' ? '%' : '$'}${applicationText}
     </div>
   `;
 }
@@ -217,14 +220,18 @@ function convertDynamicToLegacy(dynamicConfig: DynamicClientConfig): ClientConfi
   };
 }
 
-function generateHTMLReport(data: PDFData): string {
+function generateHTMLReport(data: PDFData, systemVersion: string = '1.0.0'): string {
   const calculateRowTotal = (selectedItem: SelectedItem) => {
     if (selectedItem.isFree) return 0;
     
+    // For tiered pricing items, use calculateTieredPrice to get the correct total
     let subtotal: number;
-    
-    // Calculate subtotal: Quantity × Current Unit Price (same for both tiered and simple pricing)
-    subtotal = selectedItem.quantity * selectedItem.unitPrice;
+    if (selectedItem.item.pricingType === 'tiered' && selectedItem.item.tiers && selectedItem.item.tiers.length > 0) {
+      const tieredResult = calculateTieredPrice(selectedItem.item, selectedItem.quantity);
+      subtotal = tieredResult.totalPrice;
+    } else {
+      subtotal = selectedItem.quantity * selectedItem.unitPrice;
+    }
     
     let discountAmount = 0;
     if (selectedItem.discountType === 'percentage') {
@@ -401,6 +408,7 @@ function generateHTMLReport(data: PDFData): string {
         ${areebaLogoSVG}
         <h1 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 600;">areeba Pricing Simulator Report</h1>
         <p style="margin: 0; color: #666; font-size: 14px;">Generated on ${formattedDateTime}</p>
+        ${data.simulator ? `<p style="margin: 4px 0 0 0; color: #666; font-size: 14px; font-weight: 500;">Simulator: ${data.simulator.name}</p>` : ''}
       </div>
 
       <div class="config-section">
@@ -437,7 +445,7 @@ function generateHTMLReport(data: PDFData): string {
       </div>
 
       <div style="text-align: center; margin-top: 32px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #666;">
-        Generated by areeba Pricing Simulator v${APP_VERSION}
+        Generated by areeba Pricing Simulator v${systemVersion}
       </div>
     </body>
     </html>

@@ -1,7 +1,36 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { ArrowLeft, LogOut, Settings, Package, Tags, History, CreditCard, Calculator, Zap, Users, Plus, ChevronLeft, ChevronRight, Edit, Copy, RefreshCw, Download, User, UserCheck } from 'lucide-react';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { 
+  Breadcrumb, 
+  BreadcrumbList, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
+import { 
+  Sidebar, 
+  SidebarContent, 
+  SidebarFooter, 
+  SidebarGroup, 
+  SidebarGroupContent, 
+  SidebarGroupLabel, 
+  SidebarHeader, 
+  SidebarInset,
+  SidebarMenu, 
+  SidebarMenuButton, 
+  SidebarMenuItem, 
+  SidebarMenuSub, 
+  SidebarMenuSubButton, 
+  SidebarMenuSubItem, 
+  SidebarProvider, 
+  SidebarSeparator,
+  SidebarTrigger
+} from './ui/sidebar';
+import { ArrowLeft, LogOut, Settings, Package, Tags, History, CreditCard, Calculator, Zap, Users, Plus, ChevronLeft, ChevronRight, Edit, Copy, RefreshCw, Download, User, UserCheck, ChevronDown, ChevronRight as ChevronRightIcon, BarChart3, FileText, Building, Image } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Separator } from './ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
@@ -15,10 +44,22 @@ import { DataTable } from './DataTable';
 import { CategoryManager } from './CategoryManager';
 import { TagManager } from './TagManager';
 import { UserManagement } from './UserManagement';
+import { SimulatorManager } from './SimulatorManager';
+import { SimulatorInfoPage } from './SimulatorInfoPage';
+import { SimulatorDashboard } from './SimulatorDashboard';
+import { ThemeToggle } from './ThemeToggle';
+import { PdfBuilderAdmin } from '../features/pdfBuilder/components/PdfBuilderAdmin';
+import { Spinner } from './ui/spinner';
+import { AdminPageLayout, AdminPageActions } from './AdminPageLayout';
+import { UserProfileDropdown } from './UserProfileDropdown';
 import { formatPrice } from '../utils/formatters';
 import { downloadPDF } from '../utils/pdfHelpers';
 
 import { api } from '../utils/api';
+import { getAvatarProps } from '../utils/avatarColors';
+import { ROUTES } from '../config/routes';
+import { SimulatorApi } from '../utils/simulatorApi';
+import { Simulator } from '../types/simulator';
 import WordMarkRed from '../imports/WordMarkRed';
 
 interface AdminInterfaceProps {
@@ -27,8 +68,8 @@ interface AdminInterfaceProps {
   categories: Category[];
   selectedItems?: SelectedItem[];
   clientConfig?: ClientConfig;
-  onUpdateItems: (items: PricingItem[]) => void;
-  onUpdateCategories: (categories: Category[], skipSave?: boolean) => void;
+  onUpdateItems: (items: PricingItem[]) => Promise<void>;
+  onUpdateCategories: (categories: Category[], skipSave?: boolean) => Promise<void>;
   onLogout?: () => void;
   onForceRefresh?: () => void;
   adminToken?: string | null;
@@ -36,78 +77,6 @@ interface AdminInterfaceProps {
   currentUserRole: string;
 }
 
-interface SimulatorOption {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  available: boolean;
-}
-
-const simulators: SimulatorOption[] = [
-  {
-    id: 'issuing-processing',
-    name: 'Issuing & Processing',
-    icon: <CreditCard className="h-4 w-4" />,
-    available: true
-  },
-  {
-    id: 'acquiring',
-    name: 'Acquiring Solutions',
-    icon: <Calculator className="h-4 w-4" />,
-    available: false
-  },
-  {
-    id: 'digital-banking',
-    name: 'Digital Banking',
-    icon: <Zap className="h-4 w-4" />,
-    available: false
-  }
-];
-
-interface NavigationItem {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  badge?: string;
-}
-
-const navigationItems: NavigationItem[] = [
-  {
-    id: 'configurations',
-    name: 'Configuration',
-    icon: <Settings className="h-4 w-4" />
-  },
-  {
-    id: 'categories',
-    name: 'Categories',
-    icon: <Package className="h-4 w-4" />
-  },
-  {
-    id: 'services',
-    name: 'Services',
-    icon: <Package className="h-4 w-4" />
-  },
-  {
-    id: 'tags',
-    name: 'Tags',
-    icon: <Tags className="h-4 w-4" />
-  },
-  {
-    id: 'users',
-    name: 'Users',
-    icon: <Users className="h-4 w-4" />
-  },
-  {
-    id: 'scenarios',
-    name: 'History',
-    icon: <History className="h-4 w-4" />
-  },
-  {
-    id: 'guest-submissions',
-    name: 'Guest Submissions',
-    icon: <UserCheck className="h-4 w-4" />
-  }
-];
 
 export function AdminInterface({ 
   onClose, 
@@ -123,8 +92,49 @@ export function AdminInterface({
   currentUserId,
   currentUserRole
 }: AdminInterfaceProps) {
-  const [selectedSimulator, setSelectedSimulator] = useState('issuing-processing');
-  const [activeTab, setActiveTab] = useState<'configurations' | 'categories' | 'services' | 'tags' | 'users' | 'scenarios' | 'guest-submissions'>('configurations');
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get current simulator and tab from URL
+  const getCurrentSimulatorAndTab = () => {
+    const path = location.pathname;
+    
+    // Check if we're in a PDF builder route
+    if (path.startsWith('/admin/pdf-builder')) {
+      if (path === '/admin/pdf-builder') {
+        return { simulator: 'pdf-builder', section: 'sections' };
+      }
+      if (path.startsWith('/admin/pdf-builder/')) {
+        const section = path.replace('/admin/pdf-builder/', '');
+        return { simulator: 'pdf-builder', section };
+      }
+    }
+    
+    // Check if we're in a simulator-specific route
+    const simulatorMatch = path.match(/^\/admin\/([^\/]+)\/(.+)$/);
+    if (simulatorMatch) {
+      const [, simulator, section] = simulatorMatch;
+      return { simulator, section };
+    }
+    
+    // Check global routes
+    if (path === '/admin/simulators') return { simulator: null, section: 'simulators' };
+    if (path === '/admin/history') return { simulator: null, section: 'history' };
+    if (path === '/admin/guest-submissions') return { simulator: null, section: 'guest-submissions' };
+    if (path === '/admin/users') return { simulator: null, section: 'users' };
+    
+    // Legacy routes
+    if (path.includes('/configuration')) return { simulator: null, section: 'configurations' };
+    if (path.includes('/categories')) return { simulator: null, section: 'categories' };
+    if (path.includes('/services')) return { simulator: null, section: 'services' };
+    if (path.includes('/tags')) return { simulator: null, section: 'tags' };
+    if (path.includes('/scenarios')) return { simulator: null, section: 'scenarios' };
+    
+    return { simulator: null, section: 'simulators' };
+  };
+  
+  const { simulator: currentSimulatorSlug, section: currentSection } = getCurrentSimulatorAndTab();
+  
 
 
   const [configurations, setConfigurations] = useState<any[]>([]);
@@ -138,17 +148,27 @@ export function AdminInterface({
   const [guestSubmissionsLoading, setGuestSubmissionsLoading] = useState(false);
   const [selectedGuestSubmission, setSelectedGuestSubmission] = useState<any | null>(null);
   const [showGuestSubmissionDialog, setShowGuestSubmissionDialog] = useState(false);
+  const [simulators, setSimulators] = useState<Simulator[]>([]);
+  const [simulatorsLoading, setSimulatorsLoading] = useState(false);
+  const [expandedSimulators, setExpandedSimulators] = useState<Set<string>>(new Set());
+  
+  // Find the actual simulator by slug
+  const currentSimulator = currentSimulatorSlug ? simulators.find(s => s.urlSlug === currentSimulatorSlug)?.id : null;
   
 
 
-  // Load configurations and scenarios on component mount
+  // Load configurations and simulators on component mount
   useEffect(() => {
     const loadData = async () => {
       try {
-        const loadedConfigs = await api.loadConfigurations();
+        const [loadedConfigs, loadedSimulators] = await Promise.all([
+          api.loadConfigurations(),
+          SimulatorApi.loadSimulators()
+        ]);
         setConfigurations(loadedConfigs);
+        setSimulators(loadedSimulators);
       } catch (error) {
-        console.error('Failed to load configurations:', error);
+        console.error('Failed to load data:', error);
       }
     };
     
@@ -183,20 +203,47 @@ export function AdminInterface({
 
   // Load scenarios when the scenarios tab is activated
   useEffect(() => {
-    if (activeTab === 'scenarios') {
+    if (currentSection === 'scenarios') {
       loadScenarios();
     }
-  }, [activeTab]);
+  }, [currentSection]);
 
   // Load guest submissions when the guest-submissions tab is activated
   useEffect(() => {
-    if (activeTab === 'guest-submissions') {
+    if (currentSection === 'guest-submissions') {
       loadGuestSubmissions();
     }
-  }, [activeTab]);
+  }, [currentSection]);
 
   const handleClose = () => {
-    onClose();
+    navigate('/simulators');
+  };
+
+  const toggleSimulatorDropdown = (simulatorId: string) => {
+    setExpandedSimulators(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(simulatorId)) {
+        newSet.delete(simulatorId);
+      } else {
+        newSet.add(simulatorId);
+      }
+      return newSet;
+    });
+  };
+
+  const getSimulatorRoute = (simulatorId: string, section: string) => {
+    const simulator = simulators.find(s => s.id === simulatorId);
+    return `/admin/${simulator?.urlSlug || simulatorId}/${section}`;
+  };
+
+  const getGlobalRoute = (section: string) => {
+    switch (section) {
+      case 'simulators': return ROUTES.ADMIN_SIMULATORS;
+      case 'history': return ROUTES.ADMIN_HISTORY;
+      case 'guest-submissions': return ROUTES.ADMIN_GUEST_SUBMISSIONS;
+      case 'users': return ROUTES.ADMIN_USERS;
+      default: return ROUTES.ADMIN_SIMULATORS;
+    }
   };
 
   const handleSaveConfiguration = async (config: any) => {
@@ -287,184 +334,685 @@ export function AdminInterface({
     }
   };
 
+  // Helper function to get page title
+  const getPageTitle = () => {
+    // Handle PDF Builder routes
+    if (currentSimulatorSlug === 'pdf-builder') {
+      switch (currentSection) {
+        case 'sections': return 'PDF Sections';
+        case 'templates': return 'PDF Templates';
+        case 'versions': return 'PDF Versions';
+        case 'generated': return 'Generated PDFs';
+        case 'pdf-builder': return 'PDF Builder';
+        default: return 'PDF Builder';
+      }
+    }
+
+    if (!currentSimulator) {
+      switch (currentSection) {
+        case 'simulators': return 'Simulators';
+        case 'users': return 'User Management';
+        case 'pdf-builder': return 'PDF Builder';
+        case 'history': return 'History';
+        case 'guest-submissions': return 'Guest Submissions';
+        default: return 'Admin Panel';
+      }
+    }
+
+    switch (currentSection) {
+      case 'dashboard': return 'Dashboard';
+      case 'info': return 'Information';
+      case 'items': return 'Items';
+      case 'categories': return 'Categories';
+      case 'scenarios': return 'Scenarios';
+      case 'history': return 'History';
+      case 'configurations': return 'Configurations';
+      case 'client-fields': return 'Client Fields';
+      default: return 'Admin Panel';
+    }
+  };
+
+  // Helper function to generate breadcrumbs
+  const getBreadcrumbs = () => {
+    const breadcrumbs = [
+      {
+        label: 'Admin',
+        href: '/admin',
+        isCurrent: false
+      }
+    ];
+
+    // Handle PDF Builder routes
+    if (currentSimulatorSlug === 'pdf-builder') {
+      breadcrumbs.push({
+        label: 'PDF Builder',
+        href: '/admin/pdf-builder',
+        isCurrent: false
+      });
+    } else if (currentSimulator) {
+      const simulator = simulators.find(s => s.id === currentSimulator);
+      breadcrumbs.push({
+        label: simulator?.name || 'Simulator',
+        href: `/admin/${simulator?.urlSlug || currentSimulator}/dashboard`,
+        isCurrent: false
+      });
+    }
+
+    // Add current page
+    breadcrumbs.push({
+      label: getPageTitle(),
+      href: '#',
+      isCurrent: true
+    });
+
+    return breadcrumbs;
+  };
+
   return (
-    <div className="h-screen bg-background flex overflow-hidden">
-      {/* Sidebar */}
-      <div className="w-64 h-full bg-sidebar border-r border-sidebar-border flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-sidebar-border">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-20 h-5 flex-shrink-0">
-              <WordMarkRed />
+    <SidebarProvider>
+      <Sidebar>
+        <SidebarHeader className="p-3 border-b border-sidebar-border">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="flex-shrink-0 flex items-center">
+              <WordMarkRed className="h-4 w-auto" />
             </div>
             <div className="text-sidebar-foreground">
-              <div className="text-sm font-medium">Admin Panel</div>
+              <div className="text-xs font-medium">Admin Panel</div>
             </div>
           </div>
           
           {/* Back to Simulators - at the top under logo */}
-          <Button
+          <button
             onClick={handleClose}
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-4"
+            className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded-md transition-colors text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-3"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-3.5 w-3.5" />
             Back to Simulators
-          </Button>
-          
-          {/* Simulator Selector */}
-          <div className="space-y-2">
-            <Select value={selectedSimulator} onValueChange={setSelectedSimulator}>
-              <SelectTrigger className="w-full bg-sidebar-accent border-sidebar-border text-sidebar-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {simulators.map((simulator) => (
-                  <SelectItem 
-                    key={simulator.id} 
-                    value={simulator.id}
-                    disabled={!simulator.available}
-                  >
-                    <div className="flex items-center gap-2">
-                      {simulator.icon}
-                      <span>{simulator.name}</span>
-                      {!simulator.available && (
-                        <Badge variant="secondary" className="text-xs ml-1">
-                          Soon
-                        </Badge>
-                      )}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+          </button>
+        </SidebarHeader>
 
-        {/* Navigation */}
-        <div className="flex-1 p-4">
-          <nav className="space-y-1">
-            {navigationItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id as any)}
-                className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors ${
-                  activeTab === item.id
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-                }`}
-              >
-                {item.icon}
-                <span>{item.name}</span>
-                {item.badge && (
-                  <Badge variant="secondary" className="ml-auto text-xs">
-                    {item.badge}
-                  </Badge>
-                )}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-sidebar-border">
-          {/* User Profile Section */}
-          <div className="mb-3 p-3 bg-muted/50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <User className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
-                  {(() => {
-                    const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                    const displayName = userData.first_name || userData.last_name
-                      ? `${userData.first_name || ''} ${userData.last_name || ''}`.trim()
-                      : userData.email || 'User';
-                    return displayName;
-                  })()}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {(() => {
-                    const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                    return userData.email || '';
-                  })()}
-                </p>
-                <div className="flex items-center gap-1 mt-1">
-                  <Badge 
-                    variant="outline"
-                    className={`text-xs ${
-                      (() => {
-                        const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                        const role = userData.role;
-                        if (role === 'owner') {
-                          return 'bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 dark:hover:bg-purple-900/30';
-                        } else if (role === 'admin') {
-                          return 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800 dark:hover:bg-blue-900/30';
-                        } else if (role === 'member') {
-                          return 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 dark:hover:bg-green-900/30';
-                        }
-                        return '';
-                      })()
-                    }`}
-                  >
-                    {(() => {
-                      const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                      const role = userData.role || 'user';
-                      return role.charAt(0).toUpperCase() + role.slice(1);
-                    })()}
-                  </Badge>
-                </div>
-              </div>
+        <SidebarContent className="p-3">
+          {/* Simulators Section */}
+          <div className="space-y-1">
+            <h3 className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider">
+              Simulators
+            </h3>
+            <div className="space-y-1">
+            
+                {/* Simulator Dropdowns */}
+                {simulators.map((simulator) => {
+                  const isExpanded = expandedSimulators.has(simulator.id);
+                  const isCurrentSimulator = currentSimulator === simulator.id;
+                  
+                  return (
+                    <SidebarMenu key={simulator.id}>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          onClick={() => toggleSimulatorDropdown(simulator.id)}
+                          isActive={isCurrentSimulator}
+                          size="sm"
+                        >
+                          <CreditCard className="h-3.5 w-3.5" />
+                          <span>{simulator.title}</span>
+                          {isExpanded ? (
+                            <ChevronDown className="h-3.5 w-3.5 ml-auto" />
+                          ) : (
+                            <ChevronRightIcon className="h-3.5 w-3.5 ml-auto" />
+                          )}
+                        </SidebarMenuButton>
+                        
+                        {/* Simulator Sub-items */}
+                        {isExpanded && (
+                          <SidebarMenuSub>
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton
+                                onClick={() => navigate(getSimulatorRoute(simulator.id, 'dashboard'))}
+                                isActive={currentSection === 'dashboard' && isCurrentSimulator}
+                                size="sm"
+                              >
+                                <BarChart3 className="h-3.5 w-3.5" />
+                                <span>Dashboard</span>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton
+                                onClick={() => navigate(getSimulatorRoute(simulator.id, 'info'))}
+                                isActive={currentSection === 'info' && isCurrentSimulator}
+                                size="sm"
+                              >
+                                <FileText className="h-3.5 w-3.5" />
+                                <span>Info</span>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton
+                                onClick={() => navigate(getSimulatorRoute(simulator.id, 'client-fields'))}
+                                isActive={currentSection === 'client-fields' && isCurrentSimulator}
+                                size="sm"
+                              >
+                                <Settings className="h-3.5 w-3.5" />
+                                <span>Client Fields</span>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton
+                                onClick={() => navigate(getSimulatorRoute(simulator.id, 'categories'))}
+                                isActive={currentSection === 'categories' && isCurrentSimulator}
+                                size="sm"
+                              >
+                                <Package className="h-3.5 w-3.5" />
+                                <span>Categories</span>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton
+                                onClick={() => navigate(getSimulatorRoute(simulator.id, 'services'))}
+                                isActive={currentSection === 'services' && isCurrentSimulator}
+                                size="sm"
+                              >
+                                <Package className="h-3.5 w-3.5" />
+                                <span>Services</span>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton
+                                onClick={() => navigate(getSimulatorRoute(simulator.id, 'tags'))}
+                                isActive={currentSection === 'tags' && isCurrentSimulator}
+                                size="sm"
+                              >
+                                <Tags className="h-3.5 w-3.5" />
+                                <span>Tags</span>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          </SidebarMenuSub>
+                        )}
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  );
+                })}
+                
+                {/* Add New Simulator Button */}
+                <SidebarMenuButton
+                  onClick={() => navigate(ROUTES.ADMIN_SIMULATORS)}
+                  size="sm"
+                  className="border border-dashed border-sidebar-border"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Add new simulator</span>
+                </SidebarMenuButton>
             </div>
           </div>
-          
-          {/* Sign Out button - in footer */}
-          {onLogout && (
-            <Button
-              onClick={onLogout}
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
-          )}
-        </div>
-      </div>
+            
+            <SidebarSeparator className="my-3 -mx-3" />
+            
+            {/* Submissions Section */}
+            <div className="space-y-1">
+              <h3 className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider">
+                Submissions
+              </h3>
+              <div className="space-y-1">
+            
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => navigate(getGlobalRoute('history'))}
+                      isActive={currentSection === 'scenarios' && !currentSimulator}
+                      size="sm"
+                    >
+                      <History className="h-3.5 w-3.5" />
+                      <span>History</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => navigate(getGlobalRoute('guest-submissions'))}
+                      isActive={currentSection === 'guest-submissions' && !currentSimulator}
+                      size="sm"
+                    >
+                      <UserCheck className="h-3.5 w-3.5" />
+                      <span>Guest Submissions</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </div>
+            </div>
+            
+            <SidebarSeparator className="my-3 -mx-3" />
+            
+            {/* Configuration Section */}
+            <div className="space-y-1">
+              <h3 className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider">
+                Configuration
+              </h3>
+              <div className="space-y-1">
+            
+                {/* PDF Builder Dropdown */}
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => toggleSimulatorDropdown('pdf-builder')}
+                      isActive={currentSection === 'pdf-builder'}
+                      size="sm"
+                    >
+                      <FileText className="h-3.5 w-3.5" />
+                      <span>PDF Builder</span>
+                      {expandedSimulators.has('pdf-builder') ? (
+                        <ChevronDown className="h-3.5 w-3.5 ml-auto" />
+                      ) : (
+                        <ChevronRightIcon className="h-3.5 w-3.5 ml-auto" />
+                      )}
+                    </SidebarMenuButton>
+                    
+                    {/* PDF Builder Sub-items */}
+                    {expandedSimulators.has('pdf-builder') && (
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            onClick={() => navigate('/admin/pdf-builder/sections')}
+                            isActive={currentSection === 'sections' && currentSimulatorSlug === 'pdf-builder'}
+                            size="sm"
+                          >
+                            <Image className="h-3.5 w-3.5" />
+                            <span>Sections</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            onClick={() => navigate('/admin/pdf-builder/templates')}
+                            isActive={currentSection === 'templates' && currentSimulatorSlug === 'pdf-builder'}
+                            size="sm"
+                          >
+                            <FileText className="h-3.5 w-3.5" />
+                            <span>Templates</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            onClick={() => navigate('/admin/pdf-builder/versions')}
+                            isActive={currentSection === 'versions' && currentSimulatorSlug === 'pdf-builder'}
+                            size="sm"
+                          >
+                            <History className="h-3.5 w-3.5" />
+                            <span>Versions</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            onClick={() => navigate('/admin/pdf-builder/generated')}
+                            isActive={currentSection === 'generated' && currentSimulatorSlug === 'pdf-builder'}
+                            size="sm"
+                          >
+                            <Settings className="h-3.5 w-3.5" />
+                            <span>Generated PDFs</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                </SidebarMenu>
+            
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => navigate(getGlobalRoute('users'))}
+                      isActive={currentSection === 'users' && !currentSimulator}
+                      size="sm"
+                    >
+                      <Users className="h-3.5 w-3.5" />
+                      <span>Users</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </div>
+            </div>
+        </SidebarContent>
+      </Sidebar>
 
       {/* Main Content */}
-      <div className="flex-1 h-full overflow-auto">
-        <div className="p-6">
-          {/* Content Header */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-medium">
-                  {navigationItems.find(item => item.id === activeTab)?.name}
-                </h1>
-              </div>
-
+      <SidebarInset className="md:ml-[var(--sidebar-width)]">
+        <header className="flex h-auto shrink-0 flex-col gap-2 border-b px-4 py-3">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              {/* Breadcrumbs */}
+              <Breadcrumb>
+                <BreadcrumbList className="text-xs">
+                  {getBreadcrumbs().map((crumb, index) => (
+                    <React.Fragment key={index}>
+                      <BreadcrumbItem>
+                        {crumb.isCurrent ? (
+                          <BreadcrumbPage className="text-xs">{crumb.label}</BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink 
+                            href={crumb.href}
+                            className="text-xs"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigate(crumb.href);
+                            }}
+                          >
+                            {crumb.label}
+                          </BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                      {index < getBreadcrumbs().length - 1 && <BreadcrumbSeparator className="text-xs" />}
+                    </React.Fragment>
+                  ))}
+                </BreadcrumbList>
+              </Breadcrumb>
             </div>
-            <p className="text-muted-foreground">
-              {activeTab === 'configurations' && 'Create configuration fields that appear in the client configuration bar'}
-              {activeTab === 'categories' && 'Organize pricing services into logical categories for better organization'}
-              {activeTab === 'services' && 'Create and manage pricing services with auto-add and quantity mapping features'}
-              {activeTab === 'tags' && 'Manage tags for better service organization and filtering'}
-              {activeTab === 'users' && 'Manage system users, roles, and access permissions for the pricing simulator'}
-              {activeTab === 'scenarios' && 'View saved pricing scenarios from PDF downloads and client sessions'}
-            </p>
+            <UserProfileDropdown 
+              user={{
+                email: JSON.parse(localStorage.getItem('user') || '{}').email,
+                first_name: JSON.parse(localStorage.getItem('user') || '{}').first_name,
+                last_name: JSON.parse(localStorage.getItem('user') || '{}').last_name,
+                role: currentUserRole
+              }} 
+              onLogout={onLogout} 
+            />
           </div>
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <h1 className="text-lg font-semibold text-foreground">
+                {getPageTitle()}
+              </h1>
+            </div>
+          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4">
 
           {/* Content */}
           <div>
-            {activeTab === 'configurations' && (
+            {/* Simulator-specific sections */}
+            {currentSimulator && currentSection === 'dashboard' && (
+              <SimulatorDashboard simulatorId={currentSimulator} />
+            )}
+            
+            {currentSimulator && currentSection === 'info' && (
+              <SimulatorInfoPage simulatorId={currentSimulator} />
+            )}
+            
+            {currentSimulator && currentSection === 'client-fields' && (
+              <AdminPageLayout
+                title="Client Fields"
+                description="Manage client field configurations for this simulator"
+                actions={AdminPageActions.addNew(() => {
+                  setEditingConfig(null);
+                  setShowConfigDialog(true);
+                }, 'Add Configuration')}
+                onRefresh={onForceRefresh}
+              >
+                <DataTable
+                  title="Client Fields"
+                  headers={['Name', 'Status', 'Description', 'Fields', 'Actions']}
+                  items={configurations}
+                  getItemKey={(config) => config.id}
+                  renderRow={(config: any) => (
+                    <>
+                      <TableCell className="font-medium">{config.name}</TableCell>
+                      <TableCell>
+                        <Badge variant={config.isActive ? 'default' : 'secondary'}>
+                          {config.isActive ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{config.description}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {config.fields ? config.fields.length : 0} fields
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setEditingConfig(config);
+                              setShowConfigDialog(true);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDuplicateConfiguration(config)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </>
+                  )}
+                  actionButton={
+                    <Button onClick={() => setShowConfigDialog(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Client Fields
+                    </Button>
+                  }
+                  onReorder={handleReorderConfigurations}
+                />
+                
+                {showConfigDialog && (
+                  <ConfigurationDialog
+                    isOpen={showConfigDialog}
+                    onClose={() => {
+                      setShowConfigDialog(false);
+                      setEditingConfig(null);
+                    }}
+                    onSave={handleSaveConfiguration}
+                    onDelete={handleDeleteConfiguration}
+                    configuration={editingConfig}
+                    configurations={configurations}
+                    isCreating={!editingConfig}
+                  />
+                )}
+              </AdminPageLayout>
+            )}
+            
+            {currentSimulator && currentSection === 'categories' && (
+              <CategoryManager
+                categories={categories}
+                services={items}
+                onUpdateCategories={onUpdateCategories}
+              />
+            )}
+            
+            {currentSimulator && currentSection === 'services' && (
+              <SimpleServiceManager
+                services={items}
+                categories={categories}
+                onUpdateServices={onUpdateItems}
+              />
+            )}
+            
+            {currentSimulator && currentSection === 'tags' && (
+              <TagManager
+                services={items}
+                onUpdateServices={onUpdateItems}
+              />
+            )}
+            
+            {/* PDF Builder sections */}
+            {currentSimulatorSlug === 'pdf-builder' && (
+              <PdfBuilderAdmin 
+                userRole={currentUserRole} 
+                userId={currentUserId} 
+                section={currentSection}
+              />
+            )}
+            
+
+            {/* Global sections */}
+            {!currentSimulatorSlug && currentSection === 'simulators' && (
+              <SimulatorManager />
+            )}
+            
+            {/* Fallback for unrecognized routes */}
+            {!currentSimulatorSlug && currentSection !== 'simulators' && currentSection !== 'users' && currentSection !== 'scenarios' && currentSection !== 'guest-submissions' && currentSection !== 'history' && currentSection !== 'configurations' && currentSection !== 'categories' && currentSection !== 'services' && currentSection !== 'tags' && (
+              <div className="text-center py-8">
+                <h2 className="text-xl font-semibold mb-2">Page Not Found</h2>
+                <p className="text-muted-foreground">The requested page could not be found.</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Path: {location.pathname} | Section: {currentSection}
+                </p>
+              </div>
+            )}
+            
+            {!currentSimulatorSlug && currentSection === 'users' && (
+              <UserManagement
+                currentUserId={currentUserId}
+                currentUserRole={currentUserRole}
+              />
+            )}
+            
+            {!currentSimulator && currentSection === 'scenarios' && (
               <>
                 <DataTable
-                  title="Configuration Management"
-                  description="Create and manage configuration fields that appear in the client configuration bar"
+                  title="Scenario History"
+                  headers={['Submission Code', 'Client & Project', 'Prepared By', 'Date Created', 'Items', 'One-time Cost', 'Monthly Cost', 'Discount', 'Total Project Cost', 'Actions']}
+                  items={scenarios}
+                  isLoading={scenariosLoading}
+                  getItemKey={(scenario) => scenario.scenarioId}
+                  renderRow={(scenario: any) => (
+                    <>
+                      <TableCell className="font-medium">{scenario.scenarioId}</TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{scenario.clientName}</div>
+                          <div className="text-sm text-muted-foreground">{scenario.projectName}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{scenario.preparedBy}</TableCell>
+                      <TableCell>{new Date(scenario.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell>{scenario.selectedItems?.length || 0}</TableCell>
+                      <TableCell>{formatPrice(scenario.summary?.oneTimeCost || 0)}</TableCell>
+                      <TableCell>{formatPrice(scenario.summary?.monthlyCost || 0)}</TableCell>
+                      <TableCell>
+                        {scenario.summary?.globalDiscount > 0 ? `${scenario.summary.globalDiscount}%` : 'None'}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {formatPrice(scenario.summary?.totalProjectCost || 0)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedScenario(scenario);
+                              setShowScenarioDialog(true);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDuplicateScenario(scenario)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => downloadPDF(scenario)}
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </>
+                  )}
+                  actionButton={
+                    <Button onClick={loadScenarios} disabled={scenariosLoading}>
+                      <RefreshCw className={`h-4 w-4 mr-2 ${scenariosLoading ? 'animate-spin' : ''}`} />
+                      Refresh
+                    </Button>
+                  }
+                />
+                
+                {showScenarioDialog && selectedScenario && (
+                  <ScenarioDialog
+                    isOpen={showScenarioDialog}
+                    onClose={() => {
+                      setShowScenarioDialog(false);
+                      setSelectedScenario(null);
+                    }}
+                    scenario={selectedScenario}
+                  />
+                )}
+              </>
+            )}
+            
+            {!currentSimulator && currentSection === 'guest-submissions' && (
+              <>
+                <DataTable
+                  title="Guest Submissions"
+                  headers={['Submission Code', 'Contact Name', 'Company', 'Email', 'Total Price', 'Services', 'Status', 'Date', 'Actions']}
+                  items={guestSubmissions}
+                  isLoading={guestSubmissionsLoading}
+                  getItemKey={(submission) => submission.id}
+                  renderRow={(submission: any) => (
+                    <>
+                      <TableCell className="font-medium">{submission.id}</TableCell>
+                      <TableCell>{submission.contactName}</TableCell>
+                      <TableCell>{submission.company}</TableCell>
+                      <TableCell>{submission.email}</TableCell>
+                      <TableCell className="font-medium">{formatPrice(submission.totalPrice)}</TableCell>
+                      <TableCell>{submission.services?.length || 0}</TableCell>
+                      <TableCell>
+                        <Badge variant={submission.status === 'submitted' ? 'default' : 'secondary'}>
+                          {submission.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{new Date(submission.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedGuestSubmission(submission);
+                            setShowGuestSubmissionDialog(true);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </>
+                  )}
+                  actionButton={
+                    <Button onClick={loadGuestSubmissions} disabled={guestSubmissionsLoading}>
+                      <RefreshCw className={`h-4 w-4 mr-2 ${guestSubmissionsLoading ? 'animate-spin' : ''}`} />
+                      Refresh
+                    </Button>
+                  }
+                />
+                
+                {showGuestSubmissionDialog && selectedGuestSubmission && (
+                  <GuestSubmissionDetailDialog
+                    isOpen={showGuestSubmissionDialog}
+                    onClose={() => {
+                      setShowGuestSubmissionDialog(false);
+                      setSelectedGuestSubmission(null);
+                    }}
+                    submission={selectedGuestSubmission}
+                  />
+                )}
+              </>
+            )}
+            
+            {/* Legacy sections for backward compatibility - removed since we now have simulator-specific sections */}
+            {!currentSimulator && currentSection === 'configurations' && (
+              <>
+                <DataTable
+                  title="Client Fields"
                   headers={['Name', 'Status', 'Description', 'Fields', 'Actions']}
                   items={configurations}
                   getItemKey={(config) => config.id}
@@ -507,7 +1055,7 @@ export function AdminInterface({
                       }}
                       variant="outline"
                     >
-                      Create Configuration
+                      Create Client Fields
                     </Button>
                   }
                   renderRow={(config) => (
@@ -584,425 +1132,9 @@ export function AdminInterface({
                 )}
               </>
             )}
-            
-            {activeTab === 'categories' && (
-              <CategoryManager
-                categories={categories}
-                services={items}
-                onUpdateCategories={onUpdateCategories}
-              />
-            )}
-            
-            {activeTab === 'services' && (
-              <SimpleServiceManager
-                services={items}
-                categories={categories}
-                onUpdateServices={onUpdateItems}
-              />
-            )}
-            
-            {activeTab === 'tags' && (
-              <TagManager
-                services={items}
-                onUpdateServices={onUpdateItems}
-              />
-            )}
-            
-            {activeTab === 'users' && (
-              <UserManagement
-                currentUserId={currentUserId}
-                currentUserRole={currentUserRole}
-              />
-            )}
-            
-            {activeTab === 'scenarios' && (
-              <>
-                <DataTable
-                  title="Scenario History"
-                  description="View and manage saved pricing scenarios from client sessions"
-                  headers={['Submission Code', 'Client & Project', 'Prepared By', 'Date Created', 'Items', 'One-time Cost', 'Monthly Cost', 'Discount', 'Total Project Cost', 'Actions']}
-                  items={scenarios}
-                  getItemKey={(scenario) => scenario.scenarioId}
-                  onRowClick={(scenario) => {
-                    setSelectedScenario(scenario);
-                    setShowScenarioDialog(true);
-                  }}
-                  searchFields={['submissionCode', 'clientName', 'projectName', 'preparedBy']}
-                  searchPlaceholder="Search scenarios by code, client, project, or preparer..."
-                  filterOptions={[]}
-                  actionButton={
-                    <div className="flex items-center gap-2">
-                      <Button 
-                        onClick={() => {
-                          const message = "New scenarios are created when clients download PDFs from the pricing simulator. To create a new scenario:\n\n1. Go back to the pricing simulator\n2. Configure client settings\n3. Add services to the scenario\n4. Download the PDF\n\nThe scenario will then appear in this history.";
-                          alert(message);
-                        }} 
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        How to Add
-                      </Button>
-                      <Button onClick={loadScenarios} variant="outline" size="sm">
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Refresh
-                      </Button>
-                    </div>
-                  }
-                  emptyStateTitle="No scenarios saved yet"
-                  emptyStateDescription="Scenario data will appear here when users download PDFs from the pricing simulator."
-                  emptyStateIcon={<History className="h-12 w-12 text-muted-foreground" />}
-                  emptyStateAction={
-                    <Button 
-                      onClick={handleClose}
-                      variant="outline"
-                    >
-                      Go to Simulator
-                    </Button>
-                  }
-                  isLoading={scenariosLoading}
-                  renderRow={(scenario) => (
-                    <>
-                      <TableCell>
-                        <Badge variant="secondary" className="font-mono text-xs">
-                          {scenario.submissionCode || 'N/A'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <div className="font-medium">
-                            {scenario.clientName || 'Unknown Client'}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {scenario.projectName || 'Untitled Project'}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">
-                          {scenario.preparedBy || 'Unknown'}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          {new Date(scenario.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {new Date(scenario.createdAt).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="default">
-                          {scenario.itemCount} items
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">
-                          {formatPrice(scenario.oneTimeTotal)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">
-                          {formatPrice(scenario.monthlyTotal)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {scenario.globalDiscount && scenario.globalDiscount > 0 && scenario.globalDiscountApplication !== 'none' ? (
-                          <div className="space-y-0.5">
-                            <Badge variant="secondary" className="text-xs">
-                              {scenario.globalDiscountType === 'percentage' 
-                                ? `${scenario.globalDiscount}%` 
-                                : formatPrice(scenario.globalDiscount)
-                              }
-                            </Badge>
-                            <div className="text-xs text-muted-foreground">
-                              {scenario.globalDiscountApplication === 'both' ? 'Both' :
-                               scenario.globalDiscountApplication === 'monthly' ? 'Monthly' :
-                               scenario.globalDiscountApplication === 'onetime' ? 'One-time' :
-                               'None'}
-                            </div>
-                          </div>
-                        ) : (
-                          <span className="text-sm text-muted-foreground">None</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-semibold text-primary">
-                          {formatPrice(scenario.totalProjectCost)}
-                        </div>
-                      </TableCell>
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={async () => {
-                            try {
-                              const scenarioData = await api.getScenarioData(scenario.scenarioId);
-                              if (!scenarioData) {
-                                alert('Scenario data not found. Cannot generate PDF.');
-                                return;
-                              }
-                              const configDefinitions = await api.loadConfigurations();
-                              const pdfData = {
-                                config: scenarioData.config,
-                                legacyConfig: scenarioData.config,
-                                configDefinitions: configDefinitions.filter(config => config.isActive),
-                                selectedItems: scenarioData.selectedItems,
-                                categories: scenarioData.categories,
-                                globalDiscount: scenarioData.globalDiscount,
-                                globalDiscountType: scenarioData.globalDiscountType,
-                                globalDiscountApplication: scenarioData.globalDiscountApplication,
-                                summary: scenarioData.summary
-                              };
-                              downloadPDF(pdfData);
-                            } catch (error) {
-                              console.error('Failed to download PDF for scenario:', scenario.scenarioId, error);
-                              alert('Failed to download PDF. Please try again.');
-                            }
-                          }}
-                          title="Download PDF"
-                        >
-                          <Download className="h-3 w-3" />
-                        </Button>
-                      </TableCell>
-                    </>
-                  )}
-                />
-                {selectedScenario && (
-                  <ScenarioDialog
-                    isOpen={showScenarioDialog}
-                    onClose={() => {
-                      setShowScenarioDialog(false);
-                      setSelectedScenario(null);
-                    }}
-                    scenario={selectedScenario}
-                  />
-                )}
-              </>
-            )}
-            
-            {activeTab === 'guest-submissions' && (
-              <>
-                <DataTable
-                  title="Guest Submissions"
-                  description="View and manage guest user submissions from the pricing simulator"
-                  headers={['Submission Code', 'Contact Name', 'Company', 'Email', 'Total Price', 'Services', 'Status', 'Date', 'Actions']}
-                  items={guestSubmissions}
-                  getItemKey={(submission) => submission.id}
-                  onRowClick={(submission) => {
-                    setSelectedGuestSubmission(submission);
-                    setShowGuestSubmissionDialog(true);
-                  }}
-                  searchFields={['submissionCode', 'firstName', 'lastName', 'email', 'companyName']}
-                  searchPlaceholder="Search by code, name, email, or company..."
-                  filterOptions={[]}
-                  actionButton={
-                    <div className="flex items-center gap-2">
-                      <Button 
-                        onClick={async () => {
-                          try {
-                            // Enhanced CSV Export with all data
-                            const headers = [
-                              'Submission Code',
-                              'First Name',
-                              'Last Name',
-                              'Email',
-                              'Phone Number',
-                              'Company Name',
-                              'Scenario Name',
-                              'Total Price',
-                              'Services Count',
-                              'Client Name',
-                              'Project Name',
-                              'Debit Cards',
-                              'Credit Cards',
-                              'Monthly Authorizations',
-                              'Monthly Settlements',
-                              'Status',
-                              'Created Date'
-                            ];
-                            
-                            const rows = await Promise.all(guestSubmissions.map(async (sub) => {
-                              // Try to get full data, fall back to basic data
-                              let scenarioData = sub.scenarioData;
-                              if (!scenarioData) {
-                                try {
-                                  const fullData = await api.getGuestScenarioData(sub.id);
-                                  scenarioData = fullData?.scenarioData;
-                                } catch (error) {
-                                  console.warn('Could not load full data for CSV export:', sub.id);
-                                }
-                              }
-                              
-                              const config = scenarioData?.config || {};
-                              
-                              return [
-                                sub.submissionCode || '',
-                                sub.firstName || '',
-                                sub.lastName || '',
-                                sub.email || '',
-                                sub.phoneNumber || '',
-                                sub.companyName || '',
-                                sub.scenarioName || '',
-                                sub.totalPrice || 0,
-                                sub.servicesCount || 0,
-                                config.clientName || '',
-                                config.projectName || '',
-                                config.debitCards || 0,
-                                config.creditCards || 0,
-                                config.monthlyAuthorizations || 0,
-                                config.monthlySettlements || 0,
-                                sub.status || 'submitted',
-                                new Date(sub.createdAt).toLocaleDateString()
-                              ].map(cell => {
-                                // Escape commas and quotes in CSV
-                                const stringValue = String(cell);
-                                if (stringValue.includes(',') || stringValue.includes('"')) {
-                                  return `"${stringValue.replace(/"/g, '""')}"`;
-                                }
-                                return stringValue;
-                              });
-                            }));
-                            
-                            const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
-                            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                            const url = URL.createObjectURL(blob);
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.download = `guest-submissions-${new Date().toISOString().split('T')[0]}.csv`;
-                            link.click();
-                            URL.revokeObjectURL(url);
-                          } catch (error) {
-                            console.error('CSV export error:', error);
-                            alert('Failed to export CSV. Please try again.');
-                          }
-                        }} 
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Export to CSV
-                      </Button>
-                      <Button onClick={loadGuestSubmissions} variant="outline" size="sm">
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Refresh
-                      </Button>
-                    </div>
-                  }
-                  emptyStateTitle="No guest submissions yet"
-                  emptyStateDescription="Guest submissions will appear here when users submit contact information from the pricing simulator."
-                  emptyStateIcon={<UserCheck className="h-12 w-12 text-muted-foreground" />}
-                  renderRow={(submission) => (
-                    <>
-                      <TableCell>
-                        <div className="font-mono text-sm font-medium text-primary cursor-pointer hover:underline">
-                          {submission.submissionCode}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">
-                          {submission.firstName} {submission.lastName}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">
-                          {submission.companyName}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          {submission.email}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-semibold text-primary">
-                          {formatPrice(submission.totalPrice)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="default">
-                          {submission.servicesCount} items
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant={
-                            submission.status === 'contacted' ? 'default' :
-                            submission.status === 'converted' ? 'default' :
-                            'secondary'
-                          }
-                        >
-                          {submission.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          {new Date(submission.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </div>
-                      </TableCell>
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={async () => {
-                            try {
-                              const scenarioData = await api.getGuestScenarioData(submission.id);
-                              if (!scenarioData) {
-                                alert('Scenario data not found. Cannot generate PDF.');
-                                return;
-                              }
-                              const configDefinitions = await api.loadConfigurations();
-                              const pdfData = {
-                                config: scenarioData.config,
-                                legacyConfig: scenarioData.config,
-                                configDefinitions: configDefinitions.filter(config => config.isActive),
-                                selectedItems: scenarioData.selectedItems,
-                                categories: scenarioData.categories,
-                                globalDiscount: scenarioData.globalDiscount,
-                                globalDiscountType: scenarioData.globalDiscountType,
-                                globalDiscountApplication: scenarioData.globalDiscountApplication,
-                                summary: scenarioData.summary
-                              };
-                              downloadPDF(pdfData);
-                            } catch (error) {
-                              console.error('Failed to download PDF for guest submission:', submission.id, error);
-                              alert('Failed to download PDF. Please try again.');
-                            }
-                          }}
-                          title="Download PDF"
-                        >
-                          <Download className="h-3 w-3" />
-                        </Button>
-                      </TableCell>
-                    </>
-                  )}
-                />
-                {selectedGuestSubmission && (
-                  <GuestSubmissionDetailDialog
-                    isOpen={showGuestSubmissionDialog}
-                    onClose={() => {
-                      setShowGuestSubmissionDialog(false);
-                      setSelectedGuestSubmission(null);
-                    }}
-                    submission={selectedGuestSubmission}
-                  />
-                )}
-              </>
-            )}
           </div>
         </div>
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

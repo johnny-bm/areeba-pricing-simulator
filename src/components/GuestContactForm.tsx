@@ -62,12 +62,13 @@ export const GuestContactForm: React.FC<GuestContactFormProps> = ({ onSubmit }) 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+    <div className="space-y-4">
+      <div>
         <h2 className="text-2xl font-bold mb-2">Get Your Custom Pricing</h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-muted-foreground mb-6">
           Enter your details to see the full pricing breakdown and export options
         </p>
+      </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -143,7 +144,6 @@ export const GuestContactForm: React.FC<GuestContactFormProps> = ({ onSubmit }) 
             View Pricing Details
           </Button>
         </form>
-      </div>
     </div>
   );
 };

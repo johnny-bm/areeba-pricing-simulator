@@ -80,7 +80,7 @@ export function TagDialog({
           </div>
         }
         description="Create a new tag that can be assigned to services"
-        size="sm"
+        size="lg"
         secondaryActions={[
           {
             label: 'Cancel',

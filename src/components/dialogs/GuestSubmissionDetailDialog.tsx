@@ -102,7 +102,7 @@ export function GuestSubmissionDetailDialog({
         </div>
       }
       description={`Submitted on ${formatDate(submission.createdAt)}`}
-      size="xl"
+      size="lg"
       primaryAction={{
         label: isDownloading ? 'Generating...' : 'Download PDF',
         onClick: handleDownloadPDF,

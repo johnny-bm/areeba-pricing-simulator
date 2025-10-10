@@ -105,7 +105,7 @@ export function NumberInput({
       onBlur={handleBlur}
       placeholder={placeholder}
       disabled={disabled}
-      className={`${className || ''} ${isFilled ? 'bg-white border-border-filled shadow-sm' : ''}`}
+      className={`${className || ''} ${isFilled ? 'bg-background border-border-filled shadow-sm' : ''}`}
     />
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../../shared/components/ui/dialog';
+import { StandardDialog } from '../../../components/StandardDialog';
 import { Button } from '../../../shared/components/ui/button';
 import { Alert, AlertDescription } from '../../../shared/components/ui/alert';
 import { GuestContactForm } from './GuestContactForm';
@@ -75,14 +75,22 @@ export function GuestSubmissionModal({
   const statusMessage = getStatusMessage();
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Get Your Quote</DialogTitle>
-          <DialogDescription>
-            Provide your contact information to receive your personalized pricing quote.
-          </DialogDescription>
-        </DialogHeader>
+    <StandardDialog
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Get Your Quote"
+      description="Provide your contact information to receive your personalized pricing quote."
+      size="sm"
+      hideCloseButton={isSubmitting}
+      secondaryActions={step === 'error' ? [{
+        label: 'Try Again',
+        onClick: () => setStep('form')
+      }] : []}
+      primaryAction={step === 'success' || step === 'error' ? {
+        label: 'Close',
+        onClick: handleClose
+      } : undefined}
+    >
 
         {statusMessage && (
           <Alert variant={statusMessage.type}>
@@ -104,32 +112,21 @@ export function GuestSubmissionModal({
 
         {step === 'success' && (
           <div className="text-center py-6">
-            <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
+            <CheckCircle className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Quote Submitted Successfully!</h3>
             <p className="text-muted-foreground mb-4">
               {GUEST_MESSAGES.SUBMISSION_SUCCESS}
             </p>
-            <Button onClick={handleClose} className="w-full">
-              Close
-            </Button>
           </div>
         )}
 
         {step === 'error' && (
           <div className="text-center py-6">
-            <AlertCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
+            <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Submission Failed</h3>
             <p className="text-muted-foreground mb-4">
               {GUEST_MESSAGES.SUBMISSION_ERROR}
             </p>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setStep('form')} className="flex-1">
-                Try Again
-              </Button>
-              <Button onClick={handleClose} className="flex-1">
-                Close
-              </Button>
-            </div>
           </div>
         )}
 
@@ -139,7 +136,6 @@ export function GuestSubmissionModal({
             <span>Submitting your quote...</span>
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+    </StandardDialog>
   );
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import { Button } from './ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from "sonner";
@@ -18,7 +19,9 @@ import { GuestContactFormModal } from './GuestContactFormModal';
 import { ClientConfig, SelectedItem, PricingItem, Category, DynamicClientConfig } from '../types/pricing';
 import { downloadPDF } from '../utils/pdfHelpers';
 import { api } from '../utils/api';
-import { getConfigBasedQuantity, getEffectiveUnitPrice } from '../utils/tieredPricing';
+import { SimulatorApi } from '../utils/simulatorApi';
+import { EnhancedPdfButton } from '../features/pdfBuilder';
+import { getConfigBasedQuantity, getEffectiveUnitPrice, calculateTieredPrice } from '../utils/tieredPricing';
 import { isOneTimeUnit } from '../utils/unitClassification';
 import { applyAutoAddLogic, removeAutoAddedServices } from '../utils/autoAddLogic';
 import { 
@@ -41,6 +44,11 @@ interface PricingSimulatorProps {
 }
 
 export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps) {
+  // Get simulator type from URL parameters
+  const { simulatorType } = useParams<{ simulatorType?: string }>();
+  
+  console.log('🎯 PricingSimulator loaded with simulatorType:', simulatorType);
+  
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -58,7 +66,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   const [guestContactSubmitted, setGuestContactSubmitted] = useState<boolean>(false);
   
   // Simulator selection state
-  const [selectedSimulator, setSelectedSimulator] = useState<string | null>(null);
+  const [selectedSimulator, setSelectedSimulator] = useState<any | null>(null);
   
   const [clientConfig, setClientConfig] = useState<DynamicClientConfig>({
     clientName: '',
@@ -182,17 +190,45 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       }
 
       // Load global discount
-      const globalDiscountData = await globalDiscountPersistence.load();
-      if (globalDiscountData) {
-        setGlobalDiscount(globalDiscountData.discount || 0);
-        setGlobalDiscountType(globalDiscountData.type || DISCOUNT_TYPES.PERCENTAGE);
-        setGlobalDiscountApplication(globalDiscountData.application || DISCOUNT_APPLICATIONS.NONE);
+      try {
+        const discount = await globalDiscountPersistence.loadDiscount();
+        const type = await globalDiscountPersistence.loadDiscountType();
+        const application = await globalDiscountPersistence.loadDiscountApplication();
+        
+        setGlobalDiscount(discount);
+        setGlobalDiscountType(type);
+        setGlobalDiscountApplication(application);
+      } catch (error) {
+        console.error('Failed to load global discount:', error);
       }
 
       // Load simulator selection
       const simulatorData = await simulatorSelectionPersistence.load();
       if (simulatorData) {
-        setSelectedSimulator(simulatorData.simulator);
+        setSelectedSimulator(simulatorData);
+      } else if (simulatorType) {
+        // If no persisted simulator but URL has simulator type, try to load by slug
+        console.log('🔍 Loading simulator by slug:', simulatorType);
+        try {
+          const simulator = await SimulatorApi.loadSimulatorBySlug(simulatorType);
+          console.log('📋 Simulator found:', simulator);
+          if (simulator) {
+            setSelectedSimulator(simulator);
+            console.log('✅ Set simulator ID:', simulator.id);
+            // Save it to persistence
+            simulatorSelectionPersistence.save(simulator.id);
+          } else {
+            console.log('❌ Simulator not found, using slug as fallback');
+            // Fallback to using the slug directly if simulator not found
+            setSelectedSimulator(simulatorType);
+            simulatorSelectionPersistence.save(simulatorType);
+          }
+        } catch (error) {
+          console.error('❌ Failed to load simulator by slug:', error);
+          // Fallback to using the slug directly
+          setSelectedSimulator(simulatorType);
+          simulatorSelectionPersistence.save(simulatorType);
+        }
       }
 
       // Load service mappings
@@ -225,15 +261,17 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       await selectedItemsPersistence.save(selectedItems);
 
       // Save global discount
-      await globalDiscountPersistence.save({
-        discount: globalDiscount,
-        type: globalDiscountType,
-        application: globalDiscountApplication
-      });
+      try {
+        globalDiscountPersistence.saveDiscount(globalDiscount);
+        globalDiscountPersistence.saveDiscountType(globalDiscountType);
+        globalDiscountPersistence.saveDiscountApplication(globalDiscountApplication);
+      } catch (error) {
+        console.error('Failed to save global discount:', error);
+      }
 
       // Save simulator selection
       if (selectedSimulator) {
-        await simulatorSelectionPersistence.save({ simulator: selectedSimulator });
+        simulatorSelectionPersistence.save(selectedSimulator);
       }
 
       // Save service mappings
@@ -255,6 +293,34 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
 
     return () => clearTimeout(timeoutId);
   }, [saveData]);
+
+  // Auto-add logic: Apply auto-add rules when client configuration changes
+  useEffect(() => {
+    if (pricingServices.length === 0 || !clientConfig) return;
+
+    try {
+      // Apply auto-add logic
+      const updatedItems = applyAutoAddLogic(
+        selectedItems,
+        clientConfig,
+        pricingServices,
+        autoAddConfig,
+        serviceMappings
+      );
+
+      // Only update if there are changes
+      if (updatedItems.length !== selectedItems.length || 
+          updatedItems.some((item, index) => 
+            !selectedItems[index] || 
+            item.quantity !== selectedItems[index].quantity ||
+            item.id !== selectedItems[index].id
+          )) {
+        setSelectedItems(updatedItems);
+      }
+    } catch (error) {
+      console.error('Auto-add logic failed:', error);
+    }
+  }, [clientConfig, pricingServices, autoAddConfig, serviceMappings]);
 
   // Handle logout
   const handleLogout = async () => {
@@ -278,13 +344,20 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       
       // Submit guest scenario
       const response = await api.saveGuestScenario({
-        contactInfo: contactData,
-        scenarioData: {
-          selectedItems,
-          clientConfig,
-          categories,
-          summary: calculateSummary()
-        }
+        sessionId: null,
+        email: contactData.email,
+        phoneNumber: contactData.phoneNumber,
+        firstName: contactData.firstName,
+        lastName: contactData.lastName,
+        companyName: contactData.companyName,
+        scenarioName: contactData.scenarioName || 'Guest Scenario',
+        config: clientConfig,
+        selectedItems,
+        categories,
+        globalDiscount,
+        globalDiscountType,
+        globalDiscountApplication,
+        summary: calculateSummary()
       });
 
       setGuestContactSubmitted(true);
@@ -306,8 +379,25 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       item.item.category !== 'setup' && !isOneTimeUnit(item.item.unit)
     );
 
-    const oneTimeSubtotal = oneTimeItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-    const monthlySubtotal = monthlyItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+    // Use proper tiered pricing calculations
+    const oneTimeSubtotal = oneTimeItems.reduce((sum, item) => {
+      if (item.item.pricingType === 'tiered' && item.item.tiers && item.item.tiers.length > 0) {
+        const tieredResult = calculateTieredPrice(item.item, item.quantity);
+        return sum + tieredResult.totalPrice;
+      } else {
+        return sum + (item.quantity * item.unitPrice);
+      }
+    }, 0);
+    
+    const monthlySubtotal = monthlyItems.reduce((sum, item) => {
+      if (item.item.pricingType === 'tiered' && item.item.tiers && item.item.tiers.length > 0) {
+        const tieredResult = calculateTieredPrice(item.item, item.quantity);
+        return sum + tieredResult.totalPrice;
+      } else {
+        return sum + (item.quantity * item.unitPrice);
+      }
+    }, 0);
+    
     const yearlySubtotal = monthlySubtotal * 12;
 
     return {
@@ -323,10 +413,9 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   if (!selectedSimulator && !isGuestMode) {
     return (
       <SimulatorLanding 
-        onSimulatorSelect={setSelectedSimulator}
-        isAuthenticated={isAuthenticated}
-        userRole={userRole}
-        onShowAdmin={() => setShowAdminInterface(true)}
+        onSelectSimulator={setSelectedSimulator}
+        onOpenAdmin={() => setShowAdminInterface(true)}
+        onLogout={() => {}}
       />
     );
   }
@@ -339,9 +428,9 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         items={pricingServices}
         categories={categories}
         selectedItems={selectedItems}
-        clientConfig={clientConfig}
-        onUpdateItems={setPricingServices}
-        onUpdateCategories={setCategories}
+        clientConfig={clientConfig as any}
+        onUpdateItems={async (items) => setPricingServices(items)}
+        onUpdateCategories={async (categories) => setCategories(categories)}
         onLogout={handleLogout}
         currentUserId={userId || ''}
         currentUserRole={userRole || ''}
@@ -371,9 +460,9 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="sm"
@@ -383,8 +472,8 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
                 <ArrowLeft className="h-4 w-4" />
                 Back to Simulators
               </Button>
-              <div className="h-6 w-px bg-border" />
-              <WordMarkRed className="h-6" />
+              <div className="h-4 w-px bg-border" />
+              <WordMarkRed className="h-4" />
             </div>
             
             {isAuthenticated && (
@@ -396,25 +485,30 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
+        {/* Client Configuration Section */}
+        <div className="mb-8">
+          <DynamicClientConfigBar
+            config={clientConfig}
+            onConfigChange={setClientConfig}
+            isGuestMode={isGuestMode}
+          />
+        </div>
+
+        {/* Three Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Configuration */}
-          <div className="lg:col-span-1 space-y-6">
-            <DynamicClientConfigBar
-              config={clientConfig}
-              onConfigChange={setClientConfig}
-              isGuestMode={isGuestMode}
-            />
-            
+          {/* Left Column - Service Library */}
+          <div className="space-y-6">
             <ItemLibrary
               items={pricingServices}
               categories={categories}
+              selectedItemIds={selectedItems.map(item => item.item.id)}
               selectedItems={selectedItems}
-              onAddItem={(item, quantity) => {
+              onAddItem={(item) => {
                 const newItem: SelectedItem = {
                   id: `${item.id}_${Date.now()}`,
                   item,
-                  quantity,
-                  unitPrice: getEffectiveUnitPrice(item, quantity),
+                  quantity: 1,
+                  unitPrice: getEffectiveUnitPrice(item, 1),
                   discount: 0,
                   discountType: 'percentage',
                   discountApplication: 'total',
@@ -425,31 +519,40 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
               onRemoveItem={(itemId) => {
                 setSelectedItems(prev => prev.filter(item => item.id !== itemId));
               }}
-              onUpdateItem={(itemId, updates) => {
-                setSelectedItems(prev => prev.map(item => 
-                  item.id === itemId ? { ...item, ...updates } : item
-                ));
-              }}
+              clientConfig={clientConfig as any}
             />
           </div>
 
-          {/* Right Column - Scenario Builder & Summary */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* Middle Column - Selected Services */}
+          <div className="space-y-6">
             <ScenarioBuilder
               selectedItems={selectedItems}
               onUpdateItem={(itemId, updates) => {
-                setSelectedItems(prev => prev.map(item => 
-                  item.id === itemId ? { ...item, ...updates } : item
-                ));
+                setSelectedItems(prev => prev.map(item => {
+                  if (item.id === itemId) {
+                    const updatedItem = { ...item, ...updates };
+                    
+                    // If quantity is being updated and this is a tiered pricing item, recalculate unit price
+                    if (updates.quantity !== undefined && item.item.pricingType === 'tiered') {
+                      updatedItem.unitPrice = getEffectiveUnitPrice(item.item, updates.quantity);
+                    }
+                    
+                    return updatedItem;
+                  }
+                  return item;
+                }));
               }}
               onRemoveItem={(itemId) => {
                 setSelectedItems(prev => prev.filter(item => item.id !== itemId));
               }}
-              clientConfig={clientConfig}
+              clientConfig={clientConfig as any}
               categories={categories}
               isGuestMode={isGuestMode}
             />
-            
+          </div>
+
+          {/* Right Column - Fee Summary */}
+          <div className="space-y-6">
             <FeeSummary
               selectedItems={selectedItems}
               categories={categories}
@@ -459,7 +562,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
               onGlobalDiscountChange={setGlobalDiscount}
               onGlobalDiscountTypeChange={setGlobalDiscountType}
               onGlobalDiscountApplicationChange={setGlobalDiscountApplication}
-              clientConfig={clientConfig}
+              clientConfig={clientConfig as any}
               onSubmit={async () => {
                 if (isGuestMode) {
                   setShowGuestContactForm(true);
@@ -501,22 +604,34 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       {/* Modals */}
       {showSummaryDialog && (
         <ScenarioSummaryDialog
-          isOpen={showSummaryDialog}
-          onClose={() => setShowSummaryDialog(false)}
-          scenarioData={{
-            selectedItems,
-            clientConfig,
-            categories,
-            summary: calculateSummary()
-          }}
-          onSave={async (scenarioData) => {
+          open={showSummaryDialog}
+          onOpenChange={() => setShowSummaryDialog(false)}
+          scenarioId="current-scenario"
+          selectedItems={selectedItems}
+          clientConfig={clientConfig}
+          categories={categories}
+          summary={calculateSummary()}
+          onDownloadPDF={async () => {
             try {
-              await api.saveScenarioData(scenarioData);
-              setSavedScenarioId('scenario-saved');
-              toast.success('Scenario saved successfully!');
+              await downloadPDF({
+                config: clientConfig,
+                selectedItems: selectedItems,
+                categories: categories,
+                globalDiscount: globalDiscount,
+                globalDiscountType: globalDiscountType,
+                globalDiscountApplication: globalDiscountApplication,
+                simulator: selectedSimulator ? {
+                  id: selectedSimulator.id,
+                  name: selectedSimulator.name,
+                  description: selectedSimulator.description,
+                  urlSlug: selectedSimulator.urlSlug
+                } : undefined,
+                summary: calculateSummary()
+              });
+              toast.success('PDF downloaded successfully!');
             } catch (error) {
-              console.error('Failed to save scenario:', error);
-              toast.error('Failed to save scenario');
+              console.error('PDF download failed:', error);
+              toast.error('Failed to download PDF');
             }
           }}
         />

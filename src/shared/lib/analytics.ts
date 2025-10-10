@@ -23,7 +23,7 @@ class AnalyticsService {
     if (this.isInitialized) return;
 
     // Initialize analytics in production
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.PROD) {
       // TODO: Initialize your analytics service (e.g., Google Analytics, Mixpanel, etc.)
       console.log('Analytics initialized');
     }
@@ -37,7 +37,7 @@ class AnalyticsService {
   identify(properties: UserProperties) {
     this.userProperties = { ...this.userProperties, ...properties };
 
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.PROD) {
       // TODO: Send user properties to analytics service
       console.log('User identified:', properties);
     }
@@ -54,7 +54,7 @@ class AnalyticsService {
       sessionId: this.userProperties.sessionId,
     };
 
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.PROD) {
       // TODO: Send event to analytics service
       console.log('Event tracked:', eventData);
     } else {

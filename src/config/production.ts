@@ -2,17 +2,17 @@
 export const PRODUCTION_CONFIG = {
   // Feature flags
   features: {
-    analytics: process.env.NODE_ENV === 'production',
-    errorTracking: process.env.NODE_ENV === 'production',
-    performanceMonitoring: process.env.NODE_ENV === 'production',
+    analytics: import.meta.env.PROD,
+    errorTracking: import.meta.env.PROD,
+    performanceMonitoring: import.meta.env.PROD,
     rateLimiting: true,
     inputValidation: true,
     securityHeaders: true,
     caching: true,
     compression: true,
     minification: true,
-    sourceMaps: process.env.NODE_ENV === 'development',
-    hotReload: process.env.NODE_ENV === 'development',
+    sourceMaps: import.meta.env.DEV,
+    hotReload: import.meta.env.DEV,
   },
 
   // Performance settings
@@ -59,12 +59,12 @@ export const PRODUCTION_CONFIG = {
 
   // API settings
   api: {
-    baseURL: process.env.VITE_SUPABASE_URL,
+    baseURL: import.meta.env.VITE_SUPABASE_URL,
     timeout: 30000,
     retryAttempts: 3,
     retryDelay: 1000,
-    enableRequestLogging: process.env.NODE_ENV === 'development',
-    enableResponseLogging: process.env.NODE_ENV === 'development',
+    enableRequestLogging: import.meta.env.DEV,
+    enableResponseLogging: import.meta.env.DEV,
     enableErrorLogging: true,
     enablePerformanceLogging: true,
   },
@@ -122,20 +122,20 @@ export const PRODUCTION_CONFIG = {
 
   // Development settings
   development: {
-    enableHotReload: process.env.NODE_ENV === 'development',
-    enableSourceMaps: process.env.NODE_ENV === 'development',
-    enableDebugLogging: process.env.NODE_ENV === 'development',
-    enablePerformanceProfiling: process.env.NODE_ENV === 'development',
-    enableMemoryProfiling: process.env.NODE_ENV === 'development',
-    enableNetworkProfiling: process.env.NODE_ENV === 'development',
-    enableComponentProfiling: process.env.NODE_ENV === 'development',
-    enableStateProfiling: process.env.NODE_ENV === 'development',
+    enableHotReload: import.meta.env.DEV,
+    enableSourceMaps: import.meta.env.DEV,
+    enableDebugLogging: import.meta.env.DEV,
+    enablePerformanceProfiling: import.meta.env.DEV,
+    enableMemoryProfiling: import.meta.env.DEV,
+    enableNetworkProfiling: import.meta.env.DEV,
+    enableComponentProfiling: import.meta.env.DEV,
+    enableStateProfiling: import.meta.env.DEV,
   },
 };
 
 // Environment-specific configurations
 export const getEnvironmentConfig = () => {
-  const env = process.env.NODE_ENV || 'development';
+  const env = import.meta.env.MODE || 'development';
   
   switch (env) {
     case 'production':
@@ -183,15 +183,15 @@ export const isFeatureEnabled = (feature: keyof typeof PRODUCTION_CONFIG.feature
 };
 
 export const isProduction = (): boolean => {
-  return process.env.NODE_ENV === 'production';
+  return import.meta.env.PROD;
 };
 
 export const isDevelopment = (): boolean => {
-  return process.env.NODE_ENV === 'development';
+  return import.meta.env.DEV;
 };
 
 export const isStaging = (): boolean => {
-  return process.env.NODE_ENV === 'staging';
+  return import.meta.env.MODE === 'staging';
 };
 
 // Configuration validation

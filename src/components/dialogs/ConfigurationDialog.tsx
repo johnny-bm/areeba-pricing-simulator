@@ -184,13 +184,13 @@ export function ConfigurationDialog({
     <StandardDialog
       isOpen={isOpen}
       onClose={onClose}
-      title={isCreating ? 'Create New Configuration' : 'Edit Configuration'}
+      title={isCreating ? 'Create New Client Fields' : 'Edit Client Fields'}
       description={
         isCreating 
-          ? 'Create a new configuration template with custom fields for client data collection.'
-          : 'Modify the configuration template and its associated fields.'
+          ? 'Create a new client fields template with custom form fields for data collection.'
+          : 'Modify the client fields template and its associated form fields.'
       }
-      size="full"
+      size="lg"
       destructiveActions={!isCreating && configuration && onDelete ? [{
         label: isDeleting ? 'Deleting...' : 'Delete',
         onClick: handleDelete,
@@ -221,7 +221,7 @@ export function ConfigurationDialog({
       <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="config-name">Configuration Name *</Label>
+              <Label htmlFor="config-name">Client Fields Name *</Label>
               <Input
                 id="config-name"
                 value={formData.name}
@@ -256,12 +256,12 @@ export function ConfigurationDialog({
               checked={formData.isActive}
               onCheckedChange={(checked) => updateField('isActive', checked)}
             />
-            <Label>Active Configuration</Label>
+            <Label>Active Client Fields</Label>
           </div>
 
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <Label>Configuration Fields</Label>
+              <Label>Form Fields</Label>
               <Button onClick={addConfigurationField} size="sm" variant="outline">
                 <Plus className="h-4 w-4 mr-1" />
                 Add Field

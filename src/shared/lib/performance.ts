@@ -159,16 +159,17 @@ class PerformanceService {
   }
 
   /**
-   * Monitor memory usage
+   * Monitor memory usage (disabled to reduce console noise)
    */
   monitorMemory() {
-    if ('memory' in performance) {
-      const memory = (performance as any).memory;
-      this.recordMetric('memory-usage', memory.usedJSHeapSize / 1024 / 1024, {
-        total: memory.totalJSHeapSize / 1024 / 1024,
-        limit: memory.jsHeapSizeLimit / 1024 / 1024,
-      });
-    }
+    // Disabled memory monitoring to reduce console noise
+    // if ('memory' in performance) {
+    //   const memory = (performance as any).memory;
+    //   this.recordMetric('memory-usage', memory.usedJSHeapSize / 1024 / 1024, {
+    //     total: memory.totalJSHeapSize / 1024 / 1024,
+    //     limit: memory.jsHeapSizeLimit / 1024 / 1024,
+    //   });
+    // }
   }
 
   /**

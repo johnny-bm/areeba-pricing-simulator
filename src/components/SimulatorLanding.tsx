@@ -1,8 +1,15 @@
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
 import { Button } from './ui/button';
+import { Badge } from './ui/badge';
 import { EXTERNAL_URLS } from '../config/api';
-import { CreditCard, ArrowRight, Calculator, Zap } from 'lucide-react';
+import { ArrowRight, CreditCard, Calculator, Zap, Shield } from 'lucide-react';
 import { UserProfileHeader } from './UserProfileHeader';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../config/routes';
+import { Simulator } from '../types/simulator';
+import { SimulatorApi } from '../utils/simulatorApi';
+import { SIMULATOR_ICON_MAP } from '../utils/icons';
 import WordMarkRed from '../imports/WordMarkRed';
 
 interface SimulatorOption {
@@ -15,37 +22,35 @@ interface SimulatorOption {
 }
 
 interface SimulatorLandingProps {
-  onSelectSimulator: (simulatorId: string) => void;
+  onSelectSimulator?: (simulatorId: string) => void;
   onOpenAdmin?: () => void;
   onLogout: () => void;
 }
 
+
 export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: SimulatorLandingProps) {
-  const simulators: SimulatorOption[] = [
-    {
-      id: 'issuing-simulator',
-      title: 'Issuing & Processing',
-      description: 'Calculate costs for card issuing, payment processing, hosting, and transaction fees with detailed configuration options.',
-      icon: <CreditCard className="h-8 w-8" />,
-      available: true
-    },
-    {
-      id: 'acquiring-simulator',
-      title: 'Acquiring Solutions',
-      description: 'Price merchant acquisition services, payment acceptance, and settlement solutions.',
-      icon: <Calculator className="h-8 w-8" />,
-      available: false,
-      comingSoon: true
-    },
-    {
-      id: 'digital-banking-simulator',
-      title: 'Digital Banking',
-      description: 'Estimate costs for digital banking platform implementation and ongoing operations.',
-      icon: <Zap className="h-8 w-8" />,
-      available: false,
-      comingSoon: true
-    }
-  ];
+  const navigate = useNavigate();
+  const [simulators, setSimulators] = useState<Simulator[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load simulators from database
+  useEffect(() => {
+    const loadSimulators = async () => {
+      try {
+        setIsLoading(true);
+        const data = await SimulatorApi.loadSimulators();
+        setSimulators(data);
+      } catch (error) {
+        console.error('Failed to load simulators:', error);
+        // Fallback to empty array on error
+        setSimulators([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSimulators();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -68,56 +73,91 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
 
         {/* Simulator Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {simulators.map((simulator) => (
-            <Card 
-              key={simulator.id} 
-              className={`relative transition-all duration-200 ${
-                simulator.available 
-                  ? 'hover:shadow-lg hover:scale-[1.02] cursor-pointer' 
-                  : 'opacity-60 cursor-not-allowed'
-              }`}
-              onClick={() => simulator.available && onSelectSimulator(simulator.id)}
-            >
-              {simulator.comingSoon && (
-                <div className="absolute top-3 right-3 bg-muted text-muted-foreground text-xs px-2 py-1 rounded-full">
-                  Coming Soon
-                </div>
-              )}
-              
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className={`p-2 rounded-lg ${
-                    simulator.available 
-                      ? 'bg-primary/10 text-primary' 
-                      : 'bg-muted text-muted-foreground'
-                  }`}>
-                    {simulator.icon}
+          {isLoading ? (
+            // Loading skeleton
+            Array.from({ length: 3 }).map((_, index) => (
+              <Card key={index} className="animate-pulse">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-muted rounded-lg"></div>
                   </div>
-                </div>
-                <CardTitle className="text-lg">{simulator.title}</CardTitle>
-                <CardDescription className="text-sm leading-relaxed">
-                  {simulator.description}
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="pt-0">
-                <Button 
-                  className="w-full" 
-                  disabled={!simulator.available}
-                  variant={simulator.available ? "default" : "secondary"}
-                >
-                  {simulator.available ? (
-                    <>
-                      Start Simulation
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </>
-                  ) : (
-                    'Coming Soon'
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                  <div className="h-6 bg-muted rounded mb-2"></div>
+                  <div className="h-4 bg-muted rounded mb-1"></div>
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="h-10 bg-muted rounded"></div>
+                </CardContent>
+              </Card>
+            ))
+          ) : simulators.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <div className="text-muted-foreground">
+                <CreditCard className="h-12 w-12 mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No Simulators Available</h3>
+                <p className="text-sm">Simulators will appear here once they are configured.</p>
+              </div>
+            </div>
+          ) : (
+            simulators.map((simulator) => (
+              <Card 
+                key={simulator.id} 
+                className={`relative transition-all duration-200 ${
+                  simulator.isAvailable 
+                    ? 'hover:shadow-lg hover:scale-[1.02] cursor-pointer' 
+                    : 'opacity-60 cursor-not-allowed'
+                }`}
+                onClick={() => {
+                  if (simulator.isAvailable) {
+                    if (onSelectSimulator) {
+                      onSelectSimulator(simulator.urlSlug);
+                    } else {
+                      navigate(`${ROUTES.SIMULATOR}/${simulator.urlSlug}`);
+                    }
+                  }
+                }}
+              >
+                {simulator.comingSoon && (
+                  <div className="absolute top-3 right-3 bg-muted text-muted-foreground text-xs px-2 py-1 rounded-full">
+                    Coming Soon
+                  </div>
+                )}
+                
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`p-2 rounded-lg ${
+                      simulator.isAvailable 
+                        ? 'bg-primary/10 text-primary' 
+                        : 'bg-muted text-muted-foreground'
+                    }`}>
+                      {SIMULATOR_ICON_MAP[simulator.iconName] || <CreditCard className="h-8 w-8" />}
+                    </div>
+                  </div>
+                  <CardTitle className="text-lg">{simulator.title}</CardTitle>
+                  <CardDescription className="text-sm leading-relaxed">
+                    {simulator.description}
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="pt-0">
+                  <Button 
+                    className="w-full" 
+                    disabled={!simulator.isAvailable}
+                    variant={simulator.isAvailable ? "default" : "secondary"}
+                  >
+                    {simulator.isAvailable ? (
+                      <>
+                        {simulator.ctaText}
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </>
+                    ) : (
+                      simulator.ctaText
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
         {/* Features Section */}

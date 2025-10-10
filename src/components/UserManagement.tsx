@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { TableCell } from './ui/table';
+import { Avatar, AvatarFallback } from './ui/avatar';
 import { Plus, Edit, Trash2, User as UserIcon, Copy, Mail } from 'lucide-react';
 import { DataTable } from './DataTable';
 import { UserDialog } from './dialogs/UserDialog';
+import { StandardDialog } from './StandardDialog';
 import { supabase } from '../utils/supabase/client';
 import { TABLES, ROLES } from '../config/database';
 import { toast } from 'sonner';
+import { getAvatarProps } from '../utils/avatarColors';
 
 interface User {
   id: string;
@@ -333,11 +336,11 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
   const getRoleBadgeClasses = (role: string) => {
     switch (role) {
       case ROLES.OWNER:
-        return 'bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 dark:hover:bg-purple-900/30';
+        return 'bg-violet-100 text-violet-800 border-violet-200 hover:bg-violet-200 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800 dark:hover:bg-violet-900/30';
       case ROLES.ADMIN:
         return 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800 dark:hover:bg-blue-900/30';
       case ROLES.MEMBER:
-        return 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 dark:hover:bg-green-900/30';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200 hover:bg-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/30';
       default:
         return '';
     }
@@ -393,13 +396,21 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
         emptyStateDescription="Users will appear here once they are added to the system"
         emptyStateIcon={<UserIcon className="h-12 w-12 text-muted-foreground" />}
         isLoading={isLoading}
-        renderRow={(user) => (
-          <>
+        renderRow={(user) => {
+          const displayName = user.first_name || user.last_name
+            ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+            : user.email || 'User';
+          const avatarProps = getAvatarProps(displayName);
+          
+          return (
+            <>
             <TableCell>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <UserIcon className="h-5 w-5 text-primary" />
-                </div>
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback className={`text-sm font-medium ${avatarProps.bgClass} ${avatarProps.textClass}`}>
+                    {avatarProps.initials}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <div className="font-medium">
                     {user.first_name || user.last_name
@@ -469,7 +480,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                         variant="ghost"
                         onClick={() => handleResendInvite(user)}
                         title="Resend invite email"
-                        className="text-blue-600 hover:text-blue-700"
+                        className="text-primary hover:text-primary/80"
                       >
                         <Mail className="h-3 w-3" />
                       </Button>
@@ -489,8 +500,9 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                 )}
               </div>
             </TableCell>
-          </>
-        )}
+            </>
+          );
+        }}
       />
 
       {showUserDialog && (
@@ -510,13 +522,19 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
 
       {/* Invite Link Modal */}
       {inviteLink && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-lg w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">Invite Link Created</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Share this link with the new user. They can use it to create their account.
-            </p>
-            <div className="bg-muted p-3 rounded border mb-4">
+        <StandardDialog
+          isOpen={!!inviteLink}
+          onClose={() => setInviteLink(null)}
+          title="Invite Link Created"
+          description="Share this link with the new user. They can use it to create their account."
+          size="lg"
+          primaryAction={{
+            label: 'Close',
+            onClick: () => setInviteLink(null)
+          }}
+        >
+          <div className="space-y-4">
+            <div className="bg-muted p-3 rounded border">
               <input
                 type="text"
                 value={inviteLink}
@@ -525,14 +543,11 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
                 onClick={(e) => e.currentTarget.select()}
               />
             </div>
-            <p className="text-xs text-muted-foreground mb-4">
+            <p className="text-xs text-muted-foreground">
               Click the link above to select it, then copy with Ctrl+C (Cmd+C on Mac)
             </p>
-            <Button onClick={() => setInviteLink(null)} className="w-full">
-              Close
-            </Button>
           </div>
-        </div>
+        </StandardDialog>
       )}
     </>
   );

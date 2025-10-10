@@ -9,7 +9,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { StatusBadge } from './StatusBadge';
 import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { StandardDialog } from './StandardDialog';
 import { Settings2, Link2, ArrowRight, Zap, RotateCcw, Info, Bug } from 'lucide-react';
 import { PricingItem, DynamicClientConfig, ConfigurationDefinition } from '../types/pricing';
 import { updateServiceMappings, updateAutoAddConfig, AutoAddConfig } from '../utils/autoAddLogic';
@@ -170,30 +170,27 @@ export function AutoAddConfigPanel({
   const autoAddStatus = getAutoAddStatus();
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-
-      </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Link2 className="h-5 w-5" />
-            Auto-Add & Quantity Sync Configuration
-          </DialogTitle>
-        </DialogHeader>
+    <StandardDialog
+      isOpen={true}
+      onClose={() => {}}
+      title="Auto-Add & Quantity Sync Configuration"
+      description="Configure automatic service addition and quantity synchronization based on client configuration values."
+      size="lg"
+      hideCloseButton={true}
+    >
         
         <div className="space-y-6">
           {/* Status Overview */}
           <div className="grid grid-cols-3 gap-4">
             <Card className="p-4">
               <div className="text-center">
-                <div className="text-2xl font-semibold text-blue-600">{getMappedServicesCount()}</div>
+                <div className="text-2xl font-semibold text-primary">{getMappedServicesCount()}</div>
                 <div className="text-sm text-muted-foreground">Mapped Services</div>
               </div>
             </Card>
             <Card className="p-4">
               <div className="text-center">
-                <div className="text-2xl font-semibold text-green-600">{getAutoAddServicesCount()}</div>
+                <div className="text-2xl font-semibold text-emerald-600">{getAutoAddServicesCount()}</div>
                 <div className="text-sm text-muted-foreground">Auto-Add Enabled</div>
               </div>
             </Card>
@@ -477,7 +474,6 @@ export function AutoAddConfigPanel({
             )}
           </Card>
         </div>
-      </DialogContent>
-    </Dialog>
+    </StandardDialog>
   );
 }
