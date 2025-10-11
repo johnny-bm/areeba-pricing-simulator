@@ -479,7 +479,6 @@ export function AdminInterface({
                                 }}
                                 isActive={currentSection === 'dashboard' && isCurrentSimulator}
                                 size="sm"
-                                disabled={navigatingTo === `${simulator.id}-dashboard`}
                               >
                                 <BarChart3 className="h-3.5 w-3.5" />
                                 <span>Dashboard</span>

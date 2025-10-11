@@ -3,6 +3,362 @@ import { formatPrice } from './formatters';
 import { calculateTieredPrice } from './tieredPricing';
 import { VersionService } from './versionService';
 
+// Helper function to generate HTML from custom template content
+function generateCustomHTMLReport(customContent: any, data: PDFData, systemVersion: string): string {
+  console.log('pdfHelpers: Generating custom HTML report from template content');
+  
+  // Extract template metadata
+  const templateName = customContent.template || 'Custom Template';
+  const sections = customContent.sections || [];
+  const metadata = customContent.metadata || {};
+  
+  // Build HTML content from template sections
+  let htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${templateName} - ${data.config.clientName}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .client-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .section-content {
+            margin-left: 20px;
+        }
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .pricing-table th,
+        .pricing-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .pricing-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #e8f4f8;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .description-content {
+            margin: 10px 0;
+        }
+        .image-content {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .image-caption {
+            font-style: italic;
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .bullet-list {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .bullet-list li {
+            margin: 5px 0;
+        }
+        .callout {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .callout-info {
+            background-color: #e3f2fd;
+            border-left-color: #2196f3;
+        }
+        .callout-warning {
+            background-color: #fff3e0;
+            border-left-color: #ff9800;
+        }
+        .callout-success {
+            background-color: #e8f5e8;
+            border-left-color: #4caf50;
+        }
+        .callout-error {
+            background-color: #ffebee;
+            border-left-color: #f44336;
+        }
+        .callout-icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .callout-content {
+            flex: 1;
+        }
+        @media print {
+            body { margin: 0; }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>${templateName}</h1>
+        <p>Generated for: ${data.config.clientName}</p>
+        <p>Project: ${data.config.projectName}</p>
+        <p>Generated on: ${new Date().toLocaleDateString()}</p>
+    </div>
+    
+    <div class="client-info">
+        <h3>Client Information</h3>
+        <p><strong>Client:</strong> ${data.config.clientName}</p>
+        <p><strong>Project:</strong> ${data.config.projectName}</p>
+        <p><strong>Prepared by:</strong> ${data.config.preparedBy || 'System'}</p>
+    </div>
+`;
+
+  // Process each section from the template
+  sections.forEach((section: any, index: number) => {
+    htmlContent += `
+    <div class="section">
+        <div class="section-title">${section.section_title || `Section ${index + 1}`}</div>
+        <div class="section-content">`;
+    
+    // Handle different section types
+    switch (section.section_type) {
+      case 'title': {
+        const headingLevel = section.content?.level || 2;
+        const titleText = section.content?.text || section.section_title || `Section ${index + 1}`;
+        htmlContent += `<h${headingLevel} class="section-title">${titleText}</h${headingLevel}>`;
+        break;
+      }
+        
+      case 'description':
+        if (section.content?.html) {
+          htmlContent += `<div class="description-content">${section.content.html}</div>`;
+        } else if (section.content?.text) {
+          htmlContent += `<div class="description-content"><p>${section.content.text}</p></div>`;
+        } else {
+          htmlContent += `<div class="description-content"><p>No description content available.</p></div>`;
+        }
+        break;
+        
+      case 'image':
+        if (section.image_url || section.content?.image_url) {
+          const imageUrl = section.image_url || section.content?.image_url;
+          const altText = section.content?.alt_text || 'Template Image';
+          const caption = section.content?.caption;
+          htmlContent += `<div class="image-content">`;
+          htmlContent += `<img src="${imageUrl}" alt="${altText}" style="max-width: 100%; height: auto;">`;
+          if (caption) {
+            htmlContent += `<p class="image-caption">${caption}</p>`;
+          }
+          htmlContent += `</div>`;
+        } else {
+          htmlContent += `<div class="image-content"><p>No image available.</p></div>`;
+        }
+        break;
+        
+      case 'table':
+        if (section.content?.headers && section.content?.rows) {
+          htmlContent += generateCustomTableHTML(section.content.headers, section.content.rows);
+        } else if (data.selectedItems && data.selectedItems.length > 0) {
+          // Fallback to pricing table if no custom table data
+          htmlContent += generatePricingTableHTML(data.selectedItems, data.categories);
+        } else {
+          htmlContent += `<div class="table-content"><p>No table data available.</p></div>`;
+        }
+        break;
+        
+      case 'bullet_list':
+        if (section.content?.items && section.content.items.length > 0) {
+          htmlContent += generateBulletListHTML(section.content.items);
+        } else {
+          htmlContent += `<div class="bullet-list-content"><p>No list items available.</p></div>`;
+        }
+        break;
+        
+      case 'callout': {
+        const calloutType = section.content?.callout_type || 'info';
+        const calloutText = section.content?.text || 'No callout content available.';
+        const calloutIcon = section.content?.icon || getCalloutIcon(calloutType);
+        htmlContent += `<div class="callout callout-${calloutType}">
+          <div class="callout-icon">${calloutIcon}</div>
+          <div class="callout-content">${calloutText}</div>
+        </div>`;
+        break;
+      }
+        
+      default:
+        // Fallback for unknown section types
+        if (section.content?.text) {
+          htmlContent += `<p>${section.content.text}</p>`;
+        } else if (section.content?.html) {
+          htmlContent += section.content.html;
+        } else {
+          htmlContent += `<p>No content available for this section.</p>`;
+        }
+        break;
+    }
+    
+    htmlContent += `
+        </div>
+    </div>`;
+  });
+
+  // Add summary section if we have pricing data
+  if (data.summary && (data.summary.oneTimeTotal > 0 || data.summary.monthlyTotal > 0 || data.summary.yearlyTotal > 0)) {
+    htmlContent += `
+    <div class="section">
+        <div class="section-title">Project Summary</div>
+        <div class="section-content">
+            <table class="pricing-table">
+                <tr>
+                    <td>One-time Total</td>
+                    <td>${formatPrice(data.summary.oneTimeTotal)}</td>
+                </tr>
+                <tr>
+                    <td>Monthly Total</td>
+                    <td>${formatPrice(data.summary.monthlyTotal)}</td>
+                </tr>
+                <tr>
+                    <td>Yearly Total</td>
+                    <td>${formatPrice(data.summary.yearlyTotal)}</td>
+                </tr>
+                <tr class="total-row">
+                    <td><strong>Total Project Cost</strong></td>
+                    <td><strong>${formatPrice(data.summary.totalProjectCost)}</strong></td>
+                </tr>
+            </table>
+        </div>
+    </div>`;
+  }
+
+  htmlContent += `
+    <div class="footer">
+        <p>Generated by Areeba Pricing Simulator ${systemVersion}</p>
+        <p>Template: ${templateName} | Generated: ${new Date().toLocaleString()}</p>
+    </div>
+</body>
+</html>`;
+
+  return htmlContent;
+}
+
+// Helper function to generate pricing table HTML
+function generatePricingTableHTML(selectedItems: SelectedItem[], categories: Category[]): string {
+  let html = '<table class="pricing-table"><thead><tr><th>Item</th><th>Quantity</th><th>Price</th><th>Total</th></tr></thead><tbody>';
+  
+  selectedItems.forEach(item => {
+    html += `<tr>
+      <td>${item.name}</td>
+      <td>${item.quantity}</td>
+      <td>${formatPrice(item.price)}</td>
+      <td>${formatPrice(item.price * item.quantity)}</td>
+    </tr>`;
+  });
+  
+  html += '</tbody></table>';
+  return html;
+}
+
+// Helper function to generate custom table HTML
+function generateCustomTableHTML(headers: string[], rows: any[]): string {
+  let html = '<table class="pricing-table"><thead><tr>';
+  headers.forEach(header => {
+    html += `<th>${header}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+  
+  rows.forEach(row => {
+    html += '<tr>';
+    if (Array.isArray(row)) {
+      row.forEach(cell => {
+        html += `<td>${cell}</td>`;
+      });
+    } else if (typeof row === 'object' && row.cells) {
+      row.cells.forEach((cell: any) => {
+        html += `<td>${cell}</td>`;
+      });
+    }
+    html += '</tr>';
+  });
+  
+  html += '</tbody></table>';
+  return html;
+}
+
+// Helper function to generate bullet list HTML
+function generateBulletListHTML(items: any[]): string {
+  let html = '<ul class="bullet-list">';
+  items.forEach(item => {
+    const text = typeof item === 'string' ? item : (item.text || item.content || '');
+    const subItems = item.subItems || item.children || [];
+    
+    html += `<li>${text}`;
+    if (subItems.length > 0) {
+      html += '<ul>';
+      subItems.forEach((subItem: any) => {
+        const subText = typeof subItem === 'string' ? subItem : (subItem.text || subItem.content || '');
+        html += `<li>${subText}</li>`;
+      });
+      html += '</ul>';
+    }
+    html += '</li>';
+  });
+  html += '</ul>';
+  return html;
+}
+
+// Helper function to get callout icon
+function getCalloutIcon(type: string): string {
+  const icons = {
+    info: 'ℹ️',
+    warning: '⚠️',
+    success: '✅',
+    error: '❌'
+  };
+  return icons[type as keyof typeof icons] || 'ℹ️';
+}
+
 // Helper function to ensure a legacy template exists for the simulator
 async function ensureLegacyTemplate(simulatorType: string): Promise<string> {
   try {
@@ -62,6 +418,7 @@ interface PDFData {
     yearlyTotal: number;
     totalProjectCost: number;
   };
+  customContent?: any; // Custom template content from PDF builder
 }
 
 export async function downloadPDF(data: PDFData) {
@@ -91,11 +448,22 @@ export async function downloadPDF(data: PDFData) {
       monthlyTotal: 0,
       yearlyTotal: 0,
       totalProjectCost: 0
-    }
+    },
+    customContent: data.customContent
   };
   
   // Create HTML content for the PDF
-  const htmlContent = generateHTMLReport(safeData, systemVersion);
+  let htmlContent: string;
+  
+  if (safeData.customContent) {
+    // Use custom template content from PDF builder
+    console.log('pdfHelpers: Using custom template content', safeData.customContent);
+    htmlContent = generateCustomHTMLReport(safeData.customContent, safeData, systemVersion);
+  } else {
+    // Use legacy HTML generation
+    console.log('pdfHelpers: Using legacy HTML generation - no custom content provided');
+    htmlContent = generateHTMLReport(safeData, systemVersion);
+  }
   
   // Save to database if we have the required data
   if (safeData.config?.clientName && safeData.config?.projectName && safeData.simulator?.id) {
@@ -104,11 +472,21 @@ export async function downloadPDF(data: PDFData) {
       // Import PdfBuilderService dynamically to avoid circular dependencies
       const { PdfBuilderService } = await import('../features/pdfBuilder/api/pdfBuilderService');
       
-      // First, ensure we have a legacy template for this simulator type
-      const legacyTemplateId = await ensureLegacyTemplate(safeData.simulator.id);
+      let templateId: string;
+      
+      if (safeData.customContent) {
+        // Use the active template ID from the custom content
+        console.log('pdfHelpers: Using active template for custom content');
+        const activeTemplate = await PdfBuilderService.getActiveTemplate(safeData.simulator.id);
+        templateId = activeTemplate?.id || await ensureLegacyTemplate(safeData.simulator.id);
+      } else {
+        // Use legacy template for backward compatibility
+        console.log('pdfHelpers: Using legacy template');
+        templateId = await ensureLegacyTemplate(safeData.simulator.id);
+      }
       
       await PdfBuilderService.createGeneratedPdf({
-        template_id: legacyTemplateId,
+        template_id: templateId,
         client_name: safeData.config.clientName,
         project_name: safeData.config.projectName,
         simulator_type: safeData.simulator.id,

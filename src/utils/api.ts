@@ -2,6 +2,7 @@
 // Maps to the schema defined in /config/database.ts
 
 import { PricingItem, Category, ScenarioData, ConfigurationDefinition, Tag } from '../types/pricing';
+import { supabase } from './supabase/client';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -12,12 +13,18 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const API_BASE_URL = `${supabaseUrl}/functions/v1/make-server-228aa219`;
 
-const getHeaders = () => ({
-  'Authorization': `Bearer ${supabaseAnonKey}`,
-  'Content-Type': 'application/json',
-  'Cache-Control': 'no-cache, no-store, must-revalidate',
-  'Pragma': 'no-cache'
-});
+const getHeaders = async () => {
+  // Get the user's JWT token from Supabase auth
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token || supabaseAnonKey;
+  
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache'
+  };
+};
 
 const createApiRequest = async (
   url: string,
@@ -37,10 +44,11 @@ const createApiRequest = async (
   }
 
   try {
+    const headers = await getHeaders();
     const response = await fetch(finalUrl, {
       ...options,
       signal: controller.signal,
-      headers: getHeaders(),
+      headers,
     });
     clearTimeout(timeoutId);
     return response;

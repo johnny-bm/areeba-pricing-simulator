@@ -709,34 +709,37 @@ export class PdfBuilderService {
         });
       }
       
-      // Try different query approaches
-      console.log('PdfBuilderService: Trying exact match query...');
-      const { data: exactMatch, error: exactError } = await supabase
-        .from('pdf_templates')
-        .select('*')
-        .eq('simulator_type', simulatorType)
-        .eq('is_active', true)
-        .single();
-
-      console.log('PdfBuilderService: Exact match result:', { exactMatch, exactError });
-
-      if (exactMatch) {
-        return exactMatch;
-      }
-
-      // Try without .single() to see if there are multiple matches
-      console.log('PdfBuilderService: Trying multiple matches query...');
-      const { data: multipleMatches, error: multipleError } = await supabase
+      // Try to find active template for the simulator type
+      console.log('PdfBuilderService: Trying to find active template...');
+      const { data: activeTemplates, error: queryError } = await supabase
         .from('pdf_templates')
         .select('*')
         .eq('simulator_type', simulatorType)
         .eq('is_active', true);
 
-      console.log('PdfBuilderService: Multiple matches result:', { multipleMatches, multipleError });
+      console.log('PdfBuilderService: Query result:', { activeTemplates, queryError });
 
-      if (multipleMatches && multipleMatches.length > 0) {
-        console.log('PdfBuilderService: Found multiple active templates, returning first one');
-        return multipleMatches[0];
+      if (queryError) {
+        console.error('PdfBuilderService: Query error:', queryError);
+        // Try case-insensitive search as fallback
+        console.log('PdfBuilderService: Trying case-insensitive search...');
+        const { data: caseInsensitive, error: caseError } = await supabase
+          .from('pdf_templates')
+          .select('*')
+          .ilike('simulator_type', simulatorType)
+          .eq('is_active', true);
+
+        console.log('PdfBuilderService: Case-insensitive result:', { caseInsensitive, caseError });
+
+        if (caseInsensitive && caseInsensitive.length > 0) {
+          return caseInsensitive[0];
+        }
+        return null;
+      }
+
+      if (activeTemplates && activeTemplates.length > 0) {
+        console.log('PdfBuilderService: Found active template, returning first one');
+        return activeTemplates[0];
       }
 
       // Try case-insensitive search

@@ -71,12 +71,14 @@ export function PdfGenerator({
 
   useEffect(() => {
     if (template) {
+      console.log('PdfGenerator: Template loaded:', template);
       setActiveTemplate(template);
     }
   }, [template]);
 
   useEffect(() => {
     if (sections) {
+      console.log('PdfGenerator: Template sections loaded:', sections);
       setTemplateSections(sections);
     }
   }, [sections]);
@@ -84,8 +86,12 @@ export function PdfGenerator({
   const handleGeneratePdf = async () => {
     try {
       setIsGenerating(true);
+      console.log('PdfGenerator: Starting PDF generation...');
 
       if (activeTemplate) {
+        console.log('PdfGenerator: Using active template:', activeTemplate.template_name);
+        console.log('PdfGenerator: Template sections count:', templateSections.length);
+        
         // Create the PDF content from template
         const pdfContent = await generatePdfFromTemplate({
           template: activeTemplate,
@@ -97,6 +103,8 @@ export function PdfGenerator({
           includePreliminary,
           options: generationOptions
         });
+
+        console.log('PdfGenerator: Generated PDF content:', pdfContent);
 
       // Use existing PDF download functionality
       await downloadPDF({
@@ -179,8 +187,12 @@ export function PdfGenerator({
     includePreliminary: boolean;
     options: PdfGenerationOptions;
   }) => {
-    // This function would generate the PDF content based on the template
-    // For now, we'll return a basic structure that can be enhanced
+    console.log('PdfGenerator: generatePdfFromTemplate called with:', {
+      template: template.template_name,
+      sectionsCount: sections.length,
+      clientName,
+      projectName
+    });
     
     const processedSections = sections.map(section => {
       return {
@@ -194,7 +206,7 @@ export function PdfGenerator({
       };
     });
 
-    return {
+    const result = {
       template: template.template_name,
       sections: processedSections,
       metadata: {
@@ -205,6 +217,9 @@ export function PdfGenerator({
         includePreliminary
       }
     };
+    
+    console.log('PdfGenerator: Generated PDF content:', result);
+    return result;
   };
 
   const processSectionContent = (content: any, variables: any) => {
@@ -240,7 +255,19 @@ export function PdfGenerator({
     );
   }
 
+  // Debug: Log template status
+  console.log('PdfGenerator: Template status:', {
+    template: template ? { id: template.id, name: template.template_name, active: template.is_active } : null,
+    templateLoading,
+    templateError,
+    sections: sections ? sections.length : 0,
+    sectionsLoading,
+    activeTemplate: activeTemplate ? { id: activeTemplate.id, name: activeTemplate.template_name } : null,
+    templateSections: templateSections ? templateSections.length : 0
+  });
+
   if (!activeTemplate) {
+    console.log('PdfGenerator: No active template found');
     return (
       <div className="text-center py-4">
         <p className="text-sm text-muted-foreground">

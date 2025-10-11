@@ -68,8 +68,19 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12 relative">
-            {/* User Profile Header */}
-            <div className="absolute top-0 right-0">
+            {/* User Profile Header and Admin Access */}
+            <div className="absolute top-0 right-0 flex items-center gap-3">
+              {onOpenAdmin && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onOpenAdmin}
+                  className="flex items-center gap-2"
+                >
+                  <Shield className="h-4 w-4" />
+                  Admin
+                </Button>
+              )}
               <UserProfileHeader onLogout={onLogout} />
             </div>
             
