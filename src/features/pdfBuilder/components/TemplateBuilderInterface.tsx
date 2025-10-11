@@ -156,7 +156,7 @@ export function TemplateBuilderInterface({
     const { type, content } = section;
     
     switch (type) {
-      case 'title':
+      case 'title': {
         const level = content?.level || 1;
         const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
         return (
@@ -164,6 +164,7 @@ export function TemplateBuilderInterface({
             {content?.text || 'Title'}
           </HeadingTag>
         );
+      }
       
       case 'description':
         return (
@@ -184,7 +185,7 @@ export function TemplateBuilderInterface({
           </div>
         );
       
-      case 'list':
+      case 'list': {
         const ListTag = content?.ordered ? 'ol' : 'ul';
         return (
           <ListTag className="ml-4 mb-2">
@@ -193,6 +194,7 @@ export function TemplateBuilderInterface({
             ))}
           </ListTag>
         );
+      }
       
       case 'table':
         return (

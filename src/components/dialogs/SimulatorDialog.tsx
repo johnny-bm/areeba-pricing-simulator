@@ -7,7 +7,7 @@ import { Textarea } from '../ui/textarea';
 import { Switch } from '../ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Badge } from '../ui/badge';
-import { Save, X, Trash2, Copy } from 'lucide-react';
+import { Save, X, Trash2, Copy, CreditCard } from 'lucide-react';
 import { Simulator, CreateSimulatorData, UpdateSimulatorData, SIMULATOR_ICONS } from '../../types/simulator';
 import { SIMULATOR_ICON_MAP_SMALL } from '../../utils/icons';
 
