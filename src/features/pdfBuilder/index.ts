@@ -3,6 +3,10 @@
 
 // Components
 export { PdfBuilderAdmin } from './components/PdfBuilderAdmin';
+export { PdfBuilderMain } from './components/PdfBuilderMain';
+export { SectionsPage } from './components/SectionsPage';
+export { TemplatesPage } from './components/TemplatesPage';
+export { ArchivedTemplatesPage } from './components/ArchivedTemplatesPage';
 export { SectionManager } from './components/SectionManager';
 export { TemplateBuilder } from './components/TemplateBuilder';
 export { VersionControl } from './components/VersionControl';

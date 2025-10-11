@@ -30,6 +30,14 @@ import {
   SidebarSeparator,
   SidebarTrigger
 } from './ui/sidebar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { ArrowLeft, LogOut, Settings, Package, Tags, History, CreditCard, Calculator, Zap, Users, Plus, ChevronLeft, ChevronRight, Edit, Copy, RefreshCw, Download, User, UserCheck, ChevronDown, ChevronRight as ChevronRightIcon, BarChart3, FileText, Building, Image } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Separator } from './ui/separator';
@@ -151,6 +159,7 @@ export function AdminInterface({
   const [simulators, setSimulators] = useState<Simulator[]>([]);
   const [simulatorsLoading, setSimulatorsLoading] = useState(false);
   const [expandedSimulators, setExpandedSimulators] = useState<Set<string>>(new Set());
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   
   // Find the actual simulator by slug
   const currentSimulator = currentSimulatorSlug ? simulators.find(s => s.urlSlug === currentSimulatorSlug)?.id : null;
@@ -341,9 +350,7 @@ export function AdminInterface({
       switch (currentSection) {
         case 'sections': return 'PDF Sections';
         case 'templates': return 'PDF Templates';
-        case 'versions': return 'PDF Versions';
-        case 'generated': return 'Generated PDFs';
-        case 'pdf-builder': return 'PDF Builder';
+        case 'archived': return 'Archived Templates';
         default: return 'PDF Builder';
       }
     }
@@ -466,12 +473,19 @@ export function AdminInterface({
                           <SidebarMenuSub>
                             <SidebarMenuSubItem>
                               <SidebarMenuSubButton
-                                onClick={() => navigate(getSimulatorRoute(simulator.id, 'dashboard'))}
+                                onClick={() => {
+                                  setNavigatingTo(`${simulator.id}-dashboard`);
+                                  navigate(getSimulatorRoute(simulator.id, 'dashboard'));
+                                }}
                                 isActive={currentSection === 'dashboard' && isCurrentSimulator}
                                 size="sm"
+                                disabled={navigatingTo === `${simulator.id}-dashboard`}
                               >
                                 <BarChart3 className="h-3.5 w-3.5" />
                                 <span>Dashboard</span>
+                                {navigatingTo === `${simulator.id}-dashboard` && (
+                                  <div className="animate-spin rounded-full h-3 w-3 border-b border-primary ml-auto"></div>
+                                )}
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                             
@@ -636,25 +650,16 @@ export function AdminInterface({
                         
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
-                            onClick={() => navigate('/admin/pdf-builder/versions')}
-                            isActive={currentSection === 'versions' && currentSimulatorSlug === 'pdf-builder'}
+                            onClick={() => navigate('/admin/pdf-builder/archived')}
+                            isActive={currentSection === 'archived' && currentSimulatorSlug === 'pdf-builder'}
                             size="sm"
                           >
                             <History className="h-3.5 w-3.5" />
-                            <span>Versions</span>
+                            <span>Archived</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                         
-                        <SidebarMenuSubItem>
-                          <SidebarMenuSubButton
-                            onClick={() => navigate('/admin/pdf-builder/generated')}
-                            isActive={currentSection === 'generated' && currentSimulatorSlug === 'pdf-builder'}
-                            size="sm"
-                          >
-                            <Settings className="h-3.5 w-3.5" />
-                            <span>Generated PDFs</span>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
+                        
                       </SidebarMenuSub>
                     )}
                   </SidebarMenuItem>
@@ -709,15 +714,119 @@ export function AdminInterface({
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
-            <UserProfileDropdown 
-              user={{
-                email: JSON.parse(localStorage.getItem('user') || '{}').email,
-                first_name: JSON.parse(localStorage.getItem('user') || '{}').first_name,
-                last_name: JSON.parse(localStorage.getItem('user') || '{}').last_name,
-                role: currentUserRole
-              }} 
-              onLogout={onLogout} 
-            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="h-8 rounded-md px-3 text-xs gap-2"
+                >
+                  <Avatar className="h-6 w-6">
+                    <AvatarFallback 
+                      className="text-xs font-medium bg-cyan-500 text-white"
+                    >
+                      OA
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="hidden sm:inline">Owner areeba</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">Owner areeba</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      owner@areeba.com
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      Owner
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem disabled className="opacity-50">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                  <span className="ml-auto text-xs text-muted-foreground">Coming soon</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled className="opacity-50">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                  <span className="ml-auto text-xs text-muted-foreground">Coming soon</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="p-0">
+                  <div className="flex items-center gap-1 p-1 bg-muted rounded-md w-full">
+                    <Button
+                      variant={localStorage.getItem('theme') === 'light' ? 'default' : 'ghost'}
+                      size="sm"
+                      className="flex-1 h-6 px-2 text-xs"
+                      onClick={() => {
+                        // Set light theme
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                        // Force re-render
+                        window.location.reload();
+                      }}
+                    >
+                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="m4.93 4.93 1.41 1.41"></path>
+                        <path d="m17.66 17.66 1.41 1.41"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="m6.34 17.66-1.41 1.41"></path>
+                        <path d="m19.07 4.93-1.41 1.41"></path>
+                      </svg>
+                    </Button>
+                    <Button
+                      variant={localStorage.getItem('theme') === 'dark' ? 'default' : 'ghost'}
+                      size="sm"
+                      className="flex-1 h-6 px-2 text-xs"
+                      onClick={() => {
+                        // Set dark theme
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                        // Force re-render
+                        window.location.reload();
+                      }}
+                    >
+                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                      </svg>
+                    </Button>
+                    <Button
+                      variant={!localStorage.getItem('theme') ? 'default' : 'ghost'}
+                      size="sm"
+                      className="flex-1 h-6 px-2 text-xs"
+                      onClick={() => {
+                        // Set system theme
+                        localStorage.removeItem('theme');
+                        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                          document.documentElement.classList.add('dark');
+                        } else {
+                          document.documentElement.classList.remove('dark');
+                        }
+                        // Force re-render
+                        window.location.reload();
+                      }}
+                    >
+                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                      </svg>
+                    </Button>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onLogout} className="text-red-600 focus:text-red-600">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex-1">

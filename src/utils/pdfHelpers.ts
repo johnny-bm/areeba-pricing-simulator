@@ -3,6 +3,44 @@ import { formatPrice } from './formatters';
 import { calculateTieredPrice } from './tieredPricing';
 import { VersionService } from './versionService';
 
+// Helper function to ensure a legacy template exists for the simulator
+async function ensureLegacyTemplate(simulatorType: string): Promise<string> {
+  try {
+    // Import PdfBuilderService dynamically to avoid circular dependencies
+    const { PdfBuilderService } = await import('../features/pdfBuilder/api/pdfBuilderService');
+    
+    // Try to find existing legacy template
+    const templates = await PdfBuilderService.getTemplates({ 
+      simulator_type: simulatorType,
+      search: 'Legacy Template'
+    });
+    
+    const legacyTemplate = templates.templates.find(t => 
+      t.template_name === 'Legacy Template' && t.simulator_type === simulatorType
+    );
+    
+    if (legacyTemplate) {
+      console.log('pdfHelpers: Found existing legacy template:', legacyTemplate.id);
+      return legacyTemplate.id;
+    }
+    
+    // Create a new legacy template
+    console.log('pdfHelpers: Creating new legacy template for simulator:', simulatorType);
+    const newTemplate = await PdfBuilderService.createTemplate({
+      template_name: 'Legacy Template',
+      simulator_type: simulatorType,
+      is_active: true
+    });
+    
+    console.log('pdfHelpers: Created legacy template:', newTemplate.id);
+    return newTemplate.id;
+  } catch (error) {
+    console.error('pdfHelpers: Failed to ensure legacy template:', error);
+    // Fallback to a hardcoded UUID that should exist
+    return '00000000-0000-0000-0000-000000000000';
+  }
+}
+
 interface PDFData {
   config: DynamicClientConfig;
   legacyConfig?: ClientConfig; // For backward compatibility
@@ -27,8 +65,15 @@ interface PDFData {
 }
 
 export async function downloadPDF(data: PDFData) {
+  console.log('pdfHelpers: Starting PDF generation...', data);
+  
   // Get current system version
-  const systemVersion = await VersionService.getCurrentVersion();
+  let systemVersion = 'v2.2.0'; // fallback
+  try {
+    systemVersion = await VersionService.getCurrentVersion();
+  } catch (error) {
+    console.warn('Could not fetch system version, using fallback:', error);
+  }
   
   // Validate input data and provide fallbacks
   const safeData: PDFData = {
@@ -51,6 +96,44 @@ export async function downloadPDF(data: PDFData) {
   
   // Create HTML content for the PDF
   const htmlContent = generateHTMLReport(safeData, systemVersion);
+  
+  // Save to database if we have the required data
+  if (safeData.config?.clientName && safeData.config?.projectName && safeData.simulator?.id) {
+    console.log('pdfHelpers: Attempting to save PDF to database...');
+    try {
+      // Import PdfBuilderService dynamically to avoid circular dependencies
+      const { PdfBuilderService } = await import('../features/pdfBuilder/api/pdfBuilderService');
+      
+      // First, ensure we have a legacy template for this simulator type
+      const legacyTemplateId = await ensureLegacyTemplate(safeData.simulator.id);
+      
+      await PdfBuilderService.createGeneratedPdf({
+        template_id: legacyTemplateId,
+        client_name: safeData.config.clientName,
+        project_name: safeData.config.projectName,
+        simulator_type: safeData.simulator.id,
+        pricing_data: {
+          selectedItems: safeData.selectedItems,
+          categories: safeData.categories,
+          globalDiscount: safeData.globalDiscount,
+          globalDiscountType: safeData.globalDiscountType,
+          globalDiscountApplication: safeData.globalDiscountApplication,
+          summary: safeData.summary,
+          config: safeData.config
+        }
+      });
+      console.log('pdfHelpers: Successfully saved PDF to database');
+    } catch (error) {
+      console.error('pdfHelpers: Failed to save PDF to database:', error);
+      // Don't throw - we still want the PDF to be generated
+    }
+  } else {
+    console.log('pdfHelpers: Skipping database save - missing required data:', {
+      clientName: safeData.config?.clientName,
+      projectName: safeData.config?.projectName,
+      simulatorId: safeData.simulator?.id
+    });
+  }
   
   // Create a new window/tab and print it
   const printWindow = window.open('', '_blank');

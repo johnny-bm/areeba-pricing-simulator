@@ -17,10 +17,8 @@ import { ConnectionDiagnostics } from './ConnectionDiagnostics';
 import { UserProfileHeader } from './UserProfileHeader';
 import { GuestContactFormModal } from './GuestContactFormModal';
 import { ClientConfig, SelectedItem, PricingItem, Category, DynamicClientConfig } from '../types/pricing';
-import { downloadPDF } from '../utils/pdfHelpers';
 import { api } from '../utils/api';
 import { SimulatorApi } from '../utils/simulatorApi';
-import { EnhancedPdfButton } from '../features/pdfBuilder';
 import { getConfigBasedQuantity, getEffectiveUnitPrice, calculateTieredPrice } from '../utils/tieredPricing';
 import { isOneTimeUnit } from '../utils/unitClassification';
 import { applyAutoAddLogic, removeAutoAddedServices } from '../utils/autoAddLogic';
@@ -607,33 +605,14 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
           open={showSummaryDialog}
           onOpenChange={() => setShowSummaryDialog(false)}
           scenarioId="current-scenario"
+          simulatorType={selectedSimulator?.id || simulatorType || 'unknown'}
           selectedItems={selectedItems}
           clientConfig={clientConfig}
           categories={categories}
+          globalDiscount={globalDiscount}
+          globalDiscountType={globalDiscountType}
+          globalDiscountApplication={globalDiscountApplication}
           summary={calculateSummary()}
-          onDownloadPDF={async () => {
-            try {
-              await downloadPDF({
-                config: clientConfig,
-                selectedItems: selectedItems,
-                categories: categories,
-                globalDiscount: globalDiscount,
-                globalDiscountType: globalDiscountType,
-                globalDiscountApplication: globalDiscountApplication,
-                simulator: selectedSimulator ? {
-                  id: selectedSimulator.id,
-                  name: selectedSimulator.name,
-                  description: selectedSimulator.description,
-                  urlSlug: selectedSimulator.urlSlug
-                } : undefined,
-                summary: calculateSummary()
-              });
-              toast.success('PDF downloaded successfully!');
-            } catch (error) {
-              console.error('PDF download failed:', error);
-              toast.error('Failed to download PDF');
-            }
-          }}
         />
       )}
 

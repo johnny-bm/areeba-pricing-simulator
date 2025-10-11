@@ -34,15 +34,56 @@ export class AuthService {
       throw new Error('Session setup failed. Please try again.');
     }
 
-    // Step 4: Fetch user profile
-    const { data: profile, error: profileError } = await supabase
-      .from(TABLES.USER_PROFILES)
-      .select('*')
-      .eq('id', authData.user.id)
-      .single();
+    // Step 4: Fetch user profile with fallback
+    let profile;
+    let profileError;
+    
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.USER_PROFILES)
+        .select('*')
+        .eq('id', authData.user.id)
+        .single();
+      
+      profile = data;
+      profileError = error;
+    } catch (error) {
+      console.error('Profile fetch error:', error);
+      profileError = error;
+    }
 
-    if (profileError) {
-      throw new Error('Failed to load user profile. Please try again.');
+    // If profile doesn't exist, create one automatically
+    if (profileError || !profile) {
+      console.log('Profile not found, creating one automatically...');
+      
+      const newProfile = {
+        id: authData.user.id,
+        email: authData.user.email || '',
+        first_name: authData.user.user_metadata?.first_name || '',
+        last_name: authData.user.user_metadata?.last_name || '',
+        role: 'member',
+        is_active: true
+      };
+
+      try {
+        const { data: createdProfile, error: createError } = await supabase
+          .from(TABLES.USER_PROFILES)
+          .insert(newProfile)
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Failed to create profile:', createError);
+          // Use the new profile data as fallback
+          profile = newProfile;
+        } else {
+          profile = createdProfile;
+        }
+      } catch (createError) {
+        console.error('Profile creation failed:', createError);
+        // Use the new profile data as fallback
+        profile = newProfile;
+      }
     }
 
     return profile;
@@ -153,14 +194,55 @@ export class AuthService {
       return null;
     }
 
-    const { data: profile, error } = await supabase
-      .from(TABLES.USER_PROFILES)
-      .select('*')
-      .eq('id', session.user.id)
-      .single();
+    let profile;
+    let error;
+    
+    try {
+      const { data, error: profileError } = await supabase
+        .from(TABLES.USER_PROFILES)
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+      
+      profile = data;
+      error = profileError;
+    } catch (err) {
+      console.error('Profile fetch error:', err);
+      error = err;
+    }
 
+    // If profile doesn't exist, create one automatically
     if (error || !profile) {
-      return null;
+      console.log('Profile not found, creating one automatically...');
+      
+      const newProfile = {
+        id: session.user.id,
+        email: session.user.email || '',
+        first_name: session.user.user_metadata?.first_name || '',
+        last_name: session.user.user_metadata?.last_name || '',
+        role: 'member',
+        is_active: true
+      };
+
+      try {
+        const { data: createdProfile, error: createError } = await supabase
+          .from(TABLES.USER_PROFILES)
+          .insert(newProfile)
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Failed to create profile:', createError);
+          // Use the new profile data as fallback
+          profile = newProfile;
+        } else {
+          profile = createdProfile;
+        }
+      } catch (createError) {
+        console.error('Profile creation failed:', createError);
+        // Use the new profile data as fallback
+        profile = newProfile;
+      }
     }
 
     return profile;

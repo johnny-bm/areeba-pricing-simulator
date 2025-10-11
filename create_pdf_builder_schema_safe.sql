@@ -37,7 +37,9 @@ CREATE TABLE IF NOT EXISTS pdf_templates (
   template_name TEXT NOT NULL,
   simulator_type TEXT NOT NULL,
   is_active BOOLEAN DEFAULT FALSE,
+  is_archived BOOLEAN DEFAULT FALSE,
   version_number INTEGER NOT NULL DEFAULT 1,
+  archived_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL
@@ -286,12 +288,13 @@ END $$;
 CREATE OR REPLACE FUNCTION ensure_single_active_template()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- If setting a template as active, deactivate all others for the same simulator type
+  -- If setting a template as active, archive the current active template for the same simulator type
   IF NEW.is_active = TRUE THEN
     UPDATE pdf_templates 
-    SET is_active = FALSE 
+    SET is_active = FALSE, is_archived = TRUE, archived_at = NOW(), updated_at = NOW()
     WHERE simulator_type = NEW.simulator_type 
-    AND id != NEW.id;
+    AND id != NEW.id
+    AND is_active = TRUE;
   END IF;
   
   RETURN NEW;
@@ -409,6 +412,38 @@ COMMENT ON TABLE generated_pdfs IS 'History of generated PDFs with metadata';
 COMMENT ON COLUMN content_sections.section_type IS 'Type of content section: title, description, image, table, bullet_list, callout';
 COMMENT ON COLUMN content_sections.content IS 'Flexible JSON structure based on section_type';
 COMMENT ON COLUMN pdf_templates.is_active IS 'Flag indicating the current active version for the simulator type';
+COMMENT ON COLUMN pdf_templates.is_archived IS 'Flag indicating if template is archived (replaced by newer version)';
+COMMENT ON COLUMN pdf_templates.archived_at IS 'Timestamp when template was archived';
 COMMENT ON COLUMN pdf_templates.version_number IS 'Auto-incremented version number for template versions';
 COMMENT ON COLUMN template_sections.position IS 'Ordering position of section within template';
 COMMENT ON COLUMN generated_pdfs.pricing_data IS 'Captured pricing data from simulator at generation time';
+
+-- Function to restore an archived template as active
+CREATE OR REPLACE FUNCTION restore_archived_template(template_id UUID)
+RETURNS BOOLEAN AS $$
+DECLARE
+  template_record RECORD;
+BEGIN
+  -- Get the template to restore
+  SELECT * INTO template_record 
+  FROM pdf_templates 
+  WHERE id = template_id AND is_archived = TRUE;
+  
+  IF NOT FOUND THEN
+    RETURN FALSE;
+  END IF;
+  
+  -- Archive current active template for this simulator type
+  UPDATE pdf_templates 
+  SET is_active = FALSE, is_archived = TRUE, archived_at = NOW(), updated_at = NOW()
+  WHERE simulator_type = template_record.simulator_type 
+    AND is_active = TRUE;
+  
+  -- Restore the archived template
+  UPDATE pdf_templates 
+  SET is_active = TRUE, is_archived = FALSE, archived_at = NULL, updated_at = NOW()
+  WHERE id = template_id;
+  
+  RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

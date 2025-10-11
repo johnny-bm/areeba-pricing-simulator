@@ -611,3 +611,44 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+/* Remove drop shadows from all elements except dialogs */
+@layer utilities {
+  /* Remove shadows from cards, buttons, and other components */
+  .shadow,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl,
+  .shadow-inner,
+  .shadow-none {
+    box-shadow: none !important;
+  }
+  
+  /* Remove hover shadows */
+  .hover\:shadow-lg:hover,
+  .hover\:shadow-md:hover,
+  .hover\:shadow-sm:hover {
+    box-shadow: none !important;
+  }
+  
+  /* Keep shadows only for dialogs */
+  [role="dialog"],
+  [data-radix-dialog-content],
+  .dialog-content,
+  .modal-content {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  }
+}
+
+/* Fix loading text visibility */
+.loading-text {
+  color: hsl(var(--foreground)) !important;
+  font-weight: 500;
+}
+
+.loading-subtext {
+  color: hsl(var(--muted-foreground)) !important;
+  font-size: 0.75rem;
+}

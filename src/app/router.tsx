@@ -103,7 +103,7 @@ export function AppRouter() {
         element={
           isAuthenticated ? (
             <SimulatorLanding 
-              onSelectSimulator={(simulatorSlug: string) => navigate(`${ROUTES.SIMULATOR}/${simulatorSlug}`)} 
+              onSelectSimulator={(simulatorSlug: string) => navigate(`/admin/${simulatorSlug}/dashboard`)} 
               onLogout={() => navigate(ROUTES.LOGIN)} 
             />
           ) : (

@@ -8,7 +8,7 @@ function App() {
     <ErrorBoundary>
       <AppProviders>
         <AppRouter />
-        <Toaster />
+        <Toaster toastOptions={{ style: { zIndex: 9999 } }} />
       </AppProviders>
     </ErrorBoundary>
   );

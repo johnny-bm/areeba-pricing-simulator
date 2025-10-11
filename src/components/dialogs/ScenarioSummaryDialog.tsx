@@ -6,11 +6,14 @@ import { FileText, Download, CheckCircle2 } from "lucide-react";
 import { formatPrice } from "../../utils/formatters";
 import { DynamicClientConfig, SelectedItem, Category } from "../../types/pricing";
 import { isOneTimeUnit } from "../../utils/unitClassification";
+import { PdfGenerator } from "../../features/pdfBuilder/components/PdfGenerator";
+import { useActiveTemplate } from "../../features/pdfBuilder/hooks/usePdfBuilder";
 
 interface ScenarioSummaryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   scenarioId: string;
+  simulatorType: string;
   clientConfig: DynamicClientConfig;
   summary: {
     oneTimeTotal: number;
@@ -20,19 +23,27 @@ interface ScenarioSummaryDialogProps {
   };
   selectedItems: SelectedItem[];
   categories: Category[];
-  onDownloadPDF: () => void;
+  globalDiscount?: number;
+  globalDiscountType?: 'percentage' | 'fixed';
+  globalDiscountApplication?: 'none' | 'both' | 'monthly' | 'onetime';
 }
 
 export function ScenarioSummaryDialog({
   open,
   onOpenChange,
   scenarioId,
+  simulatorType,
   clientConfig,
   summary,
   selectedItems,
   categories,
-  onDownloadPDF
+  globalDiscount = 0,
+  globalDiscountType = 'percentage',
+  globalDiscountApplication = 'none'
 }: ScenarioSummaryDialogProps) {
+  // Get active template for this simulator
+  const { template, loading: templateLoading } = useActiveTemplate(simulatorType);
+  
   const oneTimeItems = selectedItems.filter(item => 
     item.item.category === 'setup' || isOneTimeUnit(item.item.unit)
   );
@@ -68,14 +79,6 @@ export function ScenarioSummaryDialog({
           onClick: () => onOpenChange(false)
         }
       ]}
-      primaryAction={{
-        label: 'Download PDF',
-        onClick: () => {
-          onDownloadPDF();
-          onOpenChange(false);
-        },
-        icon: <Download className="h-4 w-4" />
-      }}
     >
 
         <div className="space-y-4">
@@ -171,22 +174,69 @@ export function ScenarioSummaryDialog({
             </Card>
           </div>
 
-          {/* Download Options */}
-          <Card className="border-primary/20 bg-primary/5">
+          {/* PDF Generation */}
+          <Card>
             <CardContent className="pt-4">
-              <div className="flex items-start gap-3">
-                <FileText className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <h4 className="font-medium mb-1">Ready to Download</h4>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Your scenario has been saved and is now available as a PDF report. 
-                    The report will be generated with the latest data from the database.
-                  </p>
-                  <p className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-                    💡 <strong>Tip:</strong> After downloading the HTML file, open it in your browser and use <strong>Print to PDF</strong> (Ctrl+P or Cmd+P) to save it as a PDF document.
+              <div className="flex items-center gap-3 mb-4">
+                <FileText className="h-5 w-5 text-primary" />
+                <div>
+                  <h4 className="font-medium">Generate PDF</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {template ? (
+                      <>Using template: <strong>{template.template_name}</strong></>
+                    ) : templateLoading ? (
+                      'Loading template information...'
+                    ) : (
+                      'No template configured - using default PDF format'
+                    )}
                   </p>
                 </div>
               </div>
+              
+              {template ? (
+                <PdfGenerator
+                  simulatorType={simulatorType}
+                  clientName={clientConfig.clientName}
+                  projectName={clientConfig.projectName}
+                  pricingData={{
+                    selected_items: selectedItems,
+                    categories: categories,
+                    global_discount: globalDiscount,
+                    global_discount_type: globalDiscountType,
+                    global_discount_application: globalDiscountApplication,
+                    summary: summary,
+                    config: clientConfig
+                  }}
+                  onPdfGenerated={(url) => {
+                    console.log('PDF generated successfully:', url);
+                    onOpenChange(false);
+                  }}
+                  className="w-full"
+                />
+              ) : !templateLoading ? (
+                <div className="text-center py-8">
+                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No PDF Template Configured</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    There's no PDF template configured for this simulator. Create a template in the admin panel to generate professional PDFs.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      onOpenChange(false);
+                      // Navigate to admin panel
+                      window.open('/admin/pdf-builder/templates', '_blank');
+                    }}
+                  >
+                    Create PDF Template
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-sm text-muted-foreground">Loading template information...</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

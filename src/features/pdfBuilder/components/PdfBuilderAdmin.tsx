@@ -4,8 +4,9 @@
 import React, { useState } from 'react';
 import { PdfBuilderAdminProps, UserPermissions } from '../../../types/pdfBuilder';
 import { useUserPermissions } from '../hooks/usePdfBuilder';
-import { SectionManager } from './SectionManager';
-import { TemplateBuilder } from './TemplateBuilder';
+import { SectionsPage } from './SectionsPage';
+import { TemplatesPage } from './TemplatesPage';
+import { ArchivedTemplatesPage } from './ArchivedTemplatesPage';
 import { VersionControl } from './VersionControl';
 import { GeneratedPdfsManager } from './GeneratedPdfsManager';
 import { PdfBuilderErrorBoundary } from './PdfBuilderErrorBoundary';
@@ -25,15 +26,17 @@ export function PdfBuilderAdmin({
   const renderContent = () => {
     switch (section) {
       case 'sections':
-        return <SectionManager permissions={permissions} />;
+        return <SectionsPage permissions={permissions} />;
       case 'templates':
-        return <TemplateBuilder permissions={permissions} />;
+        return <TemplatesPage permissions={permissions} />;
+      case 'archived':
+        return <ArchivedTemplatesPage />;
       case 'versions':
         return <VersionControl permissions={permissions} />;
       case 'generated':
         return <GeneratedPdfsManager permissions={permissions} />;
       default:
-        return <SectionManager permissions={permissions} />;
+        return <SectionsPage permissions={permissions} />;
     }
   };
 

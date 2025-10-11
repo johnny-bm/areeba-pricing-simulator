@@ -82,25 +82,21 @@ export function PdfGenerator({
   }, [sections]);
 
   const handleGeneratePdf = async () => {
-    if (!activeTemplate) {
-      toast.error('No active template found for this simulator type');
-      return;
-    }
-
     try {
       setIsGenerating(true);
 
-      // Create the PDF content from template
-      const pdfContent = await generatePdfFromTemplate({
-        template: activeTemplate,
-        sections: templateSections,
-        clientName,
-        projectName,
-        simulatorType,
-        pricingData,
-        includePreliminary,
-        options: generationOptions
-      });
+      if (activeTemplate) {
+        // Create the PDF content from template
+        const pdfContent = await generatePdfFromTemplate({
+          template: activeTemplate,
+          sections: templateSections,
+          clientName,
+          projectName,
+          simulatorType,
+          pricingData,
+          includePreliminary,
+          options: generationOptions
+        });
 
       // Use existing PDF download functionality
       await downloadPDF({
@@ -131,13 +127,26 @@ export function PdfGenerator({
       });
 
       // Record the generated PDF in the database
-      await PdfBuilderService.createGeneratedPdf({
-        template_id: activeTemplate.id,
-        client_name: clientName,
-        project_name: projectName,
-        simulator_type: simulatorType,
-        pricing_data: pricingData
-      });
+      console.log('PdfGenerator: Attempting to save generated PDF to database...');
+      try {
+        const savedPdf = await PdfBuilderService.createGeneratedPdf({
+          template_id: activeTemplate.id,
+          client_name: clientName,
+          project_name: projectName,
+          simulator_type: simulatorType,
+          pricing_data: pricingData
+        });
+        console.log('PdfGenerator: Successfully saved generated PDF:', savedPdf);
+      } catch (error) {
+        console.error('PdfGenerator: Failed to save generated PDF to database:', error);
+        // Don't throw here - we still want the PDF to be generated even if saving fails
+        toast.error('PDF generated but failed to save to history');
+      }
+      } else {
+        // No template found - show error
+        toast.error('No PDF template configured for this simulator. Please create a template in the admin panel.');
+        return;
+      }
 
       toast.success('PDF generated successfully!');
       setShowDialog(false);

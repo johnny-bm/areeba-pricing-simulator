@@ -174,8 +174,23 @@ export class PdfBuilderService {
       throw new Error(`Failed to fetch templates: ${error.message}`);
     }
 
+    // Get section counts for each template separately
+    const processedTemplates = await Promise.all(
+      (data || []).map(async (template) => {
+        const { count: sectionCount } = await supabase
+          .from('template_sections')
+          .select('*', { count: 'exact', head: true })
+          .eq('template_id', template.id);
+
+        return {
+          ...template,
+          section_count: sectionCount || 0
+        };
+      })
+    );
+
     return {
-      templates: data || [],
+      templates: processedTemplates,
       total: count || 0,
       page,
       limit
@@ -183,7 +198,8 @@ export class PdfBuilderService {
   }
 
   static async getTemplate(id: string): Promise<PdfTemplate> {
-    const { data, error } = await supabase
+    // First get the template with sections data
+    const { data: templateData, error: templateError } = await supabase
       .from('pdf_templates')
       .select(`
         *,
@@ -191,6 +207,8 @@ export class PdfBuilderService {
           id,
           section_id,
           position,
+          section_type,
+          predefined_section,
           content_sections (
             id,
             title,
@@ -203,11 +221,27 @@ export class PdfBuilderService {
       .eq('id', id)
       .single();
 
-    if (error) {
-      throw new Error(`Failed to fetch template: ${error.message}`);
+    if (templateError) {
+      throw new Error(`Failed to fetch template: ${templateError.message}`);
     }
 
-    return data;
+    // Then get the section count separately
+    const { count: sectionCount, error: countError } = await supabase
+      .from('template_sections')
+      .select('*', { count: 'exact', head: true })
+      .eq('template_id', id);
+
+    if (countError) {
+      console.warn('Failed to fetch section count:', countError);
+    }
+
+    // Process the data to include section count
+    const processedTemplate = {
+      ...templateData,
+      section_count: sectionCount || 0
+    };
+
+    return processedTemplate;
   }
 
   static async createTemplate(template: CreateTemplateForm): Promise<PdfTemplate> {
@@ -291,13 +325,48 @@ export class PdfBuilderService {
   }
 
   static async deleteTemplate(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('pdf_templates')
-      .delete()
-      .eq('id', id);
+    try {
+      console.log('PdfBuilderService: Deleting template:', id);
+      
+      // First, delete any generated_pdfs records that reference this template
+      // since template_id is NOT NULL, we can't set it to null
+      const { error: deleteGeneratedPdfsError } = await supabase
+        .from('generated_pdfs')
+        .delete()
+        .eq('template_id', id);
 
-    if (error) {
-      throw new Error(`Failed to delete template: ${error.message}`);
+      if (deleteGeneratedPdfsError) {
+        console.error('PdfBuilderService: Failed to delete generated_pdfs:', deleteGeneratedPdfsError);
+        // Continue with deletion even if this fails
+      } else {
+        console.log('PdfBuilderService: Deleted generated_pdfs records for template:', id);
+      }
+
+      // Delete template sections first (if they exist)
+      const { error: sectionsError } = await supabase
+        .from('template_sections')
+        .delete()
+        .eq('template_id', id);
+
+      if (sectionsError) {
+        console.error('PdfBuilderService: Failed to delete template sections:', sectionsError);
+        // Continue with template deletion even if this fails
+      }
+
+      // Now delete the template
+      const { error } = await supabase
+        .from('pdf_templates')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw new Error(`Failed to delete template: ${error.message}`);
+      }
+
+      console.log('PdfBuilderService: Template deleted successfully');
+    } catch (error) {
+      console.error('PdfBuilderService: Template deletion failed:', error);
+      throw error;
     }
   }
 
@@ -352,8 +421,99 @@ export class PdfBuilderService {
     return data || [];
   }
 
+  // Archived Templates API
+  static async getArchivedTemplates(): Promise<any[]> {
+    console.log('PdfBuilderService: Fetching archived templates...');
+    
+    // First, let's check if the is_archived column exists by trying a simple query
+    try {
+      const { data: allTemplates, error: allError } = await supabase
+        .from('pdf_templates')
+        .select(`
+          id,
+          template_name,
+          simulator_type,
+          version_number,
+          archived_at,
+          created_by,
+          is_archived,
+          is_active
+        `)
+        .order('created_at', { ascending: false });
+
+      console.log('PdfBuilderService: All templates query result:', { data: allTemplates, error: allError });
+      
+      if (allError) {
+        console.error('PdfBuilderService: Error fetching all templates:', allError);
+        // If the is_archived column doesn't exist, return empty array
+        if (allError.message.includes('is_archived') || allError.message.includes('column')) {
+          console.log('PdfBuilderService: is_archived column does not exist. Database migration may be needed.');
+          return [];
+        }
+        throw new Error(`Failed to fetch templates: ${allError.message}`);
+      }
+
+      // Filter for archived templates
+      const archivedTemplates = allTemplates?.filter(template => template.is_archived === true) || [];
+      console.log('PdfBuilderService: Found', archivedTemplates.length, 'archived templates out of', allTemplates?.length || 0, 'total templates');
+
+      // Get section counts for each template separately
+      const processedTemplates = await Promise.all(
+        archivedTemplates.map(async (template) => {
+          const { count: sectionCount } = await supabase
+            .from('template_sections')
+            .select('*', { count: 'exact', head: true })
+            .eq('template_id', template.id);
+
+          return {
+            ...template,
+            section_count: sectionCount || 0
+          };
+        })
+      );
+
+      console.log('PdfBuilderService: Processed templates:', processedTemplates);
+      return processedTemplates;
+      
+    } catch (error) {
+      console.error('PdfBuilderService: Error in getArchivedTemplates:', error);
+      throw error;
+    }
+  }
+
+  static async restoreArchivedTemplate(templateId: string): Promise<boolean> {
+    const { data, error } = await supabase.rpc('restore_archived_template', {
+      template_id: templateId
+    });
+
+    if (error) {
+      throw new Error(`Failed to restore archived template: ${error.message}`);
+    }
+
+    return data === true;
+  }
+
   // Generated PDFs API
   static async getGeneratedPdfs(filters: GeneratedPdfFilters = {}): Promise<GeneratedPdfListResponse> {
+    console.log('PdfBuilderService: Fetching generated PDFs with filters:', filters);
+    
+    // First, let's test if the table exists by doing a simple count query
+    try {
+      const { count, error: countError } = await supabase
+        .from('generated_pdfs')
+        .select('*', { count: 'exact', head: true });
+      
+      console.log('PdfBuilderService: Table exists check:', { count, countError });
+      
+      if (countError) {
+        console.error('PdfBuilderService: Table does not exist or has permission issues:', countError);
+        throw new Error(`Database table 'generated_pdfs' does not exist or is not accessible: ${countError.message}`);
+      }
+    } catch (error) {
+      console.error('PdfBuilderService: Error checking table existence:', error);
+      throw error;
+    }
+    
     const { 
       template_id, 
       simulator_type, 
@@ -407,9 +567,14 @@ export class PdfBuilderService {
     const { data, error, count } = await query
       .range(from, to);
 
+    console.log('PdfBuilderService: Generated PDFs query result:', { data, error, count });
+
     if (error) {
+      console.error('PdfBuilderService: Database error fetching generated PDFs:', error);
       throw new Error(`Failed to fetch generated PDFs: ${error.message}`);
     }
+
+    console.log('PdfBuilderService: Found', data?.length || 0, 'generated PDFs out of', count || 0, 'total');
 
     return {
       pdfs: data || [],
@@ -427,16 +592,22 @@ export class PdfBuilderService {
     pricing_data: any;
     pdf_url?: string;
   }): Promise<GeneratedPdf> {
+    console.log('PdfBuilderService: Creating generated PDF record:', pdfData);
+    
     const { data, error } = await supabase
       .from('generated_pdfs')
       .insert(pdfData)
       .select()
       .single();
 
+    console.log('PdfBuilderService: Create generated PDF result:', { data, error });
+
     if (error) {
+      console.error('PdfBuilderService: Failed to create generated PDF record:', error);
       throw new Error(`Failed to create generated PDF record: ${error.message}`);
     }
 
+    console.log('PdfBuilderService: Successfully created generated PDF record:', data);
     return data;
   }
 
@@ -506,18 +677,89 @@ export class PdfBuilderService {
 
   // Utility methods
   static async getActiveTemplate(simulatorType: string): Promise<PdfTemplate | null> {
-    const { data, error } = await supabase
-      .from('pdf_templates')
-      .select('*')
-      .eq('simulator_type', simulatorType)
-      .eq('is_active', true)
-      .single();
+    try {
+      console.log('PdfBuilderService: Fetching active template for simulator:', simulatorType);
+      console.log('PdfBuilderService: Simulator type type:', typeof simulatorType);
+      
+      // First, let's check if the table exists and what templates are available
+      const { data: allTemplates, error: allError } = await supabase
+        .from('pdf_templates')
+        .select('*');
+      
+      console.log('PdfBuilderService: All templates:', { allTemplates, allError });
+      
+      if (allTemplates && allTemplates.length > 0) {
+        console.log('PdfBuilderService: Available simulator types in templates:', 
+          allTemplates.map(t => ({ 
+            id: t.id, 
+            name: t.template_name, 
+            simulator_type: t.simulator_type, 
+            is_active: t.is_active,
+            type: typeof t.simulator_type,
+            length: t.simulator_type?.length
+          }))
+        );
+        
+        // Also log the exact simulator type we're looking for
+        console.log('PdfBuilderService: Looking for simulator type:', {
+          value: simulatorType,
+          type: typeof simulatorType,
+          length: simulatorType?.length,
+          trimmed: simulatorType?.trim()
+        });
+      }
+      
+      // Try different query approaches
+      console.log('PdfBuilderService: Trying exact match query...');
+      const { data: exactMatch, error: exactError } = await supabase
+        .from('pdf_templates')
+        .select('*')
+        .eq('simulator_type', simulatorType)
+        .eq('is_active', true)
+        .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-      throw new Error(`Failed to fetch active template: ${error.message}`);
+      console.log('PdfBuilderService: Exact match result:', { exactMatch, exactError });
+
+      if (exactMatch) {
+        return exactMatch;
+      }
+
+      // Try without .single() to see if there are multiple matches
+      console.log('PdfBuilderService: Trying multiple matches query...');
+      const { data: multipleMatches, error: multipleError } = await supabase
+        .from('pdf_templates')
+        .select('*')
+        .eq('simulator_type', simulatorType)
+        .eq('is_active', true);
+
+      console.log('PdfBuilderService: Multiple matches result:', { multipleMatches, multipleError });
+
+      if (multipleMatches && multipleMatches.length > 0) {
+        console.log('PdfBuilderService: Found multiple active templates, returning first one');
+        return multipleMatches[0];
+      }
+
+      // Try case-insensitive search
+      console.log('PdfBuilderService: Trying case-insensitive search...');
+      const { data: caseInsensitive, error: caseError } = await supabase
+        .from('pdf_templates')
+        .select('*')
+        .ilike('simulator_type', simulatorType)
+        .eq('is_active', true);
+
+      console.log('PdfBuilderService: Case-insensitive result:', { caseInsensitive, caseError });
+
+      if (caseInsensitive && caseInsensitive.length > 0) {
+        return caseInsensitive[0];
+      }
+
+      console.log('PdfBuilderService: No active template found for simulator type:', simulatorType);
+      return null;
+
+    } catch (error) {
+      console.error('PdfBuilderService: Failed to fetch active template:', error);
+      return null;
     }
-
-    return data;
   }
 
   static async getAvailableSimulatorTypes(): Promise<{value: string, label: string}[]> {

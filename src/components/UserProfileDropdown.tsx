@@ -36,11 +36,7 @@ export function UserProfileDropdown({ user, onLogout }: UserProfileDropdownProps
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarFallback 
-              className="text-xs"
-              style={{ 
-                backgroundColor: avatarProps.backgroundColor, 
-                color: avatarProps.textColor 
-              }}
+              className={`text-xs ${avatarProps.bgClass} ${avatarProps.textClass}`}
             >
               {avatarProps.initials}
             </AvatarFallback>
