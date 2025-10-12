@@ -56,7 +56,7 @@ export function GuestSubmissionDetailDialog({
       const pdfData = {
         config: scenarioData.config,
         legacyConfig: scenarioData.config,
-        configDefinitions: configDefinitions.filter(config => config.isActive),
+        configDefinitions: configDefinitions.filter(config => config.is_active),
         selectedItems: scenarioData.selectedItems,
         categories: scenarioData.categories,
         globalDiscount: scenarioData.globalDiscount,

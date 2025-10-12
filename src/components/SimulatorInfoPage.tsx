@@ -263,8 +263,8 @@ export function SimulatorInfoPage({ simulatorId }: SimulatorInfoPageProps) {
                 </div>
                 <Switch
                   id="isActive"
-                  checked={formData.isActive ?? false}
-                  onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                  checked={formData.is_active ?? false}
+                  onCheckedChange={(checked) => handleInputChange('is_active', checked)}
                   disabled={!isEditing}
                 />
               </div>
@@ -307,12 +307,12 @@ export function SimulatorInfoPage({ simulatorId }: SimulatorInfoPageProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <Label htmlFor="sortOrder">Sort Order</Label>
+                <Label htmlFor="sort_order">Sort Order</Label>
                 <Input
-                  id="sortOrder"
+                  id="sort_order"
                   type="number"
-                  value={formData.sortOrder ?? 0}
-                  onChange={(e) => handleInputChange('sortOrder', parseInt(e.target.value) || 0)}
+                  value={formData.sort_order ?? 0}
+                  onChange={(e) => handleInputChange('sort_order', parseInt(e.target.value) || 0)}
                   disabled={!isEditing}
                 />
                 <p className="text-xs text-muted-foreground">
@@ -329,17 +329,17 @@ export function SimulatorInfoPage({ simulatorId }: SimulatorInfoPageProps) {
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Created</span>
-                <span>{new Date(simulator.createdAt).toLocaleDateString()}</span>
+                <span>{new Date(simulator.created_at).toLocaleDateString()}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Last Updated</span>
-                <span>{new Date(simulator.updatedAt).toLocaleDateString()}</span>
+                <span>{new Date(simulator.updated_at).toLocaleDateString()}</span>
               </div>
               <Separator />
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Status</span>
-                <Badge variant={simulator.isActive ? 'default' : 'secondary'}>
-                  {simulator.isActive ? 'Active' : 'Inactive'}
+                <Badge variant={simulator.is_active ? 'default' : 'secondary'}>
+                  {simulator.is_active ? 'Active' : 'Inactive'}
                 </Badge>
               </div>
             </CardContent>

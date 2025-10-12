@@ -32,7 +32,7 @@ export function DynamicClientConfigBar({
       try {
         setIsLoading(true);
         const loadedConfigurations = await api.loadConfigurations();
-        const activeConfigurations = loadedConfigurations.filter(config => config.isActive);
+        const activeConfigurations = loadedConfigurations.filter(config => config.is_active);
         
         // Use only what's in the database - no auto-generation of default cards
         setConfigurations(activeConfigurations);
@@ -166,7 +166,7 @@ export function DynamicClientConfigBar({
   }
 
   // Sort configurations by order
-  const sortedConfigurations = [...configurations].sort((a, b) => (a.order || 0) - (b.order || 0));
+  const sortedConfigurations = [...configurations].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
   return (
     <div className="mb-6">
@@ -182,7 +182,7 @@ export function DynamicClientConfigBar({
           
           <Collapsible open={!isMainContentCollapsed}>
             <CollapsibleContent className="animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-              <CardContent className="py-[0px] px-[24px]">
+              <CardContent className="py-6 px-[24px]">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {sortedConfigurations.map((configDef) => {
                     // Calculate filled fields count
@@ -212,10 +212,10 @@ export function DynamicClientConfigBar({
                         />
                         
                         <CollapsibleContent className="animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-                          <CardContent className="pt-4">
+                          <CardContent className="pt-6 pb-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {configDef.fields
-                                ?.sort((a, b) => (a.order || 0) - (b.order || 0))
+                                ?.sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
                                 .map((field) => {
                                   // Hide "Prepared By" field in guest mode
                                   const isPreparedByField = field.id === 'preparedBy' || field.label?.toLowerCase() === 'prepared by';

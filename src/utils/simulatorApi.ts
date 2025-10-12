@@ -82,10 +82,10 @@ export class SimulatorApi {
           cta_text: simulatorData.ctaText || 'Start Simulation',
           icon_name: simulatorData.iconName || 'CreditCard',
           url_slug: urlSlug,
-          is_active: simulatorData.isActive ?? true,
+          is_active: simulatorData.is_active ?? true,
           is_available: simulatorData.isAvailable ?? true,
           coming_soon: simulatorData.comingSoon ?? false,
-          sort_order: simulatorData.sortOrder ?? 0
+          sort_order: simulatorData.sort_order ?? 0
         })
         .select()
         .single();
@@ -112,10 +112,10 @@ export class SimulatorApi {
       if (simulatorData.ctaText !== undefined) updateData.cta_text = simulatorData.ctaText;
       if (simulatorData.iconName !== undefined) updateData.icon_name = simulatorData.iconName;
       if (simulatorData.urlSlug !== undefined) updateData.url_slug = simulatorData.urlSlug;
-      if (simulatorData.isActive !== undefined) updateData.is_active = simulatorData.isActive;
+      if (simulatorData.is_active !== undefined) updateData.is_active = simulatorData.is_active;
       if (simulatorData.isAvailable !== undefined) updateData.is_available = simulatorData.isAvailable;
       if (simulatorData.comingSoon !== undefined) updateData.coming_soon = simulatorData.comingSoon;
-      if (simulatorData.sortOrder !== undefined) updateData.sort_order = simulatorData.sortOrder;
+      if (simulatorData.sort_order !== undefined) updateData.sort_order = simulatorData.sort_order;
 
       const { data, error } = await supabase
         .from('simulators')
@@ -302,12 +302,12 @@ export class SimulatorApi {
       ctaText: row.cta_text,
       iconName: row.icon_name,
       urlSlug: row.url_slug,
-      isActive: row.is_active,
+      is_active: row.is_active,
       isAvailable: row.is_available,
       comingSoon: row.coming_soon,
-      sortOrder: row.sort_order,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
+      sort_order: row.sort_order,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
       createdBy: row.created_by,
       updatedBy: row.updated_by
     };

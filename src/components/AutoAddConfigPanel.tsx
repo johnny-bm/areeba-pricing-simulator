@@ -58,7 +58,7 @@ export function AutoAddConfigPanel({
 
   // Get all config fields from active configurations
   const allConfigFields = configurations
-    .filter(config => config.isActive)
+    .filter(config => config.is_active)
     .flatMap(config => config.fields)
     .filter(field => field.type === 'boolean' || field.type === 'number');
 

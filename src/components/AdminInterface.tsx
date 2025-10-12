@@ -304,7 +304,7 @@ export function AdminInterface({
         ...config,
         id: `${config.id}-copy-${Date.now()}`,
         name: `${config.name} (Copy)`,
-        isActive: false
+        is_active: false
       };
       await api.saveConfiguration(duplicatedConfig);
       const updatedConfigs = await api.loadConfigurations();
@@ -737,8 +737,8 @@ export function AdminInterface({
                     <>
                       <TableCell className="font-medium">{config.name}</TableCell>
                       <TableCell>
-                        <Badge variant={config.isActive ? 'default' : 'secondary'}>
-                          {config.isActive ? 'Active' : 'Inactive'}
+                        <Badge variant={config.is_active ? 'default' : 'secondary'}>
+                          {config.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{config.description}</TableCell>
@@ -789,6 +789,7 @@ export function AdminInterface({
                     configuration={editingConfig}
                     configurations={configurations}
                     isCreating={!editingConfig}
+                    simulator_id={currentSimulator || ''}
                   />
                 )}
               </AdminPageLayout>
@@ -1009,11 +1010,11 @@ export function AdminInterface({
                   searchPlaceholder="Search configurations..."
                   filterOptions={[
                     {
-                      key: 'isActive',
+                      key: 'is_active',
                       label: 'Status',
                       options: [
-                        { value: 'true', label: 'Active', count: configurations.filter(c => c.isActive).length },
-                        { value: 'false', label: 'Inactive', count: configurations.filter(c => !c.isActive).length }
+                        { value: 'true', label: 'Active', count: configurations.filter(c => c.is_active).length },
+                        { value: 'false', label: 'Inactive', count: configurations.filter(c => !c.is_active).length }
                       ]
                     }
                   ]}
@@ -1048,8 +1049,8 @@ export function AdminInterface({
                         <div className="font-medium">{config.name}</div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={config.isActive ? "default" : "secondary"}>
-                          {config.isActive ? 'Active' : 'Inactive'}
+                        <Badge variant={config.is_active ? "default" : "secondary"}>
+                          {config.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -1112,6 +1113,7 @@ export function AdminInterface({
                     configuration={editingConfig}
                     configurations={configurations}
                     isCreating={!editingConfig}
+                    simulator_id={currentSimulator || ''}
                   />
                 )}
               </>

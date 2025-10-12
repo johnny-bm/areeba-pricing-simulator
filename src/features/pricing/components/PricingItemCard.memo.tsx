@@ -45,7 +45,7 @@ export const PricingItemCardMemo = memo<PricingItemCardMemoProps>(
       prevProps.item.defaultPrice === nextProps.item.defaultPrice &&
       prevProps.item.pricingType === nextProps.item.pricingType &&
       prevProps.item.categoryId === nextProps.item.categoryId &&
-      prevProps.item.isActive === nextProps.item.isActive &&
+      prevProps.item.is_active === nextProps.item.is_active &&
       prevProps.item.isArchived === nextProps.item.isArchived &&
       prevProps.selectedItem?.quantity === nextProps.selectedItem?.quantity &&
       prevProps.selectedItem?.unitPrice === nextProps.selectedItem?.unitPrice &&

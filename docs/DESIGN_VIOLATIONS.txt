@@ -1,0 +1,961 @@
+=== Hardcoded Hex Colors ===
+src/imports/AreebaPricingSimulator2025.tsx:464:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:509:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:554:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:697:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:731:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:765:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:908:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:1069:    <div className="absolute bg-[#f3f3f5] h-[35.994px] left-0 rounded-[8px] top-0 w-[366.193px]" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:1114:    <div className="absolute bg-[#eceef2] h-[21.79px] left-0 rounded-[8px] top-0 w-[38.281px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1127:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[42.27px] rounded-[8px] top-0 w-[43.551px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1140:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[89.81px] rounded-[8px] top-0 w-[60.98px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1153:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[154.79px] rounded-[8px] top-0 w-[72.67px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1166:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[231.45px] rounded-[8px] top-0 w-[83.594px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1179:    <div className="absolute bg-[#eceef2] h-[23.991px] left-0 rounded-[8px] top-[25.78px] w-[70.043px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1238:    <div className="bg-[#eceef2] h-[21.79px] relative rounded-[8px] shrink-0 w-[25.213px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1324:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[78.04px] rounded-[8px] top-0 w-[50.455px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1337:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[136.49px] rounded-[8px] top-0 w-[83.594px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1493:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[90.77px] rounded-[8px] top-0 w-[50.455px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1506:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[149.22px] rounded-[8px] top-0 w-[38.281px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1669:    <div className="bg-[#eceef2] h-[21.79px] relative rounded-[8px] shrink-0 w-[25.213px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1755:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[74.06px] rounded-[8px] top-0 w-[43.551px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1896:    <div className="absolute bg-[#030213] h-[21.79px] left-[74.06px] rounded-[8px] top-0 w-[98.168px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1909:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[180.23px] rounded-[8px] top-0 w-[43.551px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1922:    <div className="absolute bg-[#eceef2] h-[21.79px] left-0 rounded-[8px] top-[29.79px] w-[60.98px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:2091:    <div className="bg-[#eceef2] h-[21.79px] relative rounded-[8px] shrink-0 w-[23.579px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:2177:    <div className="absolute bg-[#030213] h-[21.79px] left-[113.81px] rounded-[8px] top-0 w-[98.168px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:2190:    <div className="absolute bg-[#eceef2] h-[21.79px] left-0 rounded-[8px] top-[29.79px] w-[83.295px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:2203:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[91.29px] rounded-[8px] top-[29.79px] w-[81.463px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:47:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:57:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[-1px] tracking-[-0.1504px] w-0">
+src/imports/AreebaPricingSimulator2025.tsx:98:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:161:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#ca3500] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:171:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#ca3500] text-[14px] top-[-1px] tracking-[-0.1504px] w-0">
+src/imports/AreebaPricingSimulator2025.tsx:302:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[16px] top-[-1.18px] tracking-[-0.3125px] w-[155px]">
+src/imports/AreebaPricingSimulator2025.tsx:381:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:444:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#d4183d] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:467:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:489:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#d4183d] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:512:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:534:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#d4183d] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:557:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:625:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:700:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:734:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:768:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:836:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:911:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1007:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:1071:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1116:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1129:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1142:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1155:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1168:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1181:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1240:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1302:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[210px]">
+src/imports/AreebaPricingSimulator2025.tsx:1326:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1339:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1471:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[194px]">
+src/imports/AreebaPricingSimulator2025.tsx:1495:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1508:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1671:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1733:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1757:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1874:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[231px]">
+src/imports/AreebaPricingSimulator2025.tsx:1911:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1924:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1959:      <div className="basis-0 font-['Inter:Medium',_sans-serif] font-medium grow leading-[0] min-h-px min-w-px not-italic relative shrink-0 text-[#717182] text-[12px] text-right">
+src/imports/AreebaPricingSimulator2025.tsx:2093:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:2155:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[221px]">
+src/imports/AreebaPricingSimulator2025.tsx:2192:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:2205:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:2240:      <div className="basis-0 font-['Inter:Medium',_sans-serif] font-medium grow leading-[0] min-h-px min-w-px not-italic relative shrink-0 text-[#717182] text-[12px] text-right">
+src/imports/AreebaPricingSimulator2025.tsx:2398:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:2457:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[183.93px] not-italic text-[#717182] text-[16px] text-center text-nowrap top-[-1.18px] tracking-[-0.3125px] translate-x-[-50%]">
+src/imports/AreebaPricingSimulator2025.tsx:2467:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[183.11px] not-italic text-[#717182] text-[14px] text-center top-[0.82px] tracking-[-0.1504px] translate-x-[-50%] w-[324px]">
+src/imports/AreebaPricingSimulator2025.tsx:2508:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:2567:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[183.43px] not-italic text-[#717182] text-[16px] text-center text-nowrap top-[-1.18px] tracking-[-0.3125px] translate-x-[-50%]">
+src/imports/AreebaPricingSimulator2025.tsx:2577:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[183.11px] not-italic text-[#717182] text-[14px] text-center top-[0.82px] tracking-[-0.1504px] translate-x-[-50%] w-[324px]">
+src/imports/AreebaPricingSimulator2025.tsx:2616:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:2627:        <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[235px]">
+src/imports/AreebaPricingSimulator2025.tsx:2640:        <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:181:      <div aria-hidden="true" className="absolute border-[#ffb86a] border-[0.909px] border-solid inset-0 pointer-events-none rounded-[8px]" />
+
+=== Hardcoded RGB Colors ===
+src/features/pdfBuilder/components/TemplatesPage.tsx:511:              page-break-after: always; margin: 20px 0; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+src/features/pdfBuilder/components/TemplatesPage.tsx:717:              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+src/features/pdfBuilder/components/TemplatesPage.tsx:798:              background: rgba(255, 255, 255, 0.7);
+src/imports/AreebaPricingSimulator2025.tsx:79:      <div aria-hidden="true" className="absolute border-[0px_0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:212:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:260:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:335:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:358:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:404:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:431:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:472:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:517:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:562:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:604:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:648:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:675:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:705:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:739:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:773:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:815:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:859:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:886:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:916:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:956:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:985:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1030:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1057:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:1075:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1120:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1133:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1146:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1159:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1172:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1185:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1217:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1244:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1317:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1330:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1343:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1356:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1412:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1448:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1486:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1499:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1512:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1525:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1581:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1617:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1636:      <div aria-hidden="true" className="absolute border-[0.909px_0px_0px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:1644:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1675:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1748:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1761:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1815:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1851:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1889:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1902:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1915:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1928:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2003:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2039:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2058:      <div aria-hidden="true" className="absolute border-[0.909px_0px_0px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:2066:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2097:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2170:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2183:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2196:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2209:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2284:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2320:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2336:      <div aria-hidden="true" className="absolute border-[0.909px_0px_0px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:2344:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2376:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2421:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2448:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:2486:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2531:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2558:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:2596:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2664:      <div aria-hidden="true" className="absolute border-[0.909px_0px_0px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+
+=== Arbitrary Pixel Values ===
+src/features/pdfBuilder/components/DragDropComponents.tsx:261:          <div className="min-h-[100px] p-2 border-2 border-dashed rounded-lg border-muted-foreground/25">
+src/features/pdfBuilder/components/DragDropComponents.tsx:292:          <div className="min-h-[200px] p-2 border-2 border-dashed rounded-lg border-muted-foreground/25">
+src/features/pdfBuilder/components/SimpleTiptapEditor.tsx:64:        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] p-4',
+src/features/pdfBuilder/components/SimpleTiptapEditor.tsx:235:          "min-h-[200px] focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+src/features/pdfBuilder/components/SimpleTiptapEditor.tsx:264:        "min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+src/features/pdfBuilder/components/RichTextEditor.tsx:451:          "rich-text-editor min-h-[200px] p-4 focus:outline-none",
+src/features/pdfBuilder/components/RichTextEditor.tsx:494:        "min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+src/shared/components/ui/tabs.tsx:29:        "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-xl p-[3px] flex",
+src/shared/components/ui/tabs.tsx:45:        "data-[state=active]:bg-card dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-xl border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+src/shared/components/ui/input-otp.tsx:54:        "data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]",
+src/shared/components/ui/chart.tsx:205:                          "shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
+src/shared/components/ui/chart.tsx:209:                            "w-0 border-[1.5px] border-dashed bg-transparent":
+src/shared/components/ui/chart.tsx:293:                className="h-2 w-2 shrink-0 rounded-[2px]"
+src/shared/components/ui/scroll-area.tsx:21:        className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+src/shared/components/ui/navigation-menu.tsx:62:  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1",
+src/shared/components/ui/navigation-menu.tsx:78:        className="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
+src/shared/components/ui/navigation-menu.tsx:132:        "data-[active=true]:focus:bg-accent data-[active=true]:hover:bg-accent data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-ring/50 [&_svg:not([class*='text-'])]:text-muted-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
+src/shared/components/ui/accordion.tsx:38:          "focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
+src/shared/components/ui/drawer.tsx:68:        <div className="bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
+src/shared/components/ui/tooltip.tsx:55:        <TooltipPrimitive.Arrow className="bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
+src/shared/components/ui/switch.tsx:16:        "peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-switch-background focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+src/shared/components/ui/radio-group.tsx:30:        "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+src/shared/components/ui/command.tsx:86:        "max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto",
+src/shared/components/ui/badge.tsx:8:  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+src/shared/components/ui/sidebar.tsx:294:        "hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex",
+src/shared/components/ui/table.tsx:73:        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+src/shared/components/ui/table.tsx:86:        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+src/shared/components/ui/button.tsx:8:  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+src/shared/components/ui/toggle.tsx:10:  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap",
+src/shared/components/ui/checkbox.tsx:17:        "peer border bg-input-background dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+src/shared/components/ui/select.tsx:44:        "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-input-background px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+src/shared/components/ui/textarea.tsx:10:        "resize-none border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-input-background px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+src/shared/components/ui/input.tsx:12:        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+src/imports/AreebaPricingSimulator2025.tsx:17:    <div className="h-[23.991px] overflow-clip relative shrink-0 w-full" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:25:    <div className="absolute content-stretch flex flex-col h-[23.991px] items-start left-0 top-[10px] w-[95.994px]" data-name="WordMarkRed">
+src/imports/AreebaPricingSimulator2025.tsx:33:    <div className="absolute left-[10px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:46:    <div className="absolute h-[20px] left-[35.98px] top-[5.99px] w-[123.537px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:47:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:48:        <p className="leading-[20px] whitespace-pre">Back to Simulators</p>
+src/imports/AreebaPricingSimulator2025.tsx:56:    <div className="absolute left-[-160.17px] size-0 top-[-21.99px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:57:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[-1px] tracking-[-0.1504px] w-0">
+src/imports/AreebaPricingSimulator2025.tsx:58:        <p className="leading-[20px]">Back</p>
+src/imports/AreebaPricingSimulator2025.tsx:66:    <div className="h-[31.989px] relative rounded-[8px] shrink-0 w-[169.517px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:67:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[169.517px]">
+src/imports/AreebaPricingSimulator2025.tsx:78:    <div className="h-[23.991px] relative shrink-0 w-[0.909px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:79:      <div aria-hidden="true" className="absolute border-[0px_0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:80:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[23.991px] w-[0.909px]" />
+src/imports/AreebaPricingSimulator2025.tsx:87:    <div className="h-[23.991px] relative shrink-0 w-full" data-name="Heading 1">
+src/imports/AreebaPricingSimulator2025.tsx:88:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-1.18px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:89:        <p className="leading-[24px] whitespace-pre">{`Issuing & Processing Simulator`}</p>
+src/features/pdfBuilder/components/DragDropComponents.tsx:261:          <div className="min-h-[100px] p-2 border-2 border-dashed rounded-lg border-muted-foreground/25">
+src/features/pdfBuilder/components/DragDropComponents.tsx:292:          <div className="min-h-[200px] p-2 border-2 border-dashed rounded-lg border-muted-foreground/25">
+src/features/pdfBuilder/components/SimpleTiptapEditor.tsx:64:        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] p-4',
+src/features/pdfBuilder/components/SimpleTiptapEditor.tsx:235:          "min-h-[200px] focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+src/features/pdfBuilder/components/SimpleTiptapEditor.tsx:264:        "min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+src/features/pdfBuilder/components/RichTextEditor.tsx:451:          "rich-text-editor min-h-[200px] p-4 focus:outline-none",
+src/features/pdfBuilder/components/RichTextEditor.tsx:494:        "min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+src/shared/components/ui/tabs.tsx:29:        "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-xl p-[3px] flex",
+src/shared/components/ui/tabs.tsx:45:        "data-[state=active]:bg-card dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-xl border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+src/shared/components/ui/input-otp.tsx:54:        "data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]",
+src/shared/components/ui/chart.tsx:205:                          "shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
+src/shared/components/ui/chart.tsx:209:                            "w-0 border-[1.5px] border-dashed bg-transparent":
+src/shared/components/ui/chart.tsx:293:                className="h-2 w-2 shrink-0 rounded-[2px]"
+src/shared/components/ui/scroll-area.tsx:21:        className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+src/shared/components/ui/navigation-menu.tsx:62:  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1",
+src/shared/components/ui/navigation-menu.tsx:78:        className="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
+src/shared/components/ui/navigation-menu.tsx:132:        "data-[active=true]:focus:bg-accent data-[active=true]:hover:bg-accent data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-ring/50 [&_svg:not([class*='text-'])]:text-muted-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
+src/shared/components/ui/accordion.tsx:38:          "focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
+src/shared/components/ui/drawer.tsx:68:        <div className="bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
+src/shared/components/ui/tooltip.tsx:55:        <TooltipPrimitive.Arrow className="bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
+src/shared/components/ui/switch.tsx:16:        "peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-switch-background focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+src/shared/components/ui/radio-group.tsx:30:        "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+src/shared/components/ui/command.tsx:86:        "max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto",
+src/shared/components/ui/badge.tsx:8:  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+src/shared/components/ui/sidebar.tsx:294:        "hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex",
+src/shared/components/ui/table.tsx:73:        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+src/shared/components/ui/table.tsx:86:        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+src/shared/components/ui/button.tsx:8:  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+src/shared/components/ui/toggle.tsx:10:  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap",
+src/shared/components/ui/checkbox.tsx:17:        "peer border bg-input-background dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+src/shared/components/ui/select.tsx:44:        "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-input-background px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+src/shared/components/ui/textarea.tsx:10:        "resize-none border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-input-background px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+src/shared/components/ui/input.tsx:12:        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+src/imports/AreebaPricingSimulator2025.tsx:17:    <div className="h-[23.991px] overflow-clip relative shrink-0 w-full" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:25:    <div className="absolute content-stretch flex flex-col h-[23.991px] items-start left-0 top-[10px] w-[95.994px]" data-name="WordMarkRed">
+src/imports/AreebaPricingSimulator2025.tsx:33:    <div className="absolute left-[10px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:46:    <div className="absolute h-[20px] left-[35.98px] top-[5.99px] w-[123.537px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:47:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:48:        <p className="leading-[20px] whitespace-pre">Back to Simulators</p>
+src/imports/AreebaPricingSimulator2025.tsx:56:    <div className="absolute left-[-160.17px] size-0 top-[-21.99px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:57:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[-1px] tracking-[-0.1504px] w-0">
+src/imports/AreebaPricingSimulator2025.tsx:58:        <p className="leading-[20px]">Back</p>
+src/imports/AreebaPricingSimulator2025.tsx:66:    <div className="h-[31.989px] relative rounded-[8px] shrink-0 w-[169.517px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:67:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[169.517px]">
+src/imports/AreebaPricingSimulator2025.tsx:78:    <div className="h-[23.991px] relative shrink-0 w-[0.909px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:79:      <div aria-hidden="true" className="absolute border-[0px_0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:80:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[23.991px] w-[0.909px]" />
+src/imports/AreebaPricingSimulator2025.tsx:87:    <div className="h-[23.991px] relative shrink-0 w-full" data-name="Heading 1">
+src/imports/AreebaPricingSimulator2025.tsx:88:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-1.18px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:89:        <p className="leading-[24px] whitespace-pre">{`Issuing & Processing Simulator`}</p>
+src/imports/AreebaPricingSimulator2025.tsx:97:    <div className="h-[20px] relative shrink-0 w-full" data-name="Paragraph">
+src/imports/AreebaPricingSimulator2025.tsx:98:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:99:        <p className="leading-[20px] whitespace-pre">Configure your card payment solution and calculate costs</p>
+src/imports/AreebaPricingSimulator2025.tsx:107:    <div className="h-[43.992px] relative shrink-0 w-[371.151px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:108:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col h-[43.992px] items-start relative w-[371.151px]">
+src/imports/AreebaPricingSimulator2025.tsx:118:    <div className="absolute content-stretch flex gap-[11.989px] h-[43.992px] items-center left-[111.99px] top-0 w-[565.554px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:128:    <div className="h-[43.992px] relative shrink-0 w-[677.543px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:129:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[43.992px] relative w-[677.543px]">
+src/imports/AreebaPricingSimulator2025.tsx:139:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:160:    <div className="absolute h-[20px] left-[40.9px] top-[5.99px] w-[120.895px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:161:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#ca3500] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:162:        <p className="leading-[20px] whitespace-pre">PDF (Missing Info)</p>
+src/imports/AreebaPricingSimulator2025.tsx:170:    <div className="absolute left-[-883.88px] size-0 top-[-21.99px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:171:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#ca3500] text-[14px] top-[-1px] tracking-[-0.1504px] w-0">
+src/imports/AreebaPricingSimulator2025.tsx:172:        <p className="leading-[20px]">PDF</p>
+src/imports/AreebaPricingSimulator2025.tsx:180:    <div className="absolute bg-white h-[31.989px] left-0 rounded-[8px] top-0 w-[172.699px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:181:      <div aria-hidden="true" className="absolute border-[#ffb86a] border-[0.909px] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:191:    <div className="absolute h-[20px] left-[12.9px] top-[5.99px] w-[96.335px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:192:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:193:        <p className="leading-[20px] whitespace-pre">Clear Scenario</p>
+src/imports/AreebaPricingSimulator2025.tsx:201:    <div className="absolute left-[-1064.57px] size-0 top-[-21.99px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:202:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 top-[-1px] tracking-[-0.1504px] w-0">
+src/imports/AreebaPricingSimulator2025.tsx:203:        <p className="leading-[20px]">Clear</p>
+src/imports/AreebaPricingSimulator2025.tsx:211:    <div className="absolute bg-white h-[31.989px] left-[180.7px] rounded-[8px] top-0 w-[122.131px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:212:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:221:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:239:    <div className="absolute h-[20px] left-[40.9px] top-[5.99px] w-[81.676px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:240:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:241:        <p className="leading-[20px] whitespace-pre">Admin Panel</p>
+src/imports/AreebaPricingSimulator2025.tsx:249:    <div className="absolute left-[-1194.7px] size-0 top-[-21.99px]" data-name="AppContent">
+src/imports/AreebaPricingSimulator2025.tsx:250:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 top-[-1px] tracking-[-0.1504px] w-0">
+src/imports/AreebaPricingSimulator2025.tsx:251:        <p className="leading-[20px]">Admin</p>
+src/imports/AreebaPricingSimulator2025.tsx:259:    <div className="absolute bg-white h-[31.989px] left-[310.82px] rounded-[8px] top-0 w-[133.48px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:260:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:270:    <div className="h-[31.989px] relative shrink-0 w-[444.304px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:271:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[444.304px]">
+src/imports/AreebaPricingSimulator2025.tsx:282:    <div className="absolute content-stretch flex h-[43.992px] items-center justify-between left-[48.18px] top-[15.99px] w-[1280px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:291:    <div className="absolute h-[15.994px] left-0 top-0 w-[154.389px]" data-name="CardTitle">
+src/imports/AreebaPricingSimulator2025.tsx:292:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-0.82px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:293:        <p className="leading-[16px] whitespace-pre">Client Configuration</p>
+src/imports/AreebaPricingSimulator2025.tsx:301:    <div className="absolute h-[23.991px] left-0 top-[15.99px] w-[154.389px]" data-name="CardDescription">
+src/imports/AreebaPricingSimulator2025.tsx:302:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[16px] top-[-1.18px] tracking-[-0.3125px] w-[155px]">
+src/imports/AreebaPricingSimulator2025.tsx:303:        <p className="leading-[24px]">3 configuration cards</p>
+src/imports/AreebaPricingSimulator2025.tsx:311:    <div className="h-[39.986px] relative shrink-0 w-[154.389px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:312:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[39.986px] relative w-[154.389px]">
+src/imports/AreebaPricingSimulator2025.tsx:322:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:334:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[115.795px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:335:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:336:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[115.795px]">
+src/imports/AreebaPricingSimulator2025.tsx:338:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[12px] text-neutral-950 text-nowrap top-[8px]">
+src/imports/AreebaPricingSimulator2025.tsx:339:          <p className="leading-[16px] whitespace-pre">Collapse All</p>
+src/imports/AreebaPricingSimulator2025.tsx:348:    <div className="absolute content-stretch flex h-[39.986px] items-center justify-between left-[23.99px] top-[23.99px] w-[1230.2px]" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:357:    <div className="h-[94.872px] relative shrink-0 w-[1278.18px]" data-name="CardHeader">
+src/imports/AreebaPricingSimulator2025.tsx:358:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:359:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[94.872px] relative w-[1278.18px]">
+src/imports/AreebaPricingSimulator2025.tsx:368:    <div className="content-stretch flex gap-[8px] items-center relative shrink-0 w-full" data-name="CardTitle">
+src/imports/AreebaPricingSimulator2025.tsx:369:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[16px] text-neutral-950 text-nowrap tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:370:        <p className="leading-[16px] whitespace-pre">General Information</p>
+src/imports/AreebaPricingSimulator2025.tsx:378:    <div className="relative shrink-0 w-[165.27px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:379:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:381:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:382:          <p className="leading-[22px]">0 fields filled</p>
+src/imports/AreebaPricingSimulator2025.tsx:391:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:403:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[115.795px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:404:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:405:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[115.795px]">
+src/imports/AreebaPricingSimulator2025.tsx:407:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[12px] text-neutral-950 text-nowrap top-[8px]">
+src/imports/AreebaPricingSimulator2025.tsx:408:          <p className="leading-[16px] whitespace-pre">Collapse All</p>
+src/imports/AreebaPricingSimulator2025.tsx:431:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:433:        <div className="box-border content-stretch flex flex-col gap-[8px] items-start px-[24px] py-[12px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:443:    <div className="absolute h-[20px] left-[92.54px] top-0 w-[6.52px]" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:444:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#d4183d] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:445:        <p className="leading-[20px] whitespace-pre">*</p>
+src/imports/AreebaPricingSimulator2025.tsx:453:    <div className="h-[20px] relative shrink-0 w-full" data-name="Primitive.label">
+src/imports/AreebaPricingSimulator2025.tsx:454:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:455:        <p className="leading-[20px] whitespace-pre">Client Name</p>
+src/imports/AreebaPricingSimulator2025.tsx:464:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:466:        <div className="box-border content-stretch flex h-[31.989px] items-center px-[12px] py-[4px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:467:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:472:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:479:    <div className="content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-start relative shrink-0 w-full" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:488:    <div className="absolute h-[20px] left-[101.08px] top-0 w-[6.52px]" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:489:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#d4183d] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:490:        <p className="leading-[20px] whitespace-pre">*</p>
+src/imports/AreebaPricingSimulator2025.tsx:498:    <div className="h-[20px] relative shrink-0 w-full" data-name="Primitive.label">
+src/imports/AreebaPricingSimulator2025.tsx:499:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:500:        <p className="leading-[20px] whitespace-pre">Project Name</p>
+src/imports/AreebaPricingSimulator2025.tsx:509:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:511:        <div className="box-border content-stretch flex h-[31.989px] items-center px-[12px] py-[4px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:512:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:517:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:524:    <div className="content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-start relative shrink-0 w-full" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:533:    <div className="absolute h-[20px] left-[92.91px] top-0 w-[6.52px]" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:534:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[#d4183d] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:535:        <p className="leading-[20px] whitespace-pre">*</p>
+src/imports/AreebaPricingSimulator2025.tsx:543:    <div className="h-[20px] relative shrink-0 w-full" data-name="Primitive.label">
+src/imports/AreebaPricingSimulator2025.tsx:544:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:545:        <p className="leading-[20px] whitespace-pre">Prepared By</p>
+src/imports/AreebaPricingSimulator2025.tsx:554:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:556:        <div className="box-border content-stretch flex h-[31.989px] items-center px-[12px] py-[4px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:557:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:562:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:569:    <div className="content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-start relative shrink-0 w-full" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:578:    <div className="h-[251.932px] relative shrink-0 w-full" data-name="CardContent">
+src/imports/AreebaPricingSimulator2025.tsx:580:        <div className="box-border content-stretch flex flex-col gap-[15.994px] h-[251.932px] items-start pb-0 pt-[15.994px] px-[23.991px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:592:    <div className="basis-0 grow min-h-px min-w-px relative shrink-0 w-[397.585px]" data-name="Primitive.div">
+src/imports/AreebaPricingSimulator2025.tsx:593:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col h-full items-start relative w-[397.585px]" style={{ gap: "1.52588e-05px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:603:    <div className="absolute bg-white box-border content-stretch flex flex-col h-[324.631px] items-start left-[-0.08px] p-[0.909px] rounded-[14px] top-[0.26px] w-[399.403px]" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:604:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:612:    <div className="content-stretch flex gap-[8px] items-center relative shrink-0 w-full" data-name="CardTitle">
+src/imports/AreebaPricingSimulator2025.tsx:613:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[16px] text-neutral-950 text-nowrap tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:614:        <p className="leading-[16px] whitespace-pre">Card Configuration</p>
+src/imports/AreebaPricingSimulator2025.tsx:622:    <div className="relative shrink-0 w-[165.27px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:623:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:625:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:626:          <p className="leading-[22px]">0 fields filled</p>
+src/imports/AreebaPricingSimulator2025.tsx:635:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:647:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[115.795px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:648:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:649:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[115.795px]">
+src/imports/AreebaPricingSimulator2025.tsx:651:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[12px] text-neutral-950 text-nowrap top-[8px]">
+src/imports/AreebaPricingSimulator2025.tsx:652:          <p className="leading-[16px] whitespace-pre">Collapse All</p>
+src/imports/AreebaPricingSimulator2025.tsx:675:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:677:        <div className="box-border content-stretch flex flex-col gap-[8px] items-start px-[24px] py-[12px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:687:    <div className="content-stretch flex gap-[8px] h-[20px] items-center relative shrink-0 w-full" data-name="Primitive.label">
+src/imports/AreebaPricingSimulator2025.tsx:688:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[14px] text-neutral-950 text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:689:        <p className="leading-[20px] whitespace-pre">Number of Debit Cards</p>
+src/imports/AreebaPricingSimulator2025.tsx:697:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:699:        <div className="box-border content-stretch flex h-[31.989px] items-center px-[12px] py-[4px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:700:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:705:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:712:    <div className="content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-start relative shrink-0 w-full" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:721:    <div className="content-stretch flex gap-[8px] h-[20px] items-center relative shrink-0 w-full" data-name="Primitive.label">
+src/imports/AreebaPricingSimulator2025.tsx:722:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[14px] text-neutral-950 text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:723:        <p className="leading-[20px] whitespace-pre">Number of Virtual Cards</p>
+src/imports/AreebaPricingSimulator2025.tsx:731:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:733:        <div className="box-border content-stretch flex h-[31.989px] items-center px-[12px] py-[4px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:734:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:739:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:746:    <div className="content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-start relative shrink-0 w-full" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:755:    <div className="content-stretch flex gap-[8px] h-[20px] items-center relative shrink-0 w-full" data-name="Primitive.label">
+src/imports/AreebaPricingSimulator2025.tsx:756:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[14px] text-neutral-950 text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:757:        <p className="leading-[20px] whitespace-pre">Number of Credit Cards</p>
+src/imports/AreebaPricingSimulator2025.tsx:765:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:767:        <div className="box-border content-stretch flex h-[31.989px] items-center px-[12px] py-[4px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:768:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:773:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:780:    <div className="content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-start relative shrink-0 w-full" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:789:    <div className="h-[251.932px] relative shrink-0 w-full" data-name="CardContent">
+src/imports/AreebaPricingSimulator2025.tsx:791:        <div className="box-border content-stretch flex flex-col gap-[15.994px] h-[251.932px] items-start pb-0 pt-[15.994px] px-[23.991px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:803:    <div className="basis-0 grow min-h-px min-w-px relative shrink-0 w-[397.585px]" data-name="Primitive.div">
+src/imports/AreebaPricingSimulator2025.tsx:804:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col h-full items-start relative w-[397.585px]" style={{ gap: "1.52588e-05px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:814:    <div className="absolute bg-white box-border content-stretch flex flex-col h-[324.631px] items-start left-[415.4px] p-[0.909px] rounded-[14px] top-0 w-[399.403px]" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:815:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:823:    <div className="content-stretch flex gap-[8px] items-center relative shrink-0 w-full" data-name="CardTitle">
+src/imports/AreebaPricingSimulator2025.tsx:824:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[16px] text-neutral-950 text-nowrap tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:825:        <p className="leading-[16px] whitespace-pre">Transactions</p>
+src/imports/AreebaPricingSimulator2025.tsx:833:    <div className="relative shrink-0 w-[165.27px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:834:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:836:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:837:          <p className="leading-[22px]">0 fields filled</p>
+src/imports/AreebaPricingSimulator2025.tsx:846:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:858:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[115.795px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:859:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:860:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[115.795px]">
+src/imports/AreebaPricingSimulator2025.tsx:862:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[12px] text-neutral-950 text-nowrap top-[8px]">
+src/imports/AreebaPricingSimulator2025.tsx:863:          <p className="leading-[16px] whitespace-pre">Collapse All</p>
+src/imports/AreebaPricingSimulator2025.tsx:886:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:888:        <div className="box-border content-stretch flex flex-col gap-[8px] items-start px-[24px] py-[12px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:898:    <div className="content-stretch flex gap-[8px] h-[20px] items-center relative shrink-0 w-full" data-name="Primitive.label">
+src/imports/AreebaPricingSimulator2025.tsx:899:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[14px] text-neutral-950 text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:900:        <p className="leading-[20px] whitespace-pre">Number of Transactions</p>
+src/imports/AreebaPricingSimulator2025.tsx:908:    <div className="bg-[#f3f3f5] h-[31.989px] relative rounded-[8px] shrink-0 w-full" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:910:        <div className="box-border content-stretch flex h-[31.989px] items-center px-[12px] py-[4px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:911:          <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:916:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:923:    <div className="content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-start relative shrink-0 w-full" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:932:    <div className="h-[99.972px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:934:        <div className="box-border content-stretch flex flex-col h-[99.972px] items-start pb-0 pt-[15.994px] px-[23.991px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:944:    <div className="h-[170.852px] relative shrink-0 w-[397.585px]" data-name="Primitive.div">
+src/imports/AreebaPricingSimulator2025.tsx:945:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col h-[170.852px] items-start relative w-[397.585px]" style={{ gap: "1.52588e-05px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:955:    <div className="absolute bg-white box-border content-stretch flex flex-col h-[324.631px] items-start left-[830.79px] p-[0.909px] rounded-[14px] top-0 w-[399.403px]" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:956:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:964:    <div className="h-[324.631px] relative shrink-0 w-full" data-name="DynamicClientConfigBar">
+src/imports/AreebaPricingSimulator2025.tsx:974:    <div className="h-[372.614px] relative shrink-0 w-[1278.18px]" data-name="Primitive.div">
+src/imports/AreebaPricingSimulator2025.tsx:975:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col h-[372.614px] items-start overflow-clip pb-0 pt-[23.991px] px-[23.991px] relative w-[1278.18px]">
+src/imports/AreebaPricingSimulator2025.tsx:984:    <div className="absolute bg-white box-border content-stretch flex flex-col gap-[23.991px] h-[493.295px] items-start left-[48.18px] p-[0.909px] rounded-[14px] top-[75.98px] w-[1280px]" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:985:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:994:    <div className="content-stretch flex gap-[8px] items-center relative shrink-0 w-full" data-name="CardTitle">
+src/imports/AreebaPricingSimulator2025.tsx:995:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[16px] text-neutral-950 text-nowrap tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:996:        <p className="leading-[16px] whitespace-pre">Service Library</p>
+src/imports/AreebaPricingSimulator2025.tsx:1004:    <div className="relative shrink-0 w-[165.27px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1005:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:1007:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:1008:          <p className="leading-[22px]">0 selected · 5 available</p>
+src/imports/AreebaPricingSimulator2025.tsx:1017:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:1029:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[115.795px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:1030:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1031:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[115.795px]">
+src/imports/AreebaPricingSimulator2025.tsx:1033:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[12px] text-neutral-950 text-nowrap top-[8px]">
+src/imports/AreebaPricingSimulator2025.tsx:1034:          <p className="leading-[16px] whitespace-pre">Collapse All</p>
+src/imports/AreebaPricingSimulator2025.tsx:1057:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:1059:        <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[8px] items-start px-[24px] py-[12px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1069:    <div className="absolute bg-[#f3f3f5] h-[35.994px] left-0 rounded-[8px] top-0 w-[366.193px]" data-name="Input">
+src/imports/AreebaPricingSimulator2025.tsx:1070:      <div className="box-border content-stretch flex h-[35.994px] items-center overflow-clip pl-[36px] pr-[12px] py-[4px] relative w-[366.193px]">
+src/imports/AreebaPricingSimulator2025.tsx:1071:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[14px] text-nowrap tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1075:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1082:    <div className="absolute left-[11.99px] size-[15.994px] top-[10px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:1095:    <div className="h-[35.994px] relative shrink-0 w-full" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:1104:    <div className="absolute h-[20px] left-[12.9px] top-[12.9px] w-[85.81px]" data-name="Text">
+src/imports/AreebaPricingSimulator2025.tsx:1105:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1106:        <p className="leading-[20px] whitespace-pre">Filter by tags</p>
+src/imports/AreebaPricingSimulator2025.tsx:1114:    <div className="absolute bg-[#eceef2] h-[21.79px] left-0 rounded-[8px] top-0 w-[38.281px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1115:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[38.281px]">
+src/imports/AreebaPricingSimulator2025.tsx:1116:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1117:          <p className="leading-[16px] whitespace-pre">BIN</p>
+src/imports/AreebaPricingSimulator2025.tsx:1120:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1127:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[42.27px] rounded-[8px] top-0 w-[43.551px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1128:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[43.551px]">
+src/imports/AreebaPricingSimulator2025.tsx:1129:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1130:          <p className="leading-[16px] whitespace-pre">card</p>
+src/imports/AreebaPricingSimulator2025.tsx:1133:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1140:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[89.81px] rounded-[8px] top-0 w-[60.98px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1141:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[60.98px]">
+src/imports/AreebaPricingSimulator2025.tsx:1142:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1143:          <p className="leading-[16px] whitespace-pre">hosting</p>
+src/imports/AreebaPricingSimulator2025.tsx:1146:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1153:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[154.79px] rounded-[8px] top-0 w-[72.67px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1154:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[72.67px]">
+src/imports/AreebaPricingSimulator2025.tsx:1155:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1156:          <p className="leading-[16px] whitespace-pre">migration</p>
+src/imports/AreebaPricingSimulator2025.tsx:1159:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1166:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[231.45px] rounded-[8px] top-0 w-[83.594px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1167:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[83.594px]">
+src/imports/AreebaPricingSimulator2025.tsx:1168:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1169:          <p className="leading-[16px] whitespace-pre">onboarding</p>
+src/imports/AreebaPricingSimulator2025.tsx:1172:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1179:    <div className="absolute bg-[#eceef2] h-[23.991px] left-0 rounded-[8px] top-[25.78px] w-[70.043px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1180:      <div className="box-border content-stretch flex gap-[4px] h-[23.991px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[70.043px]">
+src/imports/AreebaPricingSimulator2025.tsx:1181:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1182:          <p className="leading-[16px] whitespace-pre">one-time</p>
+src/imports/AreebaPricingSimulator2025.tsx:1185:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1192:    <div className="absolute box-border content-stretch flex gap-[6px] h-[23.991px] items-center justify-center left-[74.03px] px-[8px] py-0 rounded-[8px] top-[25.78px] w-[64.19px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:1193:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-neutral-950 text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1194:        <p className="leading-[16px] whitespace-pre">+3 more</p>
+src/imports/AreebaPricingSimulator2025.tsx:1202:    <div className="absolute h-[49.773px] left-[12.9px] top-[40.9px] w-[340.398px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1216:    <div className="h-[103.565px] relative rounded-[10px] shrink-0 w-full" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:1217:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1226:    <div className="h-[23.991px] relative shrink-0 w-[87.457px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1227:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[23.991px] relative w-[87.457px]">
+src/imports/AreebaPricingSimulator2025.tsx:1228:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-1.18px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:1229:          <p className="leading-[24px] whitespace-pre">Initial Setup</p>
+src/imports/AreebaPricingSimulator2025.tsx:1238:    <div className="bg-[#eceef2] h-[21.79px] relative rounded-[8px] shrink-0 w-[25.213px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1239:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[25.213px]">
+src/imports/AreebaPricingSimulator2025.tsx:1240:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1241:          <p className="leading-[16px] whitespace-pre">2</p>
+src/imports/AreebaPricingSimulator2025.tsx:1244:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1251:    <div className="h-[23.991px] relative shrink-0 w-[120.668px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1252:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex gap-[7.997px] h-[23.991px] items-center relative w-[120.668px]">
+src/imports/AreebaPricingSimulator2025.tsx:1262:    <div className="relative shrink-0 size-[15.994px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:1274:    <div className="absolute box-border content-stretch flex h-[47.969px] items-center justify-between left-0 px-[11.989px] py-0 top-0 w-[364.375px]" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:1283:    <div className="h-[47.969px] relative shrink-0 w-full" data-name="Primitive.button">
+src/imports/AreebaPricingSimulator2025.tsx:1291:    <div className="h-[23.991px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1292:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-1.18px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:1293:        <p className="leading-[24px] whitespace-pre">New Customer Onboarding</p>
+src/imports/AreebaPricingSimulator2025.tsx:1301:    <div className="h-[40px] overflow-clip relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1302:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[210px]">
+src/imports/AreebaPricingSimulator2025.tsx:1303:        <p className="leading-[20px]">Complete setup process for new customers</p>
+src/imports/AreebaPricingSimulator2025.tsx:1311:    <div className="absolute h-[21.79px] left-0 rounded-[8px] top-0 w-[70.043px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1312:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[70.043px]">
+src/imports/AreebaPricingSimulator2025.tsx:1313:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-neutral-950 text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1314:          <p className="leading-[16px] whitespace-pre">one-time</p>
+src/imports/AreebaPricingSimulator2025.tsx:1317:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1324:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[78.04px] rounded-[8px] top-0 w-[50.455px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1325:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[50.455px]">
+src/imports/AreebaPricingSimulator2025.tsx:1326:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1327:          <p className="leading-[16px] whitespace-pre">setup</p>
+src/imports/AreebaPricingSimulator2025.tsx:1330:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1337:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[136.49px] rounded-[8px] top-0 w-[83.594px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1338:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[83.594px]">
+src/imports/AreebaPricingSimulator2025.tsx:1339:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1340:          <p className="leading-[16px] whitespace-pre">onboarding</p>
+src/imports/AreebaPricingSimulator2025.tsx:1343:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1350:    <div className="absolute h-[21.79px] left-0 rounded-[8px] top-[29.79px] w-[31.307px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1351:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[31.307px]">
+src/imports/AreebaPricingSimulator2025.tsx:1352:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-neutral-950 text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1353:          <p className="leading-[16px] whitespace-pre">+1</p>
+src/imports/AreebaPricingSimulator2025.tsx:1356:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1363:    <div className="h-[51.577px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1374:    <div className="basis-0 grow h-[127.557px] min-h-px min-w-px relative shrink-0" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1375:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[3.991px] h-[127.557px] items-start relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1386:    <div className="h-[20px] relative shrink-0 w-[77.131px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1387:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[20px] relative w-[77.131px]">
+src/imports/AreebaPricingSimulator2025.tsx:1388:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1389:          <p className="leading-[20px] whitespace-pre">$55,000.00</p>
+src/imports/AreebaPricingSimulator2025.tsx:1398:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:1411:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[74.19px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:1412:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1413:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[74.19px]">
+src/imports/AreebaPricingSimulator2025.tsx:1415:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[14px] text-neutral-950 text-nowrap top-[6.81px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1416:          <p className="leading-[20px] whitespace-pre">Add</p>
+src/imports/AreebaPricingSimulator2025.tsx:1425:    <div className="h-[59.986px] relative shrink-0 w-[77.131px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1426:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-end relative w-[77.131px]">
+src/imports/AreebaPricingSimulator2025.tsx:1436:    <div className="h-[127.557px] relative shrink-0 w-[322.585px]" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:1437:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[127.557px] items-start justify-between relative w-[322.585px]">
+src/imports/AreebaPricingSimulator2025.tsx:1447:    <div className="bg-white h-[165.355px] relative rounded-[14px] shrink-0 w-full" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:1448:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1450:        <div className="box-border content-stretch flex flex-col h-[165.355px] items-start pb-[0.909px] pl-[12.898px] pr-[0.909px] pt-[12.898px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1460:    <div className="h-[23.991px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1461:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-1.18px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:1462:        <p className="leading-[24px] whitespace-pre">BIN Set up</p>
+src/imports/AreebaPricingSimulator2025.tsx:1470:    <div className="h-[40px] overflow-clip relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1471:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[194px]">
+src/imports/AreebaPricingSimulator2025.tsx:1472:        <p className="leading-[20px]">Per BIN migration for Visa and Mastercard</p>
+src/imports/AreebaPricingSimulator2025.tsx:1480:    <div className="absolute h-[21.79px] left-0 rounded-[8px] top-0 w-[82.77px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1481:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[82.77px]">
+src/imports/AreebaPricingSimulator2025.tsx:1482:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-neutral-950 text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1483:          <p className="leading-[16px] whitespace-pre">per change</p>
+src/imports/AreebaPricingSimulator2025.tsx:1486:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1493:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[90.77px] rounded-[8px] top-0 w-[50.455px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1494:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[50.455px]">
+src/imports/AreebaPricingSimulator2025.tsx:1495:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1496:          <p className="leading-[16px] whitespace-pre">setup</p>
+src/imports/AreebaPricingSimulator2025.tsx:1499:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1506:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[149.22px] rounded-[8px] top-0 w-[38.281px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1507:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[38.281px]">
+src/imports/AreebaPricingSimulator2025.tsx:1508:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1509:          <p className="leading-[16px] whitespace-pre">BIN</p>
+src/imports/AreebaPricingSimulator2025.tsx:1512:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1519:    <div className="absolute h-[21.79px] left-[195.5px] rounded-[8px] top-0 w-[31.307px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1520:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[31.307px]">
+src/imports/AreebaPricingSimulator2025.tsx:1521:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-neutral-950 text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1522:          <p className="leading-[16px] whitespace-pre">+1</p>
+src/imports/AreebaPricingSimulator2025.tsx:1525:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1532:    <div className="h-[21.79px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1543:    <div className="basis-0 grow h-[97.77px] min-h-px min-w-px relative shrink-0" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1544:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[3.992px] h-[97.77px] items-start relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1555:    <div className="h-[20px] relative shrink-0 w-[68.409px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1556:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[20px] relative w-[68.409px]">
+src/imports/AreebaPricingSimulator2025.tsx:1557:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1558:          <p className="leading-[20px] whitespace-pre">$5,000.00</p>
+src/imports/AreebaPricingSimulator2025.tsx:1567:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:1580:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[74.19px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:1581:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1582:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[74.19px]">
+src/imports/AreebaPricingSimulator2025.tsx:1584:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[14px] text-neutral-950 text-nowrap top-[6.81px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1585:          <p className="leading-[20px] whitespace-pre">Add</p>
+src/imports/AreebaPricingSimulator2025.tsx:1594:    <div className="h-[59.986px] relative shrink-0 w-[74.19px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1595:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-end relative w-[74.19px]">
+src/imports/AreebaPricingSimulator2025.tsx:1605:    <div className="h-[97.77px] relative shrink-0 w-[322.585px]" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:1606:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[97.77px] items-start justify-between relative w-[322.585px]">
+src/imports/AreebaPricingSimulator2025.tsx:1616:    <div className="bg-white h-[135.568px] relative rounded-[14px] shrink-0 w-full" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:1617:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1619:        <div className="box-border content-stretch flex flex-col h-[135.568px] items-start pb-[0.909px] pl-[12.898px] pr-[0.909px] pt-[12.898px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1629:    <div className="h-[325.824px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1631:        <div className="box-border content-stretch flex flex-col gap-[7.997px] h-[325.824px] items-start pb-0 pt-[8.906px] px-[7.997px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1636:      <div aria-hidden="true" className="absolute border-[0.909px_0px_0px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:1643:    <div className="h-[375.611px] relative rounded-[10px] shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1644:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1646:        <div className="box-border content-stretch flex flex-col h-[375.611px] items-start p-[0.909px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1657:    <div className="h-[23.991px] relative shrink-0 w-[213.906px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1658:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[23.991px] relative w-[213.906px]">
+src/imports/AreebaPricingSimulator2025.tsx:1659:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-1.18px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:1660:          <p className="leading-[24px] whitespace-pre">{`Card Management & Hosting`}</p>
+src/imports/AreebaPricingSimulator2025.tsx:1669:    <div className="bg-[#eceef2] h-[21.79px] relative rounded-[8px] shrink-0 w-[25.213px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1670:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[25.213px]">
+src/imports/AreebaPricingSimulator2025.tsx:1671:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1672:          <p className="leading-[16px] whitespace-pre">2</p>
+src/imports/AreebaPricingSimulator2025.tsx:1675:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1682:    <div className="h-[23.991px] relative shrink-0 w-[247.116px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1683:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex gap-[7.997px] h-[23.991px] items-center relative w-[247.116px]">
+src/imports/AreebaPricingSimulator2025.tsx:1693:    <div className="relative shrink-0 size-[15.994px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:1705:    <div className="absolute box-border content-stretch flex h-[47.969px] items-center justify-between left-0 px-[11.989px] py-0 top-0 w-[364.375px]" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:1714:    <div className="h-[47.969px] relative shrink-0 w-full" data-name="Primitive.button">
+src/imports/AreebaPricingSimulator2025.tsx:1722:    <div className="h-[23.991px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1723:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-1.18px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:1724:        <p className="leading-[24px] whitespace-pre">Card Creation</p>
+src/imports/AreebaPricingSimulator2025.tsx:1732:    <div className="h-[20px] overflow-clip relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1733:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1734:        <p className="leading-[20px] whitespace-pre">Fee for creating new cards</p>
+src/imports/AreebaPricingSimulator2025.tsx:1742:    <div className="absolute h-[21.79px] left-0 rounded-[8px] top-0 w-[66.065px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1743:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[66.065px]">
+src/imports/AreebaPricingSimulator2025.tsx:1744:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-neutral-950 text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1745:          <p className="leading-[16px] whitespace-pre">per card</p>
+src/imports/AreebaPricingSimulator2025.tsx:1748:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1755:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[74.06px] rounded-[8px] top-0 w-[43.551px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1756:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[43.551px]">
+src/imports/AreebaPricingSimulator2025.tsx:1757:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1758:          <p className="leading-[16px] whitespace-pre">card</p>
+src/imports/AreebaPricingSimulator2025.tsx:1761:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1768:    <div className="h-[21.79px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1777:    <div className="basis-0 grow h-[77.77px] min-h-px min-w-px relative shrink-0" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1778:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[3.991px] h-[77.77px] items-start relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1789:    <div className="h-[20px] relative shrink-0 w-[38.608px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1790:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[20px] relative w-[38.608px]">
+src/imports/AreebaPricingSimulator2025.tsx:1791:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[14px] text-neutral-950 text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1792:          <p className="leading-[20px] whitespace-pre">$0.20</p>
+src/imports/AreebaPricingSimulator2025.tsx:1801:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:1814:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[74.19px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:1815:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1816:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[74.19px]">
+src/imports/AreebaPricingSimulator2025.tsx:1818:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[14px] text-neutral-950 text-nowrap top-[6.81px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:1819:          <p className="leading-[20px] whitespace-pre">Add</p>
+src/imports/AreebaPricingSimulator2025.tsx:1828:    <div className="h-[59.986px] relative shrink-0 w-[74.19px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1829:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[7.997px] h-[59.986px] items-end relative w-[74.19px]">
+src/imports/AreebaPricingSimulator2025.tsx:1839:    <div className="h-[77.77px] relative shrink-0 w-[322.585px]" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:1840:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[77.77px] items-start justify-between relative w-[322.585px]">
+src/imports/AreebaPricingSimulator2025.tsx:1850:    <div className="bg-white h-[115.568px] relative rounded-[14px] shrink-0 w-full" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:1851:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1853:        <div className="box-border content-stretch flex flex-col h-[115.568px] items-start pb-[0.909px] pl-[12.898px] pr-[0.909px] pt-[12.898px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1863:    <div className="h-[47.983px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1864:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[16px] text-neutral-950 top-[-1.18px] tracking-[-0.3125px] w-[167px]">
+src/imports/AreebaPricingSimulator2025.tsx:1865:        <p className="leading-[24px]">Card Hosting (Debit/Prepaid/Virtual)</p>
+src/imports/AreebaPricingSimulator2025.tsx:1873:    <div className="h-[40px] overflow-clip relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1874:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[231px]">
+src/imports/AreebaPricingSimulator2025.tsx:1875:        <p className="leading-[20px]">Monthly hosting fee for virtual debit or prepaid cards</p>
+src/imports/AreebaPricingSimulator2025.tsx:1883:    <div className="absolute h-[21.79px] left-0 rounded-[8px] top-0 w-[66.065px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1884:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[66.065px]">
+src/imports/AreebaPricingSimulator2025.tsx:1885:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-neutral-950 text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1886:          <p className="leading-[16px] whitespace-pre">per card</p>
+src/imports/AreebaPricingSimulator2025.tsx:1889:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1896:    <div className="absolute bg-[#030213] h-[21.79px] left-[74.06px] rounded-[8px] top-0 w-[98.168px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1897:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[98.168px]">
+src/imports/AreebaPricingSimulator2025.tsx:1898:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-nowrap text-white">
+src/imports/AreebaPricingSimulator2025.tsx:1899:          <p className="leading-[16px] whitespace-pre">Tiered Pricing</p>
+src/imports/AreebaPricingSimulator2025.tsx:1902:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1909:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[180.23px] rounded-[8px] top-0 w-[43.551px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1910:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[43.551px]">
+src/imports/AreebaPricingSimulator2025.tsx:1911:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1912:          <p className="leading-[16px] whitespace-pre">card</p>
+src/imports/AreebaPricingSimulator2025.tsx:1915:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1922:    <div className="absolute bg-[#eceef2] h-[21.79px] left-0 rounded-[8px] top-[29.79px] w-[60.98px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:1923:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[60.98px]">
+src/imports/AreebaPricingSimulator2025.tsx:1924:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:1925:          <p className="leading-[16px] whitespace-pre">hosting</p>
+src/imports/AreebaPricingSimulator2025.tsx:1928:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:1935:    <div className="h-[51.577px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1946:    <div className="basis-0 grow h-[151.548px] min-h-px min-w-px relative shrink-0" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1947:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[3.992px] h-[151.548px] items-start relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:1958:    <div className="content-stretch flex h-[15.994px] items-start relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1959:      <div className="basis-0 font-['Inter:Medium',_sans-serif] font-medium grow leading-[0] min-h-px min-w-px not-italic relative shrink-0 text-[#717182] text-[12px] text-right">
+src/imports/AreebaPricingSimulator2025.tsx:1960:        <p className="leading-[16px]">from</p>
+src/imports/AreebaPricingSimulator2025.tsx:1968:    <div className="h-[20px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1969:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[39px] not-italic text-[14px] text-neutral-950 text-nowrap text-right top-[0.82px] tracking-[-0.1504px] translate-x-[-100%]">
+src/imports/AreebaPricingSimulator2025.tsx:1970:        <p className="leading-[20px] whitespace-pre">$0.35</p>
+src/imports/AreebaPricingSimulator2025.tsx:1978:    <div className="h-[39.986px] relative shrink-0 w-[38.565px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:1979:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[3.992px] h-[39.986px] items-start relative w-[38.565px]">
+src/imports/AreebaPricingSimulator2025.tsx:1989:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:2002:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[74.19px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:2003:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2004:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[74.19px]">
+src/imports/AreebaPricingSimulator2025.tsx:2006:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[14px] text-neutral-950 text-nowrap top-[6.81px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:2007:          <p className="leading-[20px] whitespace-pre">Add</p>
+src/imports/AreebaPricingSimulator2025.tsx:2016:    <div className="h-[79.972px] relative shrink-0 w-[74.19px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2017:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[7.997px] h-[79.972px] items-end relative w-[74.19px]">
+src/imports/AreebaPricingSimulator2025.tsx:2027:    <div className="h-[151.548px] relative shrink-0 w-[322.585px]" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:2028:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[151.548px] items-start justify-between relative w-[322.585px]">
+src/imports/AreebaPricingSimulator2025.tsx:2038:    <div className="bg-white h-[189.347px] relative rounded-[14px] shrink-0 w-full" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:2039:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2041:        <div className="box-border content-stretch flex flex-col h-[189.347px] items-start pb-[0.909px] pl-[12.898px] pr-[0.909px] pt-[12.898px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:2051:    <div className="h-[329.815px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2053:        <div className="box-border content-stretch flex flex-col gap-[7.997px] h-[329.815px] items-start pb-0 pt-[8.906px] px-[7.997px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:2058:      <div aria-hidden="true" className="absolute border-[0.909px_0px_0px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:2065:    <div className="h-[379.602px] relative rounded-[10px] shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2066:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2068:        <div className="box-border content-stretch flex flex-col h-[379.602px] items-start p-[0.909px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:2079:    <div className="h-[23.991px] relative shrink-0 w-[173.196px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2080:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[23.991px] relative w-[173.196px]">
+src/imports/AreebaPricingSimulator2025.tsx:2081:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-1.18px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:2082:          <p className="leading-[24px] whitespace-pre">Transaction Processing</p>
+src/imports/AreebaPricingSimulator2025.tsx:2091:    <div className="bg-[#eceef2] h-[21.79px] relative rounded-[8px] shrink-0 w-[23.579px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:2092:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[23.579px]">
+src/imports/AreebaPricingSimulator2025.tsx:2093:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:2094:          <p className="leading-[16px] whitespace-pre">1</p>
+src/imports/AreebaPricingSimulator2025.tsx:2097:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2104:    <div className="h-[23.991px] relative shrink-0 w-[204.773px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2105:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex gap-[7.997px] h-[23.991px] items-center relative w-[204.773px]">
+src/imports/AreebaPricingSimulator2025.tsx:2115:    <div className="relative shrink-0 size-[15.994px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:2127:    <div className="absolute box-border content-stretch flex h-[47.969px] items-center justify-between left-0 px-[11.989px] py-0 top-0 w-[364.375px]" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:2136:    <div className="absolute h-[47.969px] left-[0.91px] top-[0.91px] w-[364.375px]" data-name="Primitive.button">
+src/imports/AreebaPricingSimulator2025.tsx:2144:    <div className="h-[23.991px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2145:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-0 not-italic text-[16px] text-neutral-950 text-nowrap top-[-1.18px] tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:2146:        <p className="leading-[24px] whitespace-pre">Transaction Processing OFF US</p>
+src/imports/AreebaPricingSimulator2025.tsx:2154:    <div className="h-[40px] overflow-clip relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2155:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[221px]">
+src/imports/AreebaPricingSimulator2025.tsx:2156:        <p className="leading-[20px]">Processing fee for transactions at external/third-party POS terminals</p>
+src/imports/AreebaPricingSimulator2025.tsx:2164:    <div className="absolute h-[21.79px] left-0 rounded-[8px] top-0 w-[105.81px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:2165:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[105.81px]">
+src/imports/AreebaPricingSimulator2025.tsx:2166:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-neutral-950 text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:2167:          <p className="leading-[16px] whitespace-pre">per transaction</p>
+src/imports/AreebaPricingSimulator2025.tsx:2170:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2177:    <div className="absolute bg-[#030213] h-[21.79px] left-[113.81px] rounded-[8px] top-0 w-[98.168px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:2178:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[98.168px]">
+src/imports/AreebaPricingSimulator2025.tsx:2179:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[12px] text-nowrap text-white">
+src/imports/AreebaPricingSimulator2025.tsx:2180:          <p className="leading-[16px] whitespace-pre">Tiered Pricing</p>
+src/imports/AreebaPricingSimulator2025.tsx:2183:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2190:    <div className="absolute bg-[#eceef2] h-[21.79px] left-0 rounded-[8px] top-[29.79px] w-[83.295px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:2191:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[83.295px]">
+src/imports/AreebaPricingSimulator2025.tsx:2192:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:2193:          <p className="leading-[16px] whitespace-pre">transaction</p>
+src/imports/AreebaPricingSimulator2025.tsx:2196:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2203:    <div className="absolute bg-[#eceef2] h-[21.79px] left-[91.29px] rounded-[8px] top-[29.79px] w-[81.463px]" data-name="Badge">
+src/imports/AreebaPricingSimulator2025.tsx:2204:      <div className="box-border content-stretch flex gap-[4px] h-[21.79px] items-center justify-center overflow-clip px-[8.909px] py-[2.909px] relative w-[81.463px]">
+src/imports/AreebaPricingSimulator2025.tsx:2205:        <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[#030213] text-[12px] text-nowrap">
+src/imports/AreebaPricingSimulator2025.tsx:2206:          <p className="leading-[16px] whitespace-pre">processing</p>
+src/imports/AreebaPricingSimulator2025.tsx:2209:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2216:    <div className="h-[51.577px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2227:    <div className="basis-0 grow h-[127.557px] min-h-px min-w-px relative shrink-0" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2228:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[3.991px] h-[127.557px] items-start relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:2239:    <div className="content-stretch flex h-[15.994px] items-start relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2240:      <div className="basis-0 font-['Inter:Medium',_sans-serif] font-medium grow leading-[0] min-h-px min-w-px not-italic relative shrink-0 text-[#717182] text-[12px] text-right">
+src/imports/AreebaPricingSimulator2025.tsx:2241:        <p className="leading-[16px]">from</p>
+src/imports/AreebaPricingSimulator2025.tsx:2249:    <div className="h-[20px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2250:      <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[48px] not-italic text-[14px] text-neutral-950 text-nowrap text-right top-[0.82px] tracking-[-0.1504px] translate-x-[-100%]">
+src/imports/AreebaPricingSimulator2025.tsx:2251:        <p className="leading-[20px] whitespace-pre">$0.035</p>
+src/imports/AreebaPricingSimulator2025.tsx:2259:    <div className="h-[39.986px] relative shrink-0 w-[47.273px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2260:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[3.991px] h-[39.986px] items-start relative w-[47.273px]">
+src/imports/AreebaPricingSimulator2025.tsx:2270:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:2283:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[74.19px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:2284:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2285:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[74.19px]">
+src/imports/AreebaPricingSimulator2025.tsx:2287:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[14px] text-neutral-950 text-nowrap top-[6.81px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:2288:          <p className="leading-[20px] whitespace-pre">Add</p>
+src/imports/AreebaPricingSimulator2025.tsx:2297:    <div className="h-[79.972px] relative shrink-0 w-[74.19px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2298:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[7.997px] h-[79.972px] items-end relative w-[74.19px]">
+src/imports/AreebaPricingSimulator2025.tsx:2308:    <div className="h-[127.557px] relative shrink-0 w-[322.585px]" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:2309:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[127.557px] items-start justify-between relative w-[322.585px]">
+src/imports/AreebaPricingSimulator2025.tsx:2319:    <div className="bg-white h-[165.355px] relative rounded-[14px] shrink-0 w-full" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:2320:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2322:        <div className="box-border content-stretch flex flex-col h-[165.355px] items-start pb-[0.909px] pl-[12.898px] pr-[0.909px] pt-[12.898px] relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:2332:    <div className="absolute h-[182.259px] left-[0.91px] top-[48.88px] w-[364.375px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2333:      <div className="box-border content-stretch flex flex-col h-[182.259px] items-start overflow-clip pb-0 pt-[8.906px] px-[7.997px] relative w-[364.375px]">
+src/imports/AreebaPricingSimulator2025.tsx:2336:      <div aria-hidden="true" className="absolute border-[0.909px_0px_0px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:2343:    <div className="h-[232.045px] relative rounded-[10px] shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2344:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[10px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2353:    <div className="content-stretch flex flex-col gap-[11.989px] h-[1011.24px] items-start relative shrink-0 w-full" data-name="ItemLibrary">
+src/imports/AreebaPricingSimulator2025.tsx:2363:    <div className="h-[1206.78px] relative shrink-0 w-[414.176px]" data-name="CardContent">
+src/imports/AreebaPricingSimulator2025.tsx:2364:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[15.994px] h-[1206.78px] items-start px-[23.991px] py-0 relative w-[414.176px]">
+src/imports/AreebaPricingSimulator2025.tsx:2375:    <div className="absolute bg-white box-border content-stretch flex flex-col gap-[23.991px] h-[1327.46px] items-start left-0 p-[0.909px] rounded-[14px] top-0 w-[415.994px]" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:2376:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2385:    <div className="content-stretch flex gap-[8px] items-center relative shrink-0 w-full" data-name="CardTitle">
+src/imports/AreebaPricingSimulator2025.tsx:2386:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[16px] text-neutral-950 text-nowrap tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:2387:        <p className="leading-[16px] whitespace-pre">Selected Services</p>
+src/imports/AreebaPricingSimulator2025.tsx:2395:    <div className="relative shrink-0 w-[165.27px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2396:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:2398:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:2399:          <p className="leading-[22px]">0 items selected</p>
+src/imports/AreebaPricingSimulator2025.tsx:2408:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:2420:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[115.795px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:2421:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2422:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[115.795px]">
+src/imports/AreebaPricingSimulator2025.tsx:2424:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[12px] text-neutral-950 text-nowrap top-[8px]">
+src/imports/AreebaPricingSimulator2025.tsx:2425:          <p className="leading-[16px] whitespace-pre">Collapse All</p>
+src/imports/AreebaPricingSimulator2025.tsx:2447:    <div className="box-border content-stretch flex flex-col gap-[8px] items-start px-[24px] py-[12px] relative shrink-0 w-[414.176px]" data-name="CardHeader">
+src/imports/AreebaPricingSimulator2025.tsx:2448:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:2456:    <div className="h-[23.991px] relative shrink-0 w-full" data-name="Paragraph">
+src/imports/AreebaPricingSimulator2025.tsx:2457:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[183.93px] not-italic text-[#717182] text-[16px] text-center text-nowrap top-[-1.18px] tracking-[-0.3125px] translate-x-[-50%]">
+src/imports/AreebaPricingSimulator2025.tsx:2458:        <p className="leading-[24px] whitespace-pre">No services selected</p>
+src/imports/AreebaPricingSimulator2025.tsx:2466:    <div className="h-[40px] relative shrink-0 w-full" data-name="Paragraph">
+src/imports/AreebaPricingSimulator2025.tsx:2467:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[183.11px] not-italic text-[#717182] text-[14px] text-center top-[0.82px] tracking-[-0.1504px] translate-x-[-50%] w-[324px]">
+src/imports/AreebaPricingSimulator2025.tsx:2468:        <p className="leading-[20px]">Add services from the library to start building your scenario</p>
+src/imports/AreebaPricingSimulator2025.tsx:2476:    <div className="box-border content-stretch flex flex-col gap-[7.997px] h-[135.966px] items-start pb-0 pt-[31.989px] px-0 relative shrink-0 w-[366.207px]" data-name="ScenarioBuilder">
+src/imports/AreebaPricingSimulator2025.tsx:2485:    <div className="absolute bg-white box-border content-stretch flex flex-col gap-[24px] items-center left-[431.99px] p-px rounded-[14px] top-[-0.27px] w-[416.009px]" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:2486:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2495:    <div className="content-stretch flex gap-[8px] items-center relative shrink-0 w-full" data-name="CardTitle">
+src/imports/AreebaPricingSimulator2025.tsx:2496:      <div className="font-['Inter:Medium',_sans-serif] font-medium leading-[0] not-italic relative shrink-0 text-[16px] text-neutral-950 text-nowrap tracking-[-0.3125px]">
+src/imports/AreebaPricingSimulator2025.tsx:2497:        <p className="leading-[16px] whitespace-pre">Fee Summary</p>
+src/imports/AreebaPricingSimulator2025.tsx:2505:    <div className="relative shrink-0 w-[165.27px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2506:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:2508:        <div className="font-['Inter:Regular',_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#717182] text-[12px] tracking-[-0.3125px] w-[166px]">
+src/imports/AreebaPricingSimulator2025.tsx:2509:          <p className="leading-[22px]">Summary</p>
+src/imports/AreebaPricingSimulator2025.tsx:2518:    <div className="absolute left-[10.91px] size-[15.994px] top-[8px]" data-name="Icon">
+src/imports/AreebaPricingSimulator2025.tsx:2530:    <div className="bg-white h-[31.989px] relative rounded-[8px] shrink-0 w-[115.795px]" data-name="Button">
+src/imports/AreebaPricingSimulator2025.tsx:2531:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[8px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2532:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[31.989px] relative w-[115.795px]">
+src/imports/AreebaPricingSimulator2025.tsx:2534:        <div className="absolute font-['Inter:Medium',_sans-serif] font-medium leading-[0] left-[36.89px] not-italic text-[12px] text-neutral-950 text-nowrap top-[8px]">
+src/imports/AreebaPricingSimulator2025.tsx:2535:          <p className="leading-[16px] whitespace-pre">Collapse All</p>
+src/imports/AreebaPricingSimulator2025.tsx:2557:    <div className="box-border content-stretch flex flex-col gap-[8px] items-start px-[24px] py-[12px] relative shrink-0 w-[414.176px]" data-name="CardHeader">
+src/imports/AreebaPricingSimulator2025.tsx:2558:      <div aria-hidden="true" className="absolute border-[0px_0px_0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:2566:    <div className="h-[23.991px] relative shrink-0 w-full" data-name="Paragraph">
+src/imports/AreebaPricingSimulator2025.tsx:2567:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[183.43px] not-italic text-[#717182] text-[16px] text-center text-nowrap top-[-1.18px] tracking-[-0.3125px] translate-x-[-50%]">
+src/imports/AreebaPricingSimulator2025.tsx:2568:        <p className="leading-[24px] whitespace-pre">No items selected</p>
+src/imports/AreebaPricingSimulator2025.tsx:2576:    <div className="h-[40px] relative shrink-0 w-full" data-name="Paragraph">
+src/imports/AreebaPricingSimulator2025.tsx:2577:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[183.11px] not-italic text-[#717182] text-[14px] text-center top-[0.82px] tracking-[-0.1504px] translate-x-[-50%] w-[324px]">
+src/imports/AreebaPricingSimulator2025.tsx:2578:        <p className="leading-[20px]">Your fee summary will appear here once you add items to your scenario</p>
+src/imports/AreebaPricingSimulator2025.tsx:2586:    <div className="box-border content-stretch flex flex-col gap-[7.997px] h-[135.966px] items-start pb-0 pt-[31.989px] px-0 relative shrink-0 w-[366.207px]" data-name="ScenarioBuilder">
+src/imports/AreebaPricingSimulator2025.tsx:2595:    <div className="absolute bg-white box-border content-stretch flex flex-col gap-[24px] items-center left-[863.82px] p-px rounded-[14px] top-[-0.27px] w-[416.009px]" data-name="Card">
+src/imports/AreebaPricingSimulator2025.tsx:2596:      <div aria-hidden="true" className="absolute border-[0.909px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none rounded-[14px]" />
+src/imports/AreebaPricingSimulator2025.tsx:2605:    <div className="absolute h-[1327.46px] left-[48.18px] top-[593.27px] w-[1280px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2615:    <div className="absolute h-[20px] left-[242.07px] top-0 w-[76.506px]" data-name="VersionInfo">
+src/imports/AreebaPricingSimulator2025.tsx:2616:      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:2617:        <p className="leading-[20px] whitespace-pre">v4.0.0.9259</p>
+src/imports/AreebaPricingSimulator2025.tsx:2625:    <div className="h-[20px] relative shrink-0 w-[318.58px]" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2626:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[20px] relative w-[318.58px]">
+src/imports/AreebaPricingSimulator2025.tsx:2627:        <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] top-[0.82px] tracking-[-0.1504px] w-[235px]">
+src/imports/AreebaPricingSimulator2025.tsx:2628:          <p className="leading-[20px]">areeba © 2025. All Rights Reserved.</p>
+src/imports/AreebaPricingSimulator2025.tsx:2638:    <div className="h-[20px] relative shrink-0 w-[47.117px]" data-name="Link">
+src/imports/AreebaPricingSimulator2025.tsx:2639:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[20px] relative w-[47.117px]">
+src/imports/AreebaPricingSimulator2025.tsx:2640:        <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-0 not-italic text-[#717182] text-[14px] text-nowrap top-[0.82px] tracking-[-0.1504px]">
+src/imports/AreebaPricingSimulator2025.tsx:2641:          <p className="leading-[20px] whitespace-pre">Privacy</p>
+src/imports/AreebaPricingSimulator2025.tsx:2650:    <div className="h-[20px] relative shrink-0 w-full" data-name="Container">
+src/imports/AreebaPricingSimulator2025.tsx:2652:        <div className="content-stretch flex h-[20px] items-center justify-between relative w-full">
+src/imports/AreebaPricingSimulator2025.tsx:2663:    <div className="absolute box-border content-stretch flex flex-col h-[52.898px] items-start left-[48.18px] pb-0 pt-[32.898px] px-0 top-[1968.72px] w-[1280px]" data-name="Footer">
+src/imports/AreebaPricingSimulator2025.tsx:2664:      <div aria-hidden="true" className="absolute border-[0.909px_0px_0px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+src/imports/AreebaPricingSimulator2025.tsx:2672:    <div className="absolute bg-white h-[2037.61px] left-0 top-0 w-[1376.36px]" data-name="AppContent">
+src/components/ScenarioBuilder.tsx:250:                    <SelectTrigger className="w-[180px]">
+src/components/ScenarioBuilder.tsx:313:                                    <CardContent className="p-[12px]">
+src/components/ScenarioBuilder.tsx:321:                                            className="font-medium truncate cursor-pointer mb-1 text-[14px]"
+src/components/ScenarioBuilder.tsx:339:                                                <span className="line-through text-muted-foreground text-[12px]">
+src/components/ScenarioBuilder.tsx:342:                                                <span className="font-medium text-foreground text-[12px] text-[13px]">
+src/components/ScenarioBuilder.tsx:438:                                              className="text-primary hover:underline text-[14px] no-underline"
+src/components/ui/input-otp.tsx:54:        "data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]",
+src/components/ui/chart.tsx:205:                          "shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
+src/components/ui/chart.tsx:209:                            "w-0 border-[1.5px] border-dashed bg-transparent":
+src/components/ui/chart.tsx:293:                className="h-2 w-2 shrink-0 rounded-[2px]"
+src/components/ui/scroll-area.tsx:34:        "h-full w-2.5 border-l border-l-transparent p-[1px]",
+src/components/ui/scroll-area.tsx:36:        "h-2.5 flex-col border-t border-t-transparent p-[1px]",
+src/components/ui/navigation-menu.tsx:58:      className="relative top-[1px] ml-1 h-3 w-3 transition duration-300 group-data-[state=open]:rotate-180"
+src/components/ui/drawer.tsx:68:        <div className="bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
+src/components/ui/calendar.tsx:71:          "has-focus:border-ring border-input shadow-xs has-focus:ring-ring/50 has-focus:ring-[3px] relative rounded-md border",
+src/components/ui/calendar.tsx:202:        "data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 flex aspect-square h-auto w-full min-w-[--cell-size] flex-col gap-1 font-normal leading-none data-[range-end=true]:rounded-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] [&>span]:text-xs [&>span]:opacity-70",
+src/components/ui/command.tsx:61:    className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
+src/components/ui/sidebar.tsx:294:        "hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex",
+src/components/ui/table.tsx:76:      "h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+src/components/ui/table.tsx:91:      "p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+src/components/ui/separator.tsx:22:        orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+src/components/ui/textarea.tsx:12:        "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+src/components/DynamicClientConfigBar.tsx:185:              <CardContent className="py-6 px-[24px]">
+src/components/ScenarioHistoryTab.tsx:152:          <div className="max-h-[600px] overflow-auto">
+src/components/ScenarioHistoryTab.tsx:163:                  <TableHead className="w-[120px]">Actions</TableHead>
+src/components/ItemLibrary.tsx:379:                                  <div className="font-medium mb-0.5 text-[14px]">{item.name}</div>
+src/components/ItemLibrary.tsx:380:                                  <div className="text-sm text-muted-foreground line-clamp-1 text-[12px]">
+src/components/FeeSummary.tsx:479:          <p className="text-[10px] leading-relaxed">
+src/components/DraggableTable.tsx:111:      <div className="max-h-[600px] overflow-auto">
+src/components/TieredPricingEditor.tsx:148:                        className="text-xs min-h-[60px]"
+src/components/DataTable.tsx:301:                    <div key={filter.key as string} className="min-w-[180px]">
+src/components/DataTable.tsx:364:                <div className="max-h-[600px] overflow-auto">
+src/components/AutoAddConfigPanel.tsx:232:                        <ScrollArea className="h-[200px]">
+src/components/AutoAddConfigPanel.tsx:295:                              <ScrollArea className="h-[150px]">
+src/components/AutoAddConfigPanel.tsx:390:                    <ScrollArea className="h-[200px]">
+src/components/CardHeaderWithCollapse.tsx:27:        className="border-b cursor-pointer hover:bg-muted/50 transition-colors p-[24px] pb-6"
+src/components/CardHeaderWithCollapse.tsx:33:            <CardDescription className="text-[12px]">{description}</CardDescription>
+src/components/CardHeaderWithCollapse.tsx:47:    <CardHeader className="border-b p-[24px]">
+src/components/CardHeaderWithCollapse.tsx:51:          <CardDescription className="text-[12px]">{description}</CardDescription>
+src/shared/components/ui/chart.tsx:176:        "border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
+src/shared/components/ui/switch.tsx:16:        "peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-switch-background focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+src/shared/components/ui/calendar.tsx:35:          "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
+src/shared/components/ui/menubar.tsx:82:          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[12rem] origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-md",
+src/shared/components/ui/menubar.tsx:251:        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-lg",
+src/shared/components/ui/dropdown-menu.tsx:45:          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md",
+src/shared/components/ui/dropdown-menu.tsx:233:        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-lg",
+src/shared/components/ui/select.tsx:68:          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md",
+src/shared/components/ui/context-menu.tsx:88:        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] origin-(--radix-context-menu-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-lg",
+src/shared/components/ui/context-menu.tsx:105:          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-h-(--radix-context-menu-content-available-height) min-w-[8rem] origin-(--radix-context-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md",
+src/components/ui/chart.tsx:176:        "border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
+src/components/ui/calendar.tsx:30:        "bg-background group/calendar p-3 [--cell-size:2rem] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
+src/components/ui/calendar.tsx:88:          "text-muted-foreground flex-1 select-none rounded-md text-[0.8rem] font-normal",
+src/components/ui/calendar.tsx:97:          "text-muted-foreground select-none text-[0.8rem]",
+src/components/ui/menubar.tsx:82:          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[12rem] origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-md",
+src/components/ui/menubar.tsx:251:        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-lg",
+src/components/ui/dropdown-menu.tsx:50:      "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
+src/components/ui/dropdown-menu.tsx:68:        "z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+src/components/ui/select.tsx:76:        "relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin]",
+src/components/ui/context-menu.tsx:88:        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] origin-(--radix-context-menu-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-lg",
+src/components/ui/context-menu.tsx:105:          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-h-(--radix-context-menu-content-available-height) min-w-[8rem] origin-(--radix-context-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md",
+src/components/ui/form.tsx:138:      className={cn("text-[0.8rem] text-muted-foreground", className)}
+src/components/ui/form.tsx:160:      className={cn("text-[0.8rem] font-medium text-destructive", className)}
+
+=== Inline Styles ===
+src/features/pdfBuilder/components/ImageUpload.tsx:220:                  style={{
+src/features/pdfBuilder/components/ImageUpload.tsx:360:        style={{
+src/features/pdfBuilder/components/RichTextEditor.tsx:455:        style={{ 
+src/shared/components/ui/progress.tsx:25:        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+src/shared/components/ui/chart.tsx:294:                style={{
+src/imports/AreebaPricingSimulator2025.tsx:379:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:593:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col h-full items-start relative w-[397.585px]" style={{ gap: "1.52588e-05px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:623:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:804:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col h-full items-start relative w-[397.585px]" style={{ gap: "1.52588e-05px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:834:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:945:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col h-[170.852px] items-start relative w-[397.585px]" style={{ gap: "1.52588e-05px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:1005:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:2396:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/imports/AreebaPricingSimulator2025.tsx:2506:      <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start relative w-[165.27px]" style={{ gap: "5.72205e-06px" }}>
+src/components/ui/color-indicator.tsx:27:        style={{ backgroundColor: color }}
+src/components/ui/progress.tsx:20:      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+src/components/ui/chart.tsx:294:                style={{
+src/components/SimulatorLanding.tsx:101:                      <div style={{ color: 'red', fontWeight: 'bold', fontSize: '16px' }}>Loading simulators...</div>
+src/components/SimulatorLanding.tsx:102:                      <div style={{ color: 'blue', fontSize: '14px' }}>Fetching services and pricing data</div>
+src/components/SimulatorLanding.tsx:154:                          <div style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}>Loading simulator...</div>
+src/components/SimulatorLanding.tsx:155:                          <div style={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.75rem' }}>Preparing services and pricing data</div>
+
+=== Native HTML Elements (Should Use shadcn) ===

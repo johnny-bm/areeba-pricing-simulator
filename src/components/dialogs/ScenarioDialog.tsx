@@ -77,7 +77,7 @@ export function ScenarioDialog({ isOpen, onClose, scenario }: ScenarioDialogProp
       const pdfData = {
         config: fullScenarioData.config,
         legacyConfig: fullScenarioData.config,
-        configDefinitions: configDefinitions.filter(config => config.isActive),
+        configDefinitions: configDefinitions.filter(config => config.is_active),
         selectedItems: fullScenarioData.selectedItems,
         categories: fullScenarioData.categories,
         globalDiscount: fullScenarioData.globalDiscount,

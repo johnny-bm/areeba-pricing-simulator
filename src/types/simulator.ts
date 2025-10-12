@@ -6,12 +6,12 @@ export interface Simulator {
   ctaText: string;
   iconName: string;
   urlSlug: string;
-  isActive: boolean;
+  is_active: boolean;
   isAvailable: boolean;
   comingSoon: boolean;
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
   createdBy?: string;
   updatedBy?: string;
 }
@@ -23,10 +23,10 @@ export interface CreateSimulatorData {
   ctaText?: string;
   iconName?: string;
   urlSlug?: string; // Optional, will be generated if not provided
-  isActive?: boolean;
+  is_active?: boolean;
   isAvailable?: boolean;
   comingSoon?: boolean;
-  sortOrder?: number;
+  sort_order?: number;
 }
 
 export interface UpdateSimulatorData {
@@ -36,10 +36,10 @@ export interface UpdateSimulatorData {
   ctaText?: string;
   iconName?: string;
   urlSlug?: string;
-  isActive?: boolean;
+  is_active?: boolean;
   isAvailable?: boolean;
   comingSoon?: boolean;
-  sortOrder?: number;
+  sort_order?: number;
 }
 
 // Available Lucide icons for simulators

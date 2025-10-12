@@ -203,7 +203,7 @@ export function ScenarioBuilder({
     const categoryIds = new Set(selectedItems.map(item => item.item.categoryId));
     return categories
       .filter(cat => categoryIds.has(cat.id))
-      .sort((a, b) => (a.order || 0) - (b.order || 0));
+      .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
   }, [selectedItems, categories]);
 
   // Group filtered items by category
@@ -231,7 +231,7 @@ export function ScenarioBuilder({
           onToggle={handleToggleAllCards}
           showCollapseButton={selectedItems.length > 0}
         />
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6 pb-6">
           {selectedItems.length > 0 ? (
             <>
               {/* Search and Filter */}
@@ -266,7 +266,7 @@ export function ScenarioBuilder({
               <div className="space-y-3">
                 {categories
                   .filter(category => itemsByCategory.has(category.id))
-                  .sort((a, b) => (a.order || 0) - (b.order || 0))
+                  .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
                   .map((category) => {
                     const categoryItems = itemsByCategory.get(category.id) || [];
                     const isCategoryExpanded = expandedCategories[category.id] ?? allCategoriesExpanded;

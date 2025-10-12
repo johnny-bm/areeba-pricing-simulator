@@ -120,7 +120,7 @@ function generateDetailedPricingSection(data: PDFData): string {
 
   const sortedCategories = categories
     .filter(cat => groupedItems[cat.id])
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
+    .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
   const getCategoryTotal = (categoryId: string) => {
     const items = groupedItems[categoryId] || [];

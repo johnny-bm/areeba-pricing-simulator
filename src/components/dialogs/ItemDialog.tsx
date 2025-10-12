@@ -75,7 +75,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
             api.loadConfigurations(),
             api.loadPricingItems()
           ]);
-          setConfigurations(configsData.filter(config => config.isActive));
+          setConfigurations(configsData.filter(config => config.is_active));
           setAvailableServices(servicesData);
           
           // Extract all unique tags from services

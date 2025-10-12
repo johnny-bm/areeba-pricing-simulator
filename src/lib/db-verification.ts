@@ -8,7 +8,7 @@ interface TableCheck {
 const REQUIRED_TABLES: TableCheck[] = [
   {
     table: 'user_profiles',
-    requiredColumns: ['id', 'email', 'role', 'created_at']
+    requiredColumns: ['id', 'email', 'role', 'is_active', 'created_at', 'updated_at']
   },
   {
     table: 'user_invites',
@@ -16,11 +16,15 @@ const REQUIRED_TABLES: TableCheck[] = [
   },
   {
     table: 'services',
-    requiredColumns: ['id', 'name', 'category', 'default_price', 'simulator_id']
+    requiredColumns: ['id', 'name', 'category', 'default_price', 'simulator_id', 'is_active', 'display_order']
   },
   {
     table: 'categories',
-    requiredColumns: ['id', 'name', 'simulator_id']
+    requiredColumns: ['id', 'name', 'simulator_id', 'is_active', 'display_order']
+  },
+  {
+    table: 'simulators',
+    requiredColumns: ['id', 'name', 'title', 'is_active', 'sort_order', 'created_at', 'updated_at']
   },
   {
     table: 'simulator_submissions',
@@ -32,11 +36,11 @@ const REQUIRED_TABLES: TableCheck[] = [
   },
   {
     table: 'pdf_templates',
-    requiredColumns: ['id', 'template_name', 'simulator_type']
+    requiredColumns: ['id', 'template_name', 'simulator_type', 'is_active']
   },
   {
     table: 'configurations',
-    requiredColumns: ['id', 'simulator_id', 'name', 'fields']
+    requiredColumns: ['id', 'simulator_id', 'name', 'fields', 'is_active', 'display_order', 'sort_order']
   }
 ];
 

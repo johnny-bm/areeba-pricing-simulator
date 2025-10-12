@@ -29,7 +29,7 @@ interface SimulatorFormData {
   isActive: boolean;
   isAvailable: boolean;
   comingSoon: boolean;
-  sortOrder: number;
+  sort_order: number;
 }
 
 export function SimulatorDialog({
@@ -49,7 +49,7 @@ export function SimulatorDialog({
     isActive: true,
     isAvailable: true,
     comingSoon: false,
-    sortOrder: 0
+    sort_order: 0
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -66,10 +66,10 @@ export function SimulatorDialog({
           ctaText: simulator.ctaText,
           iconName: simulator.iconName,
           urlSlug: simulator.urlSlug,
-          isActive: simulator.isActive,
+          isActive: simulator.is_active,
           isAvailable: simulator.isAvailable,
           comingSoon: simulator.comingSoon,
-          sortOrder: simulator.sortOrder
+          sort_order: simulator.sort_order
         });
       } else {
         // Create mode - start with defaults
@@ -83,7 +83,7 @@ export function SimulatorDialog({
           isActive: true,
           isAvailable: true,
           comingSoon: false,
-          sortOrder: 0
+          sort_order: 0
         });
       }
     }
@@ -279,8 +279,8 @@ export function SimulatorDialog({
           <Input
             id="simulator-sort"
             type="number"
-            value={formData.sortOrder}
-            onChange={(e) => updateField('sortOrder', parseInt(e.target.value) || 0)}
+            value={formData.sort_order}
+            onChange={(e) => updateField('sort_order', parseInt(e.target.value) || 0)}
             placeholder="0"
           />
           <p className="text-xs text-muted-foreground">

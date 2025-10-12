@@ -83,7 +83,7 @@ export function SimpleServiceEditor({
             api.loadConfigurations(),
             api.loadPricingItems()
           ]);
-          setConfigurations(configsData.filter(config => config.isActive));
+          setConfigurations(configsData.filter(config => config.is_active));
           
           // Extract all unique tags from services
           const allTags = new Set<string>();

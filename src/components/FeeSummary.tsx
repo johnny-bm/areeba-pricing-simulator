@@ -170,7 +170,7 @@ export function FeeSummary({
 
   const sortedCategories = categories
     .filter(cat => groupedItems[cat.id])
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
+    .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
   const getCategoryTotal = (categoryId: string) => {
     const items = groupedItems[categoryId] || [];
@@ -214,7 +214,7 @@ export function FeeSummary({
         onToggle={() => {}}
         showCollapseButton={false}
       />
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-3 pt-6 pb-6">
         {/* Global Discount Controls - Compact Version - Hidden in guest mode */}
         {!isGuestMode && (
           <>

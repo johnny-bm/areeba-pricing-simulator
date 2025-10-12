@@ -61,7 +61,7 @@ export function ScenarioHistoryTab({ scenarios, isLoading, onRefresh }: Scenario
           configValues: {} // Add missing configValues property
         },
         legacyConfig: scenarioData.config, // Use as legacy config for backward compatibility
-        configDefinitions: configDefinitions.filter(config => config.isActive),
+        configDefinitions: configDefinitions.filter(config => config.is_active),
         selectedItems: scenarioData.selectedItems,
         categories: scenarioData.categories,
         globalDiscount: scenarioData.globalDiscount,

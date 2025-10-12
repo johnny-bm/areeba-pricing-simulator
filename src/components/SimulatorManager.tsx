@@ -98,13 +98,13 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
       // Update sortOrder for each simulator based on new order
       const updates = reorderedSimulators.map((simulator, index) => ({
         ...simulator,
-        sortOrder: index
+        sort_order: index
       }));
       
       // Update all simulators with new sort order
       await Promise.all(updates.map(simulator => 
         SimulatorApi.updateSimulator(simulator.id, {
-          sortOrder: simulator.sortOrder
+          sort_order: simulator.sort_order
         })
       ));
       
@@ -189,7 +189,7 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
             </TableCell>
             <TableCell>
               <div className="flex gap-1">
-                {simulator.isActive && (
+                {simulator.is_active && (
                   <Badge variant="default" className="text-xs">Active</Badge>
                 )}
                 {simulator.isAvailable && (
@@ -207,7 +207,7 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
             </TableCell>
             <TableCell>
               <span className="text-sm font-mono text-muted-foreground">
-                {simulator.sortOrder + 1}
+                {simulator.sort_order + 1}
               </span>
             </TableCell>
             <TableCell>

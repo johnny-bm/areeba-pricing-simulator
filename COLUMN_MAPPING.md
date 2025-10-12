@@ -1,0 +1,260 @@
+# Database Column Reference
+
+## configurations table
+- id (string)
+- simulator_id (string)
+- name (string)
+- is_active (boolean)     ← NOT isActive
+- display_order (number | null)  ← NOT order
+- sort_order (number | null)     ← NOT sortOrder
+- fields (Json)
+- description (string | null)
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## services table
+- id (string)
+- simulator_id (string)
+- category (string)
+- name (string)
+- description (string)
+- default_price (number)
+- unit (string)
+- pricing_type (string | null)
+- tiered_pricing (Json | null)
+- display_order (number | null)  ← NOT order
+- is_active (boolean | null)     ← NOT isActive
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## categories table
+- id (string)
+- simulator_id (string)
+- name (string)
+- description (string)
+- color (string)
+- display_order (number | null)  ← NOT order
+- order_index (number)
+- is_active (boolean | null)     ← NOT isActive
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## simulators table
+- id (string)
+- name (string)
+- title (string)
+- description (string)
+- url_slug (string)
+- icon_name (string)
+- cta_text (string)
+- is_active (boolean)     ← NOT isActive
+- is_available (boolean)
+- coming_soon (boolean)
+- sort_order (number)     ← NOT sortOrder
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## user_profiles table
+- id (string)
+- email (string)
+- first_name (string | null)
+- last_name (string | null)
+- role (string)
+- is_active (boolean | null)     ← NOT isActive
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## simulator_submissions table
+- id (string)
+- simulator_id (string)
+- user_id (string | null)
+- configuration_id (string | null)
+- submission_code (string)
+- submission_name (string | null)
+- project_name (string | null)
+- client_name (string | null)
+- prepared_by (string | null)
+- status (string | null)
+- simulator_type (string | null)
+- configuration_data (Json)
+- services_data (Json)
+- selected_services (Json | null)
+- client_configuration (Json | null)
+- cost_summary (Json | null)
+- fee_summary (Json)
+- global_discount (number | null)
+- global_discount_type (string | null)
+- global_discount_application (string | null)
+- notes (string | null)
+- submitted_at (string | null)
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## guest_scenarios table
+- id (string)
+- submission_code (string)
+- scenario_name (string)
+- first_name (string)
+- last_name (string)
+- email (string)
+- phone_number (string)
+- company_name (string)
+- scenario_data (Json)
+- total_price (number | null)
+- status (string | null)
+- referrer_url (string | null)
+- ip_address (string | null)
+- user_agent (string | null)
+- created_at (string)
+- created_by (string | null)
+- updated_at (string)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## tags table
+- id (string)
+- simulator_id (string)
+- name (string)
+- is_active (boolean)     ← NOT isActive
+- usage_count (number | null)
+- used_in_items (string[] | null)
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## pdf_templates table
+- id (string)
+- template_name (string)
+- simulator_type (string)
+- version_number (number)
+- is_active (boolean | null)     ← NOT isActive
+- is_archived (boolean | null)
+- archived_at (string | null)
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+
+## auto_add_rules table
+- id (number)
+- simulator_id (string)
+- service_id (string)
+- config_field_id (string)
+- is_active (boolean | null)     ← NOT isActive
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## quantity_rules table
+- id (number)
+- simulator_id (string)
+- service_id (string)
+- config_field_id (string)
+- multiplier (number | null)
+- is_active (boolean | null)     ← NOT isActive
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## service_tags table
+- id (number)
+- service_id (string)
+- tag_id (string)
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+- updated_by (string | null)
+- deleted_at (string | null)
+- deleted_by (string | null)
+
+## content_sections table
+- id (string)
+- title (string)
+- section_type (string)
+- content (Json)
+- image_url (string | null)
+- created_at (string | null)
+- created_by (string | null)
+- updated_at (string | null)
+
+## template_sections table
+- id (string)
+- template_id (string)
+- section_id (string | null)
+- section_type (string | null)
+- predefined_section (string | null)
+- position (number)
+- created_at (string | null)
+
+## generated_pdfs table
+- id (string)
+- template_id (string)
+- client_name (string)
+- project_name (string)
+- simulator_type (string)
+- pricing_data (Json)
+- pdf_url (string | null)
+- generated_at (string | null)
+- generated_by (string | null)
+
+## user_invites table
+- id (string)
+- email (string)
+- first_name (string | null)
+- last_name (string | null)
+- role (string)
+- invite_code (string)
+- expires_at (string | null)
+- used_at (string | null)
+- created_at (string | null)
+- created_by (string | null)
+
+## admin_audit_log table
+- id (string)
+- user_id (string)
+- action (string)
+- resource_type (string | null)
+- resource_id (string | null)
+- success (boolean | null)
+- error_message (string | null)
+- details (Json | null)
+- ip_address (unknown | null)
+- user_agent (string | null)
+- created_at (string | null)
+
+## kv_store table
+- key (string)
+- value (Json)

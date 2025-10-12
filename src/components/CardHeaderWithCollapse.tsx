@@ -24,7 +24,7 @@ export function CardHeaderWithCollapse({
   if (variant === 'sub') {
     return (
       <CardHeader 
-        className="border-b cursor-pointer hover:bg-muted/50 transition-colors p-[24px]"
+        className="border-b cursor-pointer hover:bg-muted/50 transition-colors p-[24px] pb-6"
         onClick={onToggle}
       >
         <div className="flex items-center justify-between">

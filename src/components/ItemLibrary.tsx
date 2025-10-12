@@ -46,7 +46,7 @@ export function ItemLibrary({
     if (!categories || categories.length === 0) {
       return [];
     }
-    return [...categories].sort((a, b) => (a.order || 0) - (b.order || 0));
+    return [...categories].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
   }, [categories]);
 
   // Get all unique tags across all items
@@ -189,7 +189,7 @@ export function ItemLibrary({
           onToggle={handleToggleAllCategories}
           showCollapseButton={sortedCategories.length > 1}
         />
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6 pb-6">
           {/* Search Bar */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />

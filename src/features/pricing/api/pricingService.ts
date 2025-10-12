@@ -57,9 +57,9 @@ export class PricingService {
               aValue = a.categoryId;
               bValue = b.categoryId;
               break;
-            case 'createdAt':
-              aValue = new Date(a.createdAt || 0);
-              bValue = new Date(b.createdAt || 0);
+            case 'created_at':
+              aValue = new Date(a.created_at || 0);
+              bValue = new Date(b.created_at || 0);
               break;
             default:
               return 0;
@@ -95,7 +95,7 @@ export class PricingService {
   /**
    * Create new pricing item
    */
-  static async createPricingItem(item: Omit<PricingItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<PricingItem> {
+  static async createPricingItem(item: Omit<PricingItem, 'id' | 'created_at' | 'updated_at'>): Promise<PricingItem> {
     try {
       const response = await api.createPricingItem(item);
       return response;
@@ -142,7 +142,7 @@ export class PricingService {
   /**
    * Create new category
    */
-  static async createCategory(category: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>): Promise<Category> {
+  static async createCategory(category: Omit<Category, 'id' | 'created_at' | 'updated_at'>): Promise<Category> {
     try {
       const response = await api.createCategory(category);
       return response;
@@ -189,7 +189,7 @@ export class PricingService {
   /**
    * Create new tag
    */
-  static async createTag(tag: Omit<Tag, 'id' | 'createdAt' | 'updatedAt'>): Promise<Tag> {
+  static async createTag(tag: Omit<Tag, 'id' | 'created_at' | 'updated_at'>): Promise<Tag> {
     try {
       const response = await api.createTag(tag);
       return response;

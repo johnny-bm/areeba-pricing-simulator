@@ -21,6 +21,7 @@ interface ConfigurationDialogProps {
   configuration?: ConfigurationDefinition | null;
   configurations: ConfigurationDefinition[];
   isCreating: boolean;
+  simulator_id: string;
 }
 
 export function ConfigurationDialog({ 
@@ -31,14 +32,16 @@ export function ConfigurationDialog({
   onDuplicate,
   configuration, 
   configurations, 
-  isCreating 
+  isCreating,
+  simulator_id
 }: ConfigurationDialogProps) {
   const [formData, setFormData] = useState<ConfigurationDefinition>({
     id: '',
     name: '',
     description: '',
-    isActive: true,
-    order: 1,
+    simulator_id: '',
+    is_active: true,
+    display_order: 1,
     fields: []
   });
   
@@ -72,8 +75,9 @@ export function ConfigurationDialog({
           id: '',
           name: '',
           description: '',
-          isActive: true,
-          order: (configurations.length + 1),
+          simulator_id: simulator_id,
+          is_active: true,
+          display_order: (configurations.length + 1),
           fields: []
         });
       }
@@ -150,7 +154,7 @@ export function ConfigurationDialog({
       type: 'string',
       defaultValue: '',
       required: false,
-      order: formData.fields.length + 1
+      display_order: formData.fields.length + 1
     };
     
     updateField('fields', [...formData.fields, newField]);
@@ -232,8 +236,8 @@ export function ConfigurationDialog({
             <div className="space-y-2">
               <Label htmlFor="config-order">Display Order</Label>
               <NumberInput
-                value={formData.order}
-                onChange={(value) => updateField('order', value)}
+                value={formData.display_order}
+                onChange={(value) => updateField('display_order', value)}
                 placeholder="1"
                 allowDecimals={false}
               />
@@ -253,8 +257,8 @@ export function ConfigurationDialog({
 
           <div className="flex items-center space-x-2">
             <Checkbox
-              checked={formData.isActive}
-              onCheckedChange={(checked) => updateField('isActive', checked)}
+              checked={formData.is_active}
+              onCheckedChange={(checked) => updateField('is_active', checked)}
             />
             <Label>Active Client Fields</Label>
           </div>
@@ -271,7 +275,7 @@ export function ConfigurationDialog({
             {formData.fields.length > 0 ? (
               <DraggableTable
                 headers={['Field Name', 'Label', 'Type', 'Default', 'Required', 'Order', 'Actions']}
-                items={formData.fields.sort((a, b) => a.order - b.order)}
+                items={formData.fields.sort((a, b) => a.display_order - b.display_order)}
                 onReorder={handleFieldReorder}
                 getItemKey={(field) => field.id}
                 renderRow={(field) => (
@@ -338,8 +342,8 @@ export function ConfigurationDialog({
                     </TableCell>
                     <TableCell>
                       <NumberInput
-                        value={field.order}
-                        onChange={(value) => updateConfigurationFieldData(field.id, { order: value })}
+                        value={field.display_order}
+                        onChange={(value) => updateConfigurationFieldData(field.id, { display_order: value })}
                         min={1}
                         max={100}
                         className="h-8 w-16"

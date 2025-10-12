@@ -599,15 +599,12 @@ async saveGuestScenario(data: {
   async saveSessionData(sessionId: string, key: string, value: any): Promise<void> {
     try {
       const fullKey = `${sessionId}_${key}`;
-      const timestamp = getCurrentTimestamp();
       
       const { error } = await supabase
         .from('kv_store')
         .upsert({
           key: fullKey,
-          value: value,
-          created_at: timestamp,
-          updated_at: timestamp
+          value: value
         }, { onConflict: 'key' });
       
       if (error) {
@@ -683,7 +680,9 @@ async saveGuestScenario(data: {
       
       const configWithAudit = {
         ...config,
-        simulator_id: simulatorId,
+        // Use config's simulator_id if provided, otherwise fall back to parameter
+        // This prevents accidentally overwriting the config value with undefined
+        simulator_id: config.simulator_id || simulatorId,
         created_by: user?.id,
         updated_by: user?.id,
         created_at: timestamp,

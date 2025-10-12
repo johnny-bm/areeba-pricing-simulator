@@ -38,7 +38,7 @@ export interface PricingItem {
   categoryId: string;
   unit: string;
   tags?: string[];
-  isActive?: boolean;
+  is_active?: boolean;
   isArchived?: boolean;
   autoAddServices?: { configFieldId: string; triggerCondition: string; triggerValue: any }[];
   quantitySourceFields?: string[];
@@ -46,28 +46,28 @@ export interface PricingItem {
   autoQuantitySources?: string[];
   auto_add_trigger_fields?: string[];
   tiers?: PricingTier[];
-  createdAt?: string;
-  updatedAt?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Category {
   id: string;
   name: string;
   description?: string;
-  order?: number;
+  display_order?: number;
   order_index?: number;
-  isActive?: boolean;
+  is_active?: boolean;
   color?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Tag {
   id: string;
   name: string;
   color?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface SelectedItem {
@@ -169,7 +169,7 @@ export interface ConfigurationField {
   min?: number;
   max?: number;
   step?: number;
-  order?: number;
+  display_order?: number;
   description?: string;
 }
 
@@ -178,10 +178,11 @@ export interface ConfigurationDefinition {
   name: string;
   description?: string;
   fields: ConfigurationField[];
-  isActive?: boolean;
-  order?: number;
-  createdAt?: string;
-  updatedAt?: string;
+  simulator_id: string;
+  is_active?: boolean;
+  display_order?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ScenarioData {
@@ -282,6 +283,6 @@ export interface PricingFilters {
 }
 
 export interface PricingSortOptions {
-  field: 'name' | 'price' | 'category' | 'createdAt';
+  field: 'name' | 'price' | 'category' | 'created_at';
   direction: 'asc' | 'desc';
 }
