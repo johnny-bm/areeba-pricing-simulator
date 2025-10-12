@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { TableCell } from './ui/table';
 import { Plus, Edit, Trash2, Package, Copy } from 'lucide-react';
-import { Category, PricingItem } from '../types/pricing';
+import { Category, PricingItem } from '../types/domain';
 import { DataTable } from './DataTable';
 import { CategoryDialog } from './dialogs/CategoryDialog';
 
@@ -58,7 +58,7 @@ export function CategoryManager({
   const handleDeleteCategory = async (category: Category) => {
     try {
       // Check if category is being used by any services
-      const servicesUsingCategory = services.filter(service => service.category === category.id);
+      const servicesUsingCategory = services.filter(service => service.categoryId === category.id);
       
       if (servicesUsingCategory.length > 0) {
         throw new Error(`Cannot delete category "${category.name}" because it is being used by ${servicesUsingCategory.length} service(s). Please reassign or delete those services first.`);
@@ -115,7 +115,7 @@ export function CategoryManager({
 
   // Get services count for each category
   const getCategoryServiceCount = (categoryId: string) => {
-    return services.filter(service => service.category === categoryId).length;
+    return services.filter(service => service.categoryId === categoryId).length;
   };
 
   return (

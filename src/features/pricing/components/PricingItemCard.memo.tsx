@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { PricingItemCard } from './PricingItemCard';
-import { PricingItem, SelectedItem } from '../types';
+import { PricingItem, SelectedItem } from '../../../types/domain';
 
 interface PricingItemCardMemoProps {
   item: PricingItem;

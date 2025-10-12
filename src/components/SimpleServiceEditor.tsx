@@ -6,7 +6,7 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Save, X, Trash2, Copy, Loader2 } from 'lucide-react';
-import { PricingItem, Category, PricingTier, ConfigurationDefinition } from '../types/pricing';
+import { PricingItem, Category, PricingTier, ConfigurationDefinition } from '../types/domain';
 import { ALL_UNITS } from '../utils/unitClassification';
 import { PRICING_TYPES, COLUMNS } from '../config/database';
 import { api } from '../utils/api';
@@ -116,15 +116,15 @@ export function SimpleServiceEditor({
           id: service.id,
           name: service.name,
           description: service.description,
-          category: service.category,
-          categoryId: service.categoryId || service.category,
+          category: service.categoryId,
+          categoryId: service.categoryId || service.categoryId,
           unit: service.unit,
           defaultPrice: service.defaultPrice,
           tags: service.tags || [],
           pricingType: service.pricingType || 'fixed',
           tiers: service.tiers || [],
           quantitySourceFields: service.quantitySourceFields || [],
-          autoAddServices: service.autoAddServices || []
+          autoAddServices: service.autoAddServices?.map(item => item.configFieldId) || []
         });
       } else {
         // Create mode - start with defaults
@@ -146,7 +146,7 @@ export function SimpleServiceEditor({
     }
   }, [isOpen, service, isCreating, categories]);
 
-  const updateField = <K extends keyof ServiceFormData>(field: K, value: ServiceFormData[K]) => {
+  const updateField = (field: keyof ServiceFormData, value: any) => {
     // Add safety checks for string fields to prevent undefined values
     let safeValue = value;
     if (field === 'name' || field === 'description') {
@@ -181,7 +181,6 @@ export function SimpleServiceEditor({
         id: formData.id || `service-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: formData.name.trim(),
         description: formData.description.trim(),
-        category: formData.category,
         categoryId: formData.categoryId || '',
         unit: formData.unit,
         defaultPrice: formData.defaultPrice,
@@ -189,7 +188,11 @@ export function SimpleServiceEditor({
         pricingType: formData.pricingType,
         tiers: formData.pricingType === PRICING_TYPES.TIERED ? formData.tiers : undefined,
         quantitySourceFields: formData.quantitySourceFields,
-        autoAddServices: formData.autoAddServices
+        autoAddServices: formData.autoAddServices.map(configFieldId => ({
+          configFieldId,
+          triggerCondition: 'boolean',
+          triggerValue: true
+        }))
       };
 
       await onSave(serviceToSave);

@@ -1,4 +1,4 @@
-import { PricingItem, PricingTier, SelectedItem, ClientConfig } from '../types/pricing';
+import { PricingItem, PricingTier, SelectedItem, ClientConfig } from '../types/domain';
 
 export interface TierCalculationResult {
   totalPrice: number;
@@ -198,7 +198,7 @@ export function getQuantitySourceDescription(item: PricingItem): string | null {
     return null;
   }
 
-  const sourceDescriptions: Record<keyof ClientConfig, string> = {
+  const sourceDescriptions: Record<string, string> = {
     clientName: 'Client Name',
     projectName: 'Project Name', 
     preparedBy: 'Prepared By',
@@ -237,7 +237,7 @@ export function getTierConfigContext(tier: PricingTier, config: ClientConfig): s
   }
 
   const configValue = config[tier.configReference];
-  const sourceDescriptions: Record<keyof ClientConfig, string> = {
+  const sourceDescriptions: Record<string, string> = {
     clientName: 'Client Name',
     projectName: 'Project Name', 
     preparedBy: 'Prepared By',

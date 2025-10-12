@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { PricingService } from '../api/pricingService';
-import { PricingItem, PricingFilters, PricingSortOptions } from '../types';
+import { PricingItem, PricingFilters, PricingSortOptions } from '../../../types/domain';
 
 export function usePricingItems() {
   const [items, setItems] = useState<PricingItem[]>([]);

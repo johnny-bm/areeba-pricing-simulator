@@ -11,7 +11,7 @@ import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { Plus, Minus, ChevronDown, ChevronUp, Sparkles, X, Search } from "lucide-react";
-import { PricingItem, ClientConfig, Category, SelectedItem } from "../types/pricing";
+import { PricingItem, ClientConfig, Category, SelectedItem } from "../types/domain";
 import { formatPrice } from "../utils/formatters";
 import { CardHeaderWithCollapse } from "./CardHeaderWithCollapse";
 
@@ -168,10 +168,10 @@ export function ItemLibrary({
   const itemsByCategory = useMemo(() => {
     const grouped: Record<string, PricingItem[]> = {};
     filteredItems.forEach(item => {
-      if (!grouped[item.category]) {
-        grouped[item.category] = [];
+      if (!grouped[item.categoryId]) {
+        grouped[item.categoryId] = [];
       }
-      grouped[item.category].push(item);
+      grouped[item.categoryId].push(item);
     });
     return grouped;
   }, [filteredItems]);

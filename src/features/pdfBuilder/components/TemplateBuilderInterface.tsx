@@ -123,7 +123,11 @@ export function TemplateBuilderInterface({
         template_name: templateName,
         simulator_type: simulatorType,
         sections: selectedSections.map(section => ({
+          id: section.id,
+          template_id: template?.id || '',
           section_id: section.id,
+          position: section.order,
+          created_at: new Date().toISOString(),
           title: section.title,
           section_type: section.type,
           content: section.content,

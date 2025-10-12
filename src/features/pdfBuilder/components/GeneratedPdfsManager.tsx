@@ -209,10 +209,7 @@ export function GeneratedPdfsManager({ permissions }: GeneratedPdfsManagerProps)
             label: 'Simulator',
             options: [
               { value: 'all', label: 'All Simulators' },
-              ...simulatorTypes.map((type) => ({
-                value: type,
-                label: type
-              }))
+              ...simulatorTypes
             ]
           }
         ]}

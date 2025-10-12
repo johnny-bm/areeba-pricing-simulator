@@ -1,5 +1,5 @@
 import { api } from '../../../utils/api';
-import { AdminUser, AdminInvite, AdminScenario, AdminGuestSubmission, AdminStats, AdminFilters } from '../types';
+import { AdminUser, AdminInvite, AdminScenario, AdminGuestSubmission, AdminStats, AdminFilters } from '../../../types/domain';
 import { ADMIN_ERRORS } from '../constants';
 
 export class AdminService {
@@ -8,8 +8,8 @@ export class AdminService {
    */
   static async getStats(): Promise<AdminStats> {
     try {
-      const response = await api.getAdminStats();
-      return response.data;
+      const stats = await api.getAdminStats();
+      return stats;
     } catch (error) {
       throw new Error(`Failed to fetch admin stats: ${(error as Error).message}`);
     }
@@ -18,10 +18,19 @@ export class AdminService {
   /**
    * Get all users with optional filtering
    */
-  static async getUsers(filters?: AdminFilters): Promise<AdminUser[]> {
+  static async getUsers(filters?: AdminFilters, currentUserRole?: string): Promise<AdminUser[]> {
     try {
-      const response = await api.getUsers(filters);
-      return response.data || [];
+      // Security check: Only admins and owners can view users
+      if (!currentUserRole || !['admin', 'owner'].includes(currentUserRole)) {
+        throw new Error('Insufficient permissions: Admin access required');
+      }
+      
+      const users = await api.getUsers(filters);
+      return users.map(user => ({
+        ...user,
+        lastLogin: user.last_login,
+        loginCount: user.login_count
+      }));
     } catch (error) {
       throw new Error(`Failed to fetch users: ${(error as Error).message}`);
     }
@@ -30,10 +39,21 @@ export class AdminService {
   /**
    * Get user by ID
    */
-  static async getUser(id: string): Promise<AdminUser | null> {
+  static async getUser(id: string, currentUserRole?: string): Promise<AdminUser | null> {
     try {
-      const response = await api.getUser(id);
-      return response.data;
+      // Security check: Only admins and owners can view user details
+      if (!currentUserRole || !['admin', 'owner'].includes(currentUserRole)) {
+        throw new Error('Insufficient permissions: Admin access required');
+      }
+      
+      const user = await api.getUser(id);
+      if (!user) return null;
+      
+      return {
+        ...user,
+        lastLogin: user.last_login,
+        loginCount: user.login_count
+      };
     } catch (error) {
       throw new Error(`Failed to fetch user: ${(error as Error).message}`);
     }
@@ -42,10 +62,24 @@ export class AdminService {
   /**
    * Update user
    */
-  static async updateUser(id: string, updates: Partial<AdminUser>): Promise<AdminUser> {
+  static async updateUser(id: string, updates: Partial<AdminUser>, currentUserRole?: string, targetUserRole?: string): Promise<AdminUser> {
     try {
-      const response = await api.updateUser(id, updates);
-      return response.data;
+      // Security check: Only admins and owners can update users
+      if (!currentUserRole || !['admin', 'owner'].includes(currentUserRole)) {
+        throw new Error('Insufficient permissions: Admin access required');
+      }
+      
+      // Additional check: Admins cannot modify other admins or owners
+      if (currentUserRole === 'admin' && targetUserRole && ['admin', 'owner'].includes(targetUserRole)) {
+        throw new Error('Insufficient permissions: Cannot modify admin or owner accounts');
+      }
+      
+      const updatedUser = await api.updateUser(id, updates);
+      return {
+        ...updatedUser,
+        lastLogin: updatedUser.last_login,
+        loginCount: updatedUser.login_count
+      };
     } catch (error) {
       throw new Error(`Failed to update user: ${(error as Error).message}`);
     }
@@ -54,8 +88,18 @@ export class AdminService {
   /**
    * Delete user
    */
-  static async deleteUser(id: string): Promise<void> {
+  static async deleteUser(id: string, currentUserRole?: string, targetUserRole?: string): Promise<void> {
     try {
+      // Security check: Only admins and owners can delete users
+      if (!currentUserRole || !['admin', 'owner'].includes(currentUserRole)) {
+        throw new Error('Insufficient permissions: Admin access required');
+      }
+      
+      // Additional check: Admins cannot delete other admins or owners
+      if (currentUserRole === 'admin' && targetUserRole && ['admin', 'owner'].includes(targetUserRole)) {
+        throw new Error('Insufficient permissions: Cannot delete admin or owner accounts');
+      }
+      
       await api.deleteUser(id);
     } catch (error) {
       throw new Error(`Failed to delete user: ${(error as Error).message}`);
@@ -65,10 +109,15 @@ export class AdminService {
   /**
    * Get all invites
    */
-  static async getInvites(): Promise<AdminInvite[]> {
+  static async getInvites(currentUserRole?: string): Promise<AdminInvite[]> {
     try {
-      const response = await api.getInvites();
-      return response.data || [];
+      // Security check: Only admins and owners can view invites
+      if (!currentUserRole || !['admin', 'owner'].includes(currentUserRole)) {
+        throw new Error('Insufficient permissions: Admin access required');
+      }
+      
+      const invites = await api.getInvites();
+      return invites;
     } catch (error) {
       throw new Error(`Failed to fetch invites: ${(error as Error).message}`);
     }
@@ -77,10 +126,15 @@ export class AdminService {
   /**
    * Create invite
    */
-  static async createInvite(invite: Omit<AdminInvite, 'id' | 'created_at' | 'used_at'>): Promise<AdminInvite> {
+  static async createInvite(invite: Omit<AdminInvite, 'id' | 'created_at' | 'used_at'>, currentUserRole?: string): Promise<AdminInvite> {
     try {
-      const response = await api.createInvite(invite);
-      return response.data;
+      // Security check: Only admins and owners can create invites
+      if (!currentUserRole || !['admin', 'owner'].includes(currentUserRole)) {
+        throw new Error('Insufficient permissions: Admin access required');
+      }
+      
+      const newInvite = await api.createInvite(invite);
+      return newInvite;
     } catch (error) {
       throw new Error(`Failed to create invite: ${(error as Error).message}`);
     }
@@ -89,8 +143,13 @@ export class AdminService {
   /**
    * Delete invite
    */
-  static async deleteInvite(id: string): Promise<void> {
+  static async deleteInvite(id: string, currentUserRole?: string): Promise<void> {
     try {
+      // Security check: Only admins and owners can delete invites
+      if (!currentUserRole || !['admin', 'owner'].includes(currentUserRole)) {
+        throw new Error('Insufficient permissions: Admin access required');
+      }
+      
       await api.deleteInvite(id);
     } catch (error) {
       throw new Error(`Failed to delete invite: ${(error as Error).message}`);
@@ -102,8 +161,17 @@ export class AdminService {
    */
   static async getScenarios(filters?: AdminFilters): Promise<AdminScenario[]> {
     try {
-      const response = await api.getScenarios(filters);
-      return response.data || [];
+      const scenarios = await api.loadScenarios();
+      // TODO(types): Apply filters when implemented
+      return scenarios.map(scenario => ({
+        id: scenario.id || '',
+        name: 'Unnamed Scenario', // TODO(types): Add name field to ScenarioData
+        created_at: scenario.createdAt || new Date().toISOString(),
+        updated_at: scenario.updatedAt || new Date().toISOString(),
+        status: 'draft' as const, // TODO(types): Add status field to ScenarioData
+        total_price: scenario.summary?.totalProjectCost || 0,
+        user_id: scenario.userId || null
+      }));
     } catch (error) {
       throw new Error(`Failed to fetch scenarios: ${(error as Error).message}`);
     }
@@ -114,8 +182,18 @@ export class AdminService {
    */
   static async getScenario(id: string): Promise<AdminScenario | null> {
     try {
-      const response = await api.getScenario(id);
-      return response.data;
+      const scenario = await api.getScenarioData(id);
+      if (!scenario) return null;
+      
+      return {
+        id: scenario.id || '',
+        name: 'Unnamed Scenario', // TODO(types): Add name field to ScenarioData
+        created_at: scenario.createdAt || new Date().toISOString(),
+        updated_at: scenario.updatedAt || new Date().toISOString(),
+        status: 'draft' as const, // TODO(types): Add status field to ScenarioData
+        total_price: scenario.summary?.totalProjectCost || 0,
+        user_id: scenario.userId || null
+      };
     } catch (error) {
       throw new Error(`Failed to fetch scenario: ${(error as Error).message}`);
     }
@@ -137,8 +215,19 @@ export class AdminService {
    */
   static async getGuestSubmissions(filters?: AdminFilters): Promise<AdminGuestSubmission[]> {
     try {
-      const response = await api.getGuestSubmissions(filters);
-      return response.data || [];
+      const submissions = await api.loadGuestSubmissions();
+      // TODO(types): Apply filters when implemented
+      return submissions.map(submission => ({
+        id: submission.id || '',
+        email: submission.email || '',
+        first_name: submission.first_name || '',
+        last_name: submission.last_name || '',
+        company_name: submission.company_name || '',
+        scenario_name: submission.scenario_name || '',
+        total_price: submission.total_price || 0,
+        status: submission.status || 'submitted',
+        created_at: submission.created_at || new Date().toISOString()
+      }));
     } catch (error) {
       throw new Error(`Failed to fetch guest submissions: ${(error as Error).message}`);
     }
@@ -149,8 +238,20 @@ export class AdminService {
    */
   static async getGuestSubmission(id: string): Promise<AdminGuestSubmission | null> {
     try {
-      const response = await api.getGuestSubmission(id);
-      return response.data;
+      const submission = await api.getGuestScenarioData(id);
+      if (!submission) return null;
+      
+      return {
+        id: submission.id || '',
+        email: submission.email || '',
+        first_name: submission.first_name || '',
+        last_name: submission.last_name || '',
+        company_name: submission.company_name || '',
+        scenario_name: submission.scenario_name || '',
+        total_price: submission.total_price || 0,
+        status: submission.status || 'submitted',
+        created_at: submission.created_at || new Date().toISOString()
+      };
     } catch (error) {
       throw new Error(`Failed to fetch guest submission: ${(error as Error).message}`);
     }
@@ -158,10 +259,12 @@ export class AdminService {
 
   /**
    * Delete guest submission
+   * TODO(types): Implement guest submission deletion
    */
   static async deleteGuestSubmission(id: string): Promise<void> {
     try {
-      await api.deleteGuestSubmission(id);
+      // TODO(types): Implement guest submission deletion
+      throw new Error('Guest submission deletion not implemented yet');
     } catch (error) {
       throw new Error(`Failed to delete guest submission: ${(error as Error).message}`);
     }
@@ -170,10 +273,43 @@ export class AdminService {
   /**
    * Export data
    */
-  static async exportData(type: 'users' | 'scenarios' | 'guest_submissions', format: 'csv' | 'json' = 'csv'): Promise<Blob> {
+  static async exportData(type: 'users' | 'scenarios' | 'guest_submissions', format: 'csv' | 'json' = 'csv', currentUserRole?: string): Promise<Blob> {
     try {
-      const response = await api.exportData(type, format);
-      return response.data;
+      // Security check: Only admins and owners can export data
+      if (!currentUserRole || !['admin', 'owner'].includes(currentUserRole)) {
+        throw new Error('Insufficient permissions: Admin access required');
+      }
+      
+      let data: any[] = [];
+      
+      switch (type) {
+        case 'users':
+          data = await this.getUsers(undefined, currentUserRole);
+          break;
+        case 'scenarios':
+          data = await this.getScenarios();
+          break;
+        case 'guest_submissions':
+          data = await this.getGuestSubmissions();
+          break;
+      }
+      
+      if (format === 'json') {
+        return new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      } else {
+        // Convert to CSV
+        if (data.length === 0) {
+          return new Blob([''], { type: 'text/csv' });
+        }
+        
+        const headers = Object.keys(data[0]);
+        const csvContent = [
+          headers.join(','),
+          ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
+        ].join('\n');
+        
+        return new Blob([csvContent], { type: 'text/csv' });
+      }
     } catch (error) {
       throw new Error(`Failed to export data: ${(error as Error).message}`);
     }

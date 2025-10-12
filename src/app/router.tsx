@@ -1,17 +1,19 @@
 import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuthContext } from '../features/auth';
 import { ROUTES } from '../config/routes';
-import { SimulatorLanding } from '../components/SimulatorLanding';
-import { LoginPage } from '../components/LoginPage';
-import { SignupPage } from '../components/SignupPage';
-import { ForgotPasswordPage } from '../components/ForgotPasswordPage';
-import { ResetPasswordPage } from '../components/ResetPasswordPage';
-import { PricingSimulator } from '../components/PricingSimulator';
-import { AdminInterface } from '../components/AdminInterface';
-import { PdfBuilderAdmin } from '../features/pdfBuilder';
 import { api } from '../utils/api';
-import { PricingItem, Category } from '../types/pricing';
+import { PricingItem, Category } from '../types/domain';
+
+// Lazy load heavy components
+const SimulatorLanding = lazy(() => import('../components/SimulatorLanding').then(m => ({ default: m.SimulatorLanding })));
+const LoginPage = lazy(() => import('../components/LoginPage').then(m => ({ default: m.LoginPage })));
+const SignupPage = lazy(() => import('../components/SignupPage').then(m => ({ default: m.SignupPage })));
+const ForgotPasswordPage = lazy(() => import('../components/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
+const ResetPasswordPage = lazy(() => import('../components/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
+const PricingSimulator = lazy(() => import('../components/PricingSimulator').then(m => ({ default: m.PricingSimulator })));
+const AdminInterface = lazy(() => import('../components/AdminInterface').then(m => ({ default: m.AdminInterface })));
+const PdfBuilderAdmin = lazy(() => import('../features/pdfBuilder').then(m => ({ default: m.PdfBuilderAdmin })));
 
 // Component to load data for admin panel
 function AdminDataLoader() {
@@ -96,7 +98,12 @@ export function AppRouter() {
   }
 
   return (
-    <Routes>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    }>
+      <Routes>
       {/* Public routes */}
       <Route 
         path={ROUTES.HOME} 
@@ -265,6 +272,7 @@ export function AppRouter() {
       {/* Catch all */}
       <Route path="*" element={<Navigate to={ROUTES.HOME} />} />
     </Routes>
+    </Suspense>
   );
 }
 

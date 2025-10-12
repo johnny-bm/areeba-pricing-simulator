@@ -17,7 +17,7 @@ export type {
   ScenarioSummary, 
   PricingFilters, 
   PricingSortOptions 
-} from './types';
+} from '../../types/domain';
 
 export { 
   PRICING_TYPES, 

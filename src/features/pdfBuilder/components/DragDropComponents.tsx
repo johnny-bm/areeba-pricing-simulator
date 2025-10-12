@@ -141,7 +141,7 @@ function SortableItem({
   isDragging = false 
 }: { 
   id: string; 
-  children: React.ReactNode; 
+  children: (listeners: any) => React.ReactNode; 
   isDragging?: boolean;
 }) {
   const {
@@ -161,7 +161,7 @@ function SortableItem({
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      {children}
+      {children(listeners)}
     </div>
   );
 }
@@ -299,13 +299,14 @@ export function DragDropTemplateBuilder({
                 <div className="space-y-2">
                   {templateSections.map((templateSection, index) => (
                     <SortableItem key={templateSection.id} id={templateSection.id}>
-                      <Card className="transition-shadow">
-                        <CardContent className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <div {...listeners}>
-                                <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
-                              </div>
+                      {(listeners) => (
+                        <Card className="transition-shadow">
+                          <CardContent className="p-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <div {...listeners}>
+                                  <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
+                                </div>
                               {templateSection.section && getSectionIcon(templateSection.section.section_type)}
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium truncate">
@@ -332,6 +333,7 @@ export function DragDropTemplateBuilder({
                           </div>
                         </CardContent>
                       </Card>
+                      )}
                     </SortableItem>
                   ))}
                 </div>
@@ -409,12 +411,15 @@ export function DragDropList({
         <div className={cn("space-y-2", className)}>
           {items.map((item, index) => (
             <SortableItem key={item.id} id={item.id}>
-              <Card className="transition-shadow">
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
-                      {renderItem ? renderItem(item, index) : (
+              {(listeners) => (
+                <Card className="transition-shadow">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div {...listeners}>
+                          <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
+                        </div>
+                        {renderItem ? renderItem(item, index) : (
                         <div className="flex-1">
                           <p className="text-sm font-medium">{item.title}</p>
                           {item.type && (
@@ -436,6 +441,7 @@ export function DragDropList({
                   </div>
                 </CardContent>
               </Card>
+              )}
             </SortableItem>
           ))}
         </div>

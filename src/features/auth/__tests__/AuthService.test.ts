@@ -27,12 +27,25 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should successfully login with valid credentials', async () => {
-      const mockUser = { id: 'user-123', email: 'test@example.com' };
+      const mockUser = { 
+        id: 'user-123', 
+        email: 'test@example.com',
+        app_metadata: {},
+        user_metadata: {},
+        aud: 'authenticated',
+        created_at: '2023-01-01T00:00:00Z'
+      };
       const mockProfile = { id: 'user-123', email: 'test@example.com', role: 'member' };
-      const mockSession = { user: mockUser };
+      const mockSession = { 
+        user: mockUser,
+        access_token: 'mock-token',
+        refresh_token: 'mock-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer'
+      };
 
       vi.mocked(supabase.auth.signInWithPassword).mockResolvedValue({
-        data: { user: mockUser },
+        data: { user: mockUser, session: mockSession },
         error: null,
       });
 
@@ -68,8 +81,14 @@ describe('AuthService', () => {
 
     it('should throw error for invalid credentials', async () => {
       vi.mocked(supabase.auth.signInWithPassword).mockResolvedValue({
-        data: { user: null },
-        error: { message: 'Invalid credentials' },
+        data: { user: null, session: null },
+        error: { 
+          message: 'Invalid credentials',
+          code: 'invalid_credentials',
+          status: 400,
+          __isAuthError: true,
+          name: 'AuthError'
+        } as any,
       });
 
       await expect(
@@ -93,7 +112,13 @@ describe('AuthService', () => {
 
     it('should throw error if logout fails', async () => {
       vi.mocked(supabase.auth.signOut).mockResolvedValue({
-        error: { message: 'Logout failed' },
+        error: { 
+          message: 'Logout failed',
+          code: 'logout_failed',
+          status: 500,
+          __isAuthError: true,
+          name: 'AuthError'
+        } as any,
       });
 
       await expect(AuthService.logout()).rejects.toThrow('Logout failed. Please try again.');
@@ -102,11 +127,25 @@ describe('AuthService', () => {
 
   describe('getCurrentUser', () => {
     it('should return user if session exists', async () => {
-      const mockUser = { id: 'user-123' };
+      const mockUser = { 
+        id: 'user-123',
+        app_metadata: {},
+        user_metadata: {},
+        aud: 'authenticated',
+        created_at: '2023-01-01T00:00:00Z'
+      };
       const mockProfile = { id: 'user-123', email: 'test@example.com', role: 'member' };
 
       vi.mocked(supabase.auth.getSession).mockResolvedValue({
-        data: { session: { user: mockUser } },
+        data: { 
+          session: { 
+            user: mockUser,
+            access_token: 'mock-token',
+            refresh_token: 'mock-refresh-token',
+            expires_in: 3600,
+            token_type: 'bearer'
+          } 
+        },
         error: null,
       });
 
@@ -148,7 +187,10 @@ describe('AuthService', () => {
         full_name: 'Test User',
         first_name: 'Test',
         last_name: 'User',
-        role: 'member',
+        role: 'member' as const,
+        is_active: true,
+        created_at: '2023-01-01T00:00:00Z',
+        updated_at: '2023-01-01T00:00:00Z'
       };
 
       const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');

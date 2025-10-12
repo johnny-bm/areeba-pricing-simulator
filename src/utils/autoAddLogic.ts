@@ -1,4 +1,4 @@
-import { PricingItem, DynamicClientConfig, SelectedItem } from '../types/pricing';
+import { PricingItem, DynamicClientConfig, SelectedItem } from '../types/domain';
 import { getConfigBasedQuantity, getEffectiveUnitPrice } from './tieredPricing';
 
 export interface AutoAddConfig {
@@ -38,8 +38,8 @@ export function applyAutoAddLogic(
     
     // Check auto-add trigger fields array directly
     if (service.autoAddServices && service.autoAddServices.length > 0) {
-      const shouldAutoAdd = service.autoAddServices.some(configFieldId => {
-        const configValue = configValues[configFieldId];
+      const shouldAutoAdd = service.autoAddServices.some(autoAddService => {
+        const configValue = configValues[autoAddService.configFieldId];
         
         if (configValue === undefined || configValue === null) return false;
         
@@ -88,8 +88,7 @@ export function applyAutoAddLogic(
       
       if (configValue !== undefined && configValue !== null) {
         const shouldAdd = (mapping.triggerCondition === 'boolean' && configValue === true) ||
-                         (mapping.triggerCondition === 'number' && typeof configValue === 'number' && configValue > 0) ||
-                         (mapping.triggerCondition === 'string' && typeof configValue === 'string' && (configValue as string).trim() !== '');
+                         (mapping.triggerCondition === 'number' && typeof configValue === 'number' && configValue > 0);
         
         if (shouldAdd && 
             !currentSelectedItems.some(item => item.item.id === mapping.serviceId) &&
@@ -243,8 +242,8 @@ export function calculateServiceQuantity(
   // Check if this service should be auto-added based on any boolean flags
   // If so, use a default quantity of 1
   if (service.autoAddServices && service.autoAddServices.length > 0) {
-    const hasAnyTrigger = service.autoAddServices.some(configFieldId => {
-      const configValue = configValues[configFieldId];
+    const hasAnyTrigger = service.autoAddServices.some(autoAddService => {
+      const configValue = configValues[autoAddService.configFieldId];
       return (typeof configValue === 'boolean' && configValue) ||
              (typeof configValue === 'number' && configValue > 0) ||
              (typeof configValue === 'string' && configValue.trim() !== '');

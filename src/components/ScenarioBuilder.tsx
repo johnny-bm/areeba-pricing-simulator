@@ -13,7 +13,7 @@ import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Edit, X, Search, ChevronDown, ChevronUp } from "lucide-react";
-import { SelectedItem, ClientConfig, Category } from "../types/pricing";
+import { SelectedItem, ClientConfig, Category } from "../types/domain";
 import { NumberInput } from "./NumberInput";
 import { formatPrice } from "../utils/formatters";
 import { CardHeaderWithCollapse } from "./CardHeaderWithCollapse";
@@ -192,7 +192,7 @@ export function ScenarioBuilder({
     
     // Apply category filter
     if (filterCategory !== 'all') {
-      result = result.filter(item => item.item.category === filterCategory);
+      result = result.filter(item => item.item.categoryId === filterCategory);
     }
     
     return result;
@@ -200,7 +200,7 @@ export function ScenarioBuilder({
 
   // Get unique categories from selected items
   const selectedCategories = useMemo(() => {
-    const categoryIds = new Set(selectedItems.map(item => item.item.category));
+    const categoryIds = new Set(selectedItems.map(item => item.item.categoryId));
     return categories
       .filter(cat => categoryIds.has(cat.id))
       .sort((a, b) => (a.order || 0) - (b.order || 0));
@@ -211,7 +211,7 @@ export function ScenarioBuilder({
     const grouped = new Map<string, SelectedItem[]>();
     
     filteredItems.forEach(item => {
-      const categoryId = item.item.category;
+      const categoryId = item.item.categoryId;
       if (!grouped.has(categoryId)) {
         grouped.set(categoryId, []);
       }

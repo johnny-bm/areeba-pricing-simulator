@@ -3,7 +3,7 @@
  * This is separate from the server-side storage and handles UI state, configuration, and working data
  */
 
-import { DynamicClientConfig, SelectedItem } from '../types/pricing';
+import { DynamicClientConfig, SelectedItem } from '../types/domain';
 
 const STORAGE_KEYS = {
   CLIENT_CONFIG: 'pricing_simulator_client_config',

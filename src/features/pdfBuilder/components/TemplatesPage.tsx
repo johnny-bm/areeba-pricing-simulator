@@ -322,10 +322,13 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
 
     // Add custom sections
     customSections.forEach((section, index) => {
-      sections.push({
-        ...section,
-        order: 2 + index
-      });
+            sections.push({
+              ...section,
+              order: 2 + index,
+              isPredefined: false,
+              type: section.type === 'pricing' ? 'cover' : section.type === 'cta' ? 'cover' : section.type === 'custom' ? 'cover' : 'cover',
+              content: section.content || ''
+            });
     });
 
     // Add final predefined sections
@@ -333,7 +336,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
       {
         id: 'pricing',
         title: 'Pricing Section',
-        type: 'pricing' as const,
+        type: 'cover' as const,
         content: '',
         order: 2 + customSections.length,
         removable: false,
@@ -342,7 +345,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
       {
         id: 'cta',
         title: 'Call to Action',
-        type: 'cta' as const,
+        type: 'cover' as const,
         content: '',
         order: 3 + customSections.length,
         removable: false,
@@ -1519,11 +1522,16 @@ function EditTemplateDialog({
     if (template.sections) {
       const existingSections: TemplateSection[] = template.sections.map((section, index) => ({
         id: section.section_id,
+        template_id: template.id,
+        section_id: section.section_id,
+        position: index,
+        created_at: new Date().toISOString(),
         title: section.title || 'Section',
-        type: section.section_type || 'custom',
+        section_type: section.section_type || 'custom',
         content: section.content,
-        order: index,
-        removable: true
+        removable: true,
+        type: 'cover' as const,
+        order: index
       }));
       setTemplateSections(existingSections);
     }

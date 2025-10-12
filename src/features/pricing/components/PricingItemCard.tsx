@@ -4,7 +4,7 @@ import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 import { Label } from '../../../shared/components/ui/label';
 import { NumberInput } from '../../../components/NumberInput';
-import { PricingItem, SelectedItem } from '../types';
+import { PricingItem, SelectedItem } from '../../../types/domain';
 import { formatPrice } from '../../../utils/formatters';
 import { PRICING_TYPES } from '../constants';
 import { Plus, Minus, Trash2, Edit } from 'lucide-react';

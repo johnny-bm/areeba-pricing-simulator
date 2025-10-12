@@ -1,4 +1,4 @@
-import { PricingItem, ClientConfig } from '../types/pricing';
+import { PricingItem, ClientConfig } from '../types/domain';
 import { getEffectiveUnitPrice } from '../utils/tieredPricing';
 import { formatPrice } from '../utils/formatters';
 import { PRICING_TYPES } from '../config/database';

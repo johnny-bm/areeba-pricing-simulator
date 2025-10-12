@@ -12,7 +12,7 @@ import {
 } from '../ui/dropdown-menu';
 import {
   Breadcrumb,
-  BreadcrumbItem,
+  BreadcrumbItem as UIBreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
@@ -165,7 +165,7 @@ export function Header({
         <BreadcrumbList className="text-xs">
           {breadcrumbs.map((crumb, index) => (
             <React.Fragment key={index}>
-              <BreadcrumbItem>
+              <UIBreadcrumbItem>
                 {crumb.isCurrent ? (
                   <BreadcrumbPage className="text-xs">{crumb.label}</BreadcrumbPage>
                 ) : (
@@ -180,7 +180,7 @@ export function Header({
                     {crumb.label}
                   </BreadcrumbLink>
                 )}
-              </BreadcrumbItem>
+              </UIBreadcrumbItem>
               {index < breadcrumbs.length - 1 && <BreadcrumbSeparator className="text-xs" />}
             </React.Fragment>
           ))}

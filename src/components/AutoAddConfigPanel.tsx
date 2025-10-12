@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
 import { StandardDialog } from './StandardDialog';
 import { Settings2, Link2, ArrowRight, Zap, RotateCcw, Info, Bug } from 'lucide-react';
-import { PricingItem, DynamicClientConfig, ConfigurationDefinition } from '../types/pricing';
+import { PricingItem, DynamicClientConfig, ConfigurationDefinition } from '../types/domain';
 import { updateServiceMappings, updateAutoAddConfig, AutoAddConfig } from '../utils/autoAddLogic';
 
 import { saveAdminSelection, removeAdminSelection } from '../utils/adminSelectionPersistence';

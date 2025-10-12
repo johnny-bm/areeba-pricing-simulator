@@ -3,7 +3,7 @@ import { Download, User, Building2, Calendar, Package, DollarSign } from 'lucide
 import { Badge } from '../ui/badge';
 import { Separator } from '../ui/separator';
 import { StandardDialog } from '../StandardDialog';
-import { ScenarioSummary } from '../../types/pricing';
+import { ScenarioSummary } from '../../types/domain';
 import { formatPrice } from '../../utils/formatters';
 import { api } from '../../utils/api';
 import { downloadPDF } from '../../utils/pdfHelpers';
@@ -101,7 +101,7 @@ export function ScenarioDialog({ isOpen, onClose, scenario }: ScenarioDialogProp
   // Extract data from loaded scenario
   const selectedItems = scenarioData?.selectedItems || [];
   const config = scenarioData?.config || {};
-  const summary = scenarioData?.summary || scenario.summary || {};
+  const summary = scenarioData?.summary || scenario || {};
   
   // Get pricing values
   const oneTimeTotal = summary.oneTimeTotal || scenario.oneTimeTotal || 0;

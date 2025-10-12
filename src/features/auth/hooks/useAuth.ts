@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AuthService } from '../api/authService';
-import { User, LoginCredentials, SignupData, AuthState } from '../types';
+import { User } from '../../../types/domain';
+import { LoginCredentials, SignupData, AuthState } from '../types';
 import { AUTH_ERRORS } from '../constants';
 
 export function useAuth(): AuthState & {

@@ -93,7 +93,7 @@ export function GuestSubmissionModal({
     >
 
         {statusMessage && (
-          <Alert variant={statusMessage.type}>
+          <Alert variant={statusMessage.type === 'error' ? 'destructive' : 'default'}>
             {statusMessage.icon}
             <AlertDescription>
               <div className="font-medium">{statusMessage.title}</div>

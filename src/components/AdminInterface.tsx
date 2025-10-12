@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -34,9 +34,10 @@ import { ArrowLeft, LogOut, Settings, Package, Tags, History, CreditCard, Calcul
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Separator } from './ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { PricingItem, Category, ScenarioSummary, ClientConfig, ConfigurationDefinition, SelectedItem } from '../types/pricing';
-import { SimpleServiceManager } from './SimpleServiceManager';
-import { ScenarioHistoryTab } from './ScenarioHistoryTab';
+import { PricingItem, Category, ScenarioSummary, ClientConfig, ConfigurationDefinition, SelectedItem } from '../types/domain';
+// Lazy load heavy components
+const SimpleServiceManager = lazy(() => import('./SimpleServiceManager').then(m => ({ default: m.SimpleServiceManager })));
+const ScenarioHistoryTab = lazy(() => import('./ScenarioHistoryTab').then(m => ({ default: m.ScenarioHistoryTab })));
 import { ConfigurationDialog } from './dialogs/ConfigurationDialog';
 import { ScenarioDialog } from './dialogs/ScenarioDialog';
 import { GuestSubmissionDetailDialog } from './dialogs/GuestSubmissionDetailDialog';
@@ -45,12 +46,12 @@ import type { BreadcrumbItem } from './layout/Header';
 import { DataTable } from './DataTable';
 import { CategoryManager } from './CategoryManager';
 import { TagManager } from './TagManager';
-import { UserManagement } from './UserManagement';
+const UserManagement = lazy(() => import('./UserManagement').then(m => ({ default: m.UserManagement })));
 import { SimulatorManager } from './SimulatorManager';
 import { SimulatorInfoPage } from './SimulatorInfoPage';
 import { SimulatorDashboard } from './SimulatorDashboard';
 import { ThemeToggle } from './ThemeToggle';
-import { PdfBuilderAdmin } from '../features/pdfBuilder/components/PdfBuilderAdmin';
+const PdfBuilderAdmin = lazy(() => import('../features/pdfBuilder/components/PdfBuilderAdmin').then(m => ({ default: m.PdfBuilderAdmin })));
 import { Spinner } from './ui/spinner';
 import { AdminPageLayout, AdminPageActions } from './AdminPageLayout';
 import { UserProfileDropdown } from './UserProfileDropdown';
@@ -802,11 +803,13 @@ export function AdminInterface({
             )}
             
             {currentSimulator && currentSection === 'services' && (
-              <SimpleServiceManager
-                services={items}
-                categories={categories}
-                onUpdateServices={onUpdateItems}
-              />
+              <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <SimpleServiceManager
+                  services={items}
+                  categories={categories}
+                  onUpdateServices={onUpdateItems}
+                />
+              </Suspense>
             )}
             
             {currentSimulator && currentSection === 'tags' && (
@@ -818,11 +821,13 @@ export function AdminInterface({
             
             {/* PDF Builder sections */}
             {currentSimulatorSlug === 'pdf-builder' && (
-              <PdfBuilderAdmin 
-                userRole={currentUserRole} 
-                userId={currentUserId} 
-                section={currentSection}
-              />
+              <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <PdfBuilderAdmin 
+                  userRole={currentUserRole} 
+                  userId={currentUserId} 
+                  section={currentSection}
+                />
+              </Suspense>
             )}
             
 
@@ -843,10 +848,12 @@ export function AdminInterface({
             )}
             
             {!currentSimulatorSlug && currentSection === 'users' && (
-              <UserManagement
-                currentUserId={currentUserId}
-                currentUserRole={currentUserRole}
-              />
+              <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <UserManagement
+                  currentUserId={currentUserId}
+                  currentUserRole={currentUserRole}
+                />
+              </Suspense>
             )}
             
             {!currentSimulator && currentSection === 'scenarios' && (

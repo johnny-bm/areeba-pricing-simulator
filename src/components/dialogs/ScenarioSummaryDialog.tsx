@@ -4,7 +4,7 @@ import { Card, CardContent } from "../ui/card";
 import { Separator } from "../ui/separator";
 import { FileText, Download, CheckCircle2 } from "lucide-react";
 import { formatPrice } from "../../utils/formatters";
-import { DynamicClientConfig, SelectedItem, Category } from "../../types/pricing";
+import { DynamicClientConfig, SelectedItem, Category } from "../../types/domain";
 import { isOneTimeUnit } from "../../utils/unitClassification";
 import { PdfGenerator } from "../../features/pdfBuilder/components/PdfGenerator";
 import { useActiveTemplate } from "../../features/pdfBuilder/hooks/usePdfBuilder";
@@ -45,15 +45,15 @@ export function ScenarioSummaryDialog({
   const { template, loading: templateLoading } = useActiveTemplate(simulatorType);
   
   const oneTimeItems = selectedItems.filter(item => 
-    item.item.category === 'setup' || isOneTimeUnit(item.item.unit)
+    item.item.categoryId === 'setup' || isOneTimeUnit(item.item.unit)
   );
   const monthlyItems = selectedItems.filter(item => 
-    item.item.category !== 'setup' && !isOneTimeUnit(item.item.unit)
+    item.item.categoryId !== 'setup' && !isOneTimeUnit(item.item.unit)
   );
 
   // Group items by category
   const groupedItems = selectedItems.reduce((acc, item) => {
-    const category = item.item.category;
+    const category = item.item.categoryId;
     if (!acc[category]) {
       acc[category] = [];
     }

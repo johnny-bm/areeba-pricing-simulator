@@ -51,20 +51,17 @@ export function HeaderFooterTest() {
         <div>
           <h2 className="text-lg font-semibold mb-4">Public Header</h2>
           <Header
-            variant="public"
             title="Pricing Simulators"
             subtitle="Select a pricing simulator to configure and calculate costs"
             showAdminButton={true}
             onAdminClick={handleAdminClick}
             onLogout={handleLogout}
-            navigationItems={navigationItems}
           />
         </div>
 
         <div>
           <h2 className="text-lg font-semibold mb-4">Simulator Header</h2>
           <Header
-            variant="simulator"
             title="Payment Gateway Simulator"
             showBackButton={true}
             backButtonText="Back to Simulators"
@@ -77,34 +74,20 @@ export function HeaderFooterTest() {
         <div>
           <h2 className="text-lg font-semibold mb-4">Admin Header</h2>
           <Header
-            variant="admin"
             title="Admin Dashboard"
-            showBreadcrumbs={true}
             breadcrumbs={[
               { label: 'Admin', href: ROUTES.ADMIN },
-              { label: 'Dashboard' }
+              { label: 'Dashboard', href: '#' }
             ]}
             showUserMenu={true}
             onLogout={handleLogout}
-            navigationItems={navigationItems}
           />
         </div>
 
         <div>
           <h2 className="text-lg font-semibold mb-4">Header with Actions</h2>
           <Header
-            variant="public"
             title="Test Page"
-            actions={
-              <div className="flex gap-2">
-                <button className="px-3 py-1 bg-blue-500 text-white rounded text-sm">
-                  Action 1
-                </button>
-                <button className="px-3 py-1 bg-green-500 text-white rounded text-sm">
-                  Action 2
-                </button>
-              </div>
-            }
             showUserMenu={true}
             onLogout={handleLogout}
           />
@@ -117,17 +100,13 @@ export function HeaderFooterTest() {
           <div>
             <h2 className="text-lg font-semibold mb-4">Public Footer</h2>
             <Footer
-              variant="public"
               showVersionInfo={true}
-              showSocialLinks={true}
-              columns={footerColumns}
             />
           </div>
 
           <div>
             <h2 className="text-lg font-semibold mb-4">Simulator Footer</h2>
             <Footer
-              variant="simulator"
               showVersionInfo={true}
             />
           </div>
@@ -135,7 +114,6 @@ export function HeaderFooterTest() {
           <div>
             <h2 className="text-lg font-semibold mb-4">Admin Footer</h2>
             <Footer
-              variant="admin"
               showVersionInfo={true}
             />
           </div>

@@ -6,7 +6,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { Skeleton } from './ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { RefreshCw, Calendar, User, Building2, FileText, DollarSign, Download, Eye } from 'lucide-react';
-import { ScenarioSummary } from '../types/pricing';
+import { ScenarioSummary } from '../types/domain';
 import { formatPrice } from '../utils/formatters';
 import { api } from '../utils/api';
 import { downloadPDF } from '../utils/pdfHelpers';
@@ -56,14 +56,17 @@ export function ScenarioHistoryTab({ scenarios, isLoading, onRefresh }: Scenario
       
       // Prepare PDF data (matching the format used in App.tsx)
       const pdfData = {
-        config: scenarioData.config,
+        config: {
+          ...scenarioData.config,
+          configValues: {} // Add missing configValues property
+        },
         legacyConfig: scenarioData.config, // Use as legacy config for backward compatibility
         configDefinitions: configDefinitions.filter(config => config.isActive),
         selectedItems: scenarioData.selectedItems,
         categories: scenarioData.categories,
         globalDiscount: scenarioData.globalDiscount,
-        globalDiscountType: scenarioData.globalDiscountType,
-        globalDiscountApplication: scenarioData.globalDiscountApplication,
+        globalDiscountType: scenarioData.globalDiscountType as 'percentage' | 'fixed',
+        globalDiscountApplication: scenarioData.globalDiscountApplication as 'none' | 'both' | 'monthly' | 'onetime',
         summary: scenarioData.summary
       };
       

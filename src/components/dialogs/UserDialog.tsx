@@ -30,7 +30,7 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [role, setRole] = useState(ROLES.MEMBER);
+  const [role, setRole] = useState<string>(ROLES.MEMBER);
   const [isActive, setIsActive] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});

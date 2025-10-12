@@ -59,8 +59,7 @@ export class PdfBuilderService {
       sections: data || [],
       total: count || 0,
       page,
-      limit,
-      totalPages: Math.ceil((count || 0) / limit)
+      limit
     };
   }
 

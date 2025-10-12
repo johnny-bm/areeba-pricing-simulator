@@ -76,6 +76,7 @@ export interface PdfTemplate {
   updated_at: string;
   created_by: string;
   sections?: TemplateSection[];
+  template_sections?: TemplateSection[];
   section_count?: number;
 }
 
@@ -85,6 +86,14 @@ export interface TemplateSection {
   section_id: string;
   position: number;
   created_at: string;
+  title?: string;
+  section_type?: string;
+  content?: any;
+  predefined_section?: string;
+  content_sections?: {
+    title?: string;
+    content?: any;
+  };
   section?: ContentSection;
 }
 
@@ -162,6 +171,7 @@ export interface UpdateSectionForm {
 
 export interface UpdateTemplateForm {
   template_name?: string;
+  simulator_type?: string;
   section_ids?: string[];
 }
 

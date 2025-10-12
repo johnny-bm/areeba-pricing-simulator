@@ -28,14 +28,27 @@ describe('PricingService', () => {
   describe('getPricingItems', () => {
     it('should return pricing items without filters', async () => {
       const mockItems = [
-        { id: '1', name: 'Item 1', defaultPrice: 100 },
-        { id: '2', name: 'Item 2', defaultPrice: 200 },
+        { 
+          id: '1', 
+          name: 'Item 1', 
+          defaultPrice: 100,
+          pricingType: 'fixed' as const,
+          categoryId: 'setup',
+          unit: 'item',
+          isArchived: false
+        },
+        { 
+          id: '2', 
+          name: 'Item 2', 
+          defaultPrice: 200,
+          pricingType: 'fixed' as const,
+          categoryId: 'setup',
+          unit: 'item',
+          isArchived: false
+        },
       ];
 
-      vi.mocked(api.getPricingItems).mockResolvedValue({
-        success: true,
-        data: mockItems,
-      });
+      vi.mocked(api.getPricingItems).mockResolvedValue(mockItems);
 
       const result = await PricingService.getPricingItems();
 
@@ -45,14 +58,27 @@ describe('PricingService', () => {
 
     it('should apply filters correctly', async () => {
       const mockItems = [
-        { id: '1', name: 'Item 1', categoryId: 'setup', defaultPrice: 100 },
-        { id: '2', name: 'Item 2', categoryId: 'hosting', defaultPrice: 200 },
+        { 
+          id: '1', 
+          name: 'Item 1', 
+          categoryId: 'setup', 
+          defaultPrice: 100,
+          pricingType: 'fixed' as const,
+          unit: 'item',
+          isArchived: false
+        },
+        { 
+          id: '2', 
+          name: 'Item 2', 
+          categoryId: 'hosting', 
+          defaultPrice: 200,
+          pricingType: 'fixed' as const,
+          unit: 'item',
+          isArchived: false
+        },
       ];
 
-      vi.mocked(api.getPricingItems).mockResolvedValue({
-        success: true,
-        data: mockItems,
-      });
+      vi.mocked(api.getPricingItems).mockResolvedValue(mockItems);
 
       const filters = { categoryId: 'setup' };
       const result = await PricingService.getPricingItems(filters);
@@ -62,14 +88,27 @@ describe('PricingService', () => {
 
     it('should apply search filter', async () => {
       const mockItems = [
-        { id: '1', name: 'Card Processing', defaultPrice: 100 },
-        { id: '2', name: 'Hosting Service', defaultPrice: 200 },
+        { 
+          id: '1', 
+          name: 'Card Processing', 
+          defaultPrice: 100,
+          pricingType: 'fixed' as const,
+          categoryId: 'setup',
+          unit: 'item',
+          isArchived: false
+        },
+        { 
+          id: '2', 
+          name: 'Hosting Service', 
+          defaultPrice: 200,
+          pricingType: 'fixed' as const,
+          categoryId: 'setup',
+          unit: 'item',
+          isArchived: false
+        },
       ];
 
-      vi.mocked(api.getPricingItems).mockResolvedValue({
-        success: true,
-        data: mockItems,
-      });
+      vi.mocked(api.getPricingItems).mockResolvedValue(mockItems);
 
       const filters = { searchTerm: 'card' };
       const result = await PricingService.getPricingItems(filters);
@@ -100,10 +139,7 @@ describe('PricingService', () => {
 
       const createdItem = { id: '1', ...newItem };
 
-      vi.mocked(api.createPricingItem).mockResolvedValue({
-        success: true,
-        data: createdItem,
-      });
+      vi.mocked(api.createPricingItem).mockResolvedValue(createdItem);
 
       const result = await PricingService.createPricingItem(newItem);
 
@@ -133,12 +169,17 @@ describe('PricingService', () => {
   describe('updatePricingItem', () => {
     it('should update existing pricing item', async () => {
       const updates = { name: 'Updated Item' };
-      const updatedItem = { id: '1', name: 'Updated Item', defaultPrice: 100 };
+      const updatedItem = { 
+        id: '1', 
+        name: 'Updated Item', 
+        defaultPrice: 100,
+        pricingType: 'fixed' as const,
+        categoryId: 'setup',
+        unit: 'item',
+        isArchived: false
+      };
 
-      vi.mocked(api.updatePricingItem).mockResolvedValue({
-        success: true,
-        data: updatedItem,
-      });
+      vi.mocked(api.updatePricingItem).mockResolvedValue(updatedItem);
 
       const result = await PricingService.updatePricingItem('1', updates);
 
@@ -159,9 +200,7 @@ describe('PricingService', () => {
 
   describe('deletePricingItem', () => {
     it('should delete pricing item', async () => {
-      vi.mocked(api.deletePricingItem).mockResolvedValue({
-        success: true,
-      });
+      vi.mocked(api.deletePricingItem).mockResolvedValue(undefined);
 
       await expect(PricingService.deletePricingItem('1')).resolves.toBeUndefined();
       expect(api.deletePricingItem).toHaveBeenCalledWith('1');
@@ -181,15 +220,39 @@ describe('PricingService', () => {
       const selectedItems = [
         {
           id: '1',
-          item: { categoryId: 'setup', unit: 'onetime' },
+          item: { 
+            id: '1',
+            name: 'Item 1',
+            defaultPrice: 100,
+            pricingType: 'fixed' as const,
+            categoryId: 'setup',
+            unit: 'onetime',
+            isArchived: false
+          },
           quantity: 1,
           unitPrice: 100,
+          discount: 0,
+          discountType: 'percentage' as const,
+          discountApplication: 'total' as const,
+          isFree: false
         },
         {
           id: '2',
-          item: { categoryId: 'hosting', unit: 'monthly' },
+          item: { 
+            id: '2',
+            name: 'Item 2',
+            defaultPrice: 50,
+            pricingType: 'fixed' as const,
+            categoryId: 'hosting',
+            unit: 'monthly',
+            isArchived: false
+          },
           quantity: 1,
           unitPrice: 50,
+          discount: 0,
+          discountType: 'percentage' as const,
+          discountApplication: 'total' as const,
+          isFree: false
         },
       ];
 

@@ -1,6 +1,7 @@
 import { supabase } from '../../../utils/supabase/client';
 import { TABLES } from '../../../config/database';
-import { User, LoginCredentials, SignupData, Invite } from '../types';
+import { User } from '../../../types/domain';
+import { LoginCredentials, SignupData, Invite } from '../types';
 import { AUTH_ERRORS } from '../constants';
 
 export class AuthService {

@@ -3,7 +3,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { NumberInput } from "./NumberInput";
-import { ClientConfig } from "../types/pricing";
+import { ClientConfig } from "../types/domain";
 
 interface ClientConfigBarProps {
   config: ClientConfig;

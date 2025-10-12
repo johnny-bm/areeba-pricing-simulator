@@ -3,7 +3,7 @@
  * Replaces localStorage with database storage for shared platform usage
  */
 
-import { DynamicClientConfig, SelectedItem } from '../types/pricing';
+import { DynamicClientConfig, SelectedItem } from '../types/domain';
 import { api } from './api';
 
 // Generate a unique session ID for this browser session

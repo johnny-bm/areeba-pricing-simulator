@@ -7,7 +7,7 @@ import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
 import { Trash2, Copy } from 'lucide-react';
-import { PricingItem, PricingTier, Category, ConfigurationDefinition } from '../../types/pricing';
+import { PricingItem, PricingTier, Category, ConfigurationDefinition } from '../../types/domain';
 import { MultiSelectInput } from '../MultiSelectInput';
 import { TieredPricingEditor } from '../TieredPricingEditor';
 import { NumberInput } from '../NumberInput';
@@ -19,7 +19,7 @@ interface ItemFormData {
   id: string;
   name: string;
   description: string;
-  category: string;
+  categoryId: string;
   unit: string;
   defaultPrice: number;
   tags: string[];
@@ -47,7 +47,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
     id: '',
     name: '',
     description: '',
-    category: categories.length > 0 ? categories[0].id : 'service',
+    categoryId: categories.length > 0 ? categories[0].id : 'service',
     unit: 'per month',
     defaultPrice: 0,
     tags: [],
@@ -113,7 +113,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           id: item.id || '',
           name: item.name || '',
           description: item.description || '',
-          category: item.category || (categories.length > 0 ? categories[0].id : 'service'),
+          categoryId: item.categoryId || (categories.length > 0 ? categories[0].id : 'service'),
           unit: item.unit || 'per month',
           defaultPrice: item.defaultPrice || 0,
           tags: item.tags || [],
@@ -129,7 +129,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           id: '',
           name: '',
           description: '',
-          category: categories.length > 0 ? categories[0].id : 'service',
+          categoryId: categories.length > 0 ? categories[0].id : 'service',
           unit: 'per month',
           defaultPrice: 0,
           tags: [],
@@ -151,8 +151,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         id: formData.id || `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: formData.name,
         description: formData.description,
-        category: formData.category,
-        categoryId: formData.category,
+        categoryId: formData.categoryId,
         unit: formData.unit,
         defaultPrice: formData.defaultPrice,
         tags: formData.tags || [],
@@ -270,7 +269,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const isValid = formData.name?.trim() && formData.description?.trim() && formData.category && formData.unit;
+  const isValid = formData.name?.trim() && formData.description?.trim() && formData.categoryId && formData.unit;
 
   return (
     <StandardDialog
@@ -323,15 +322,15 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="item-category">Category *</Label>
-              <Select value={formData.category} onValueChange={(value) => updateField('category', value)}>
+              <Label htmlFor="item-categoryId">Category *</Label>
+              <Select value={formData.categoryId} onValueChange={(value) => updateField('categoryId', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
+                  {categories.map((categoryId) => (
+                    <SelectItem key={categoryId.id} value={categoryId.id}>
+                      {categoryId.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

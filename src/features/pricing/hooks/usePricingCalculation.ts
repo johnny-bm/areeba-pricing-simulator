@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { SelectedItem, ScenarioSummary } from '../types';
+import { SelectedItem, ScenarioSummary } from '../../../types/domain';
 import { PricingService } from '../api/pricingService';
 
 export function usePricingCalculation(selectedItems: SelectedItem[]) {

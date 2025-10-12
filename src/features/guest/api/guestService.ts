@@ -117,9 +117,22 @@ export class GuestService {
     }
 
     try {
-      const response = await api.submitGuestScenario({
-        contactInfo,
-        scenarioData,
+      // TODO(types): Implement guest scenario submission
+      const response = await api.saveGuestScenario({
+        sessionId: scenarioData.sessionId,
+        email: contactInfo.email,
+        phoneNumber: contactInfo.phoneNumber,
+        firstName: contactInfo.firstName,
+        lastName: contactInfo.lastName,
+        companyName: contactInfo.companyName,
+        scenarioName: scenarioData.summary?.projectName || 'Untitled Scenario',
+        config: scenarioData.clientConfig,
+        selectedItems: scenarioData.selectedItems,
+        categories: scenarioData.categories,
+        globalDiscount: 0, // TODO(types): Add global discount to GuestScenarioData
+        globalDiscountType: 'percentage', // TODO(types): Add global discount type to GuestScenarioData
+        globalDiscountApplication: 'none', // TODO(types): Add global discount application to GuestScenarioData
+        summary: scenarioData.summary
       });
 
       // Update submission count
@@ -127,7 +140,18 @@ export class GuestService {
       localStorage.setItem(GUEST_STORAGE_KEYS.SUBMISSION_COUNT, (currentCount + 1).toString());
       localStorage.setItem(GUEST_STORAGE_KEYS.LAST_SUBMISSION, new Date().toISOString());
 
-      return response.data;
+      return {
+        id: response.scenarioId,
+        sessionId: response.scenarioId,
+        email: contactInfo.email,
+        firstName: contactInfo.firstName,
+        lastName: contactInfo.lastName,
+        company: contactInfo.companyName,
+        phone: contactInfo.phoneNumber,
+        scenarioData: scenarioData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
     } catch (error) {
       throw new Error(`Failed to submit scenario: ${(error as Error).message}`);
     }
@@ -138,8 +162,8 @@ export class GuestService {
    */
   static async getGuestSubmissions(): Promise<GuestSubmission[]> {
     try {
-      const response = await api.getGuestSubmissions();
-      return response.data || [];
+      const response = await api.loadGuestSubmissions();
+      return response || [];
     } catch (error) {
       throw new Error(`Failed to fetch guest submissions: ${(error as Error).message}`);
     }
@@ -150,7 +174,7 @@ export class GuestService {
    */
   static async getGuestSubmission(id: string): Promise<GuestSubmission | null> {
     try {
-      const response = await api.getGuestSubmission(id);
+      const response = await api.getGuestScenarioData(id);
       return response.data;
     } catch (error) {
       throw new Error(`Failed to fetch guest submission: ${(error as Error).message}`);
@@ -162,7 +186,8 @@ export class GuestService {
    */
   static async deleteGuestSubmission(id: string): Promise<void> {
     try {
-      await api.deleteGuestSubmission(id);
+      // TODO(types): Implement guest submission deletion
+      throw new Error('Guest submission deletion not implemented yet');
     } catch (error) {
       throw new Error(`Failed to delete guest submission: ${(error as Error).message}`);
     }

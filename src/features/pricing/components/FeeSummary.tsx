@@ -5,7 +5,7 @@ import { Label } from '../../../shared/components/ui/label';
 import { Button } from '../../../shared/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/components/ui/select';
 import { NumberInput } from '../../../components/NumberInput';
-import { SelectedItem, Category, DynamicClientConfig } from '../types';
+import { SelectedItem, Category, DynamicClientConfig } from '../../../types/domain';
 import { formatPrice } from '../../../utils/formatters';
 import { usePricingCalculation } from '../hooks/usePricingCalculation';
 import { DISCOUNT_TYPES, DISCOUNT_APPLICATIONS } from '../constants';

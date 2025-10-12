@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { TableCell } from './ui/table';
 import { Plus, Edit, Trash2, Tags, Copy } from 'lucide-react';
-import { PricingItem } from '../types/pricing';
+import { PricingItem } from '../types/domain';
 import { DataTable } from './DataTable';
 import { TagDialog } from './dialogs/TagDialog';
 

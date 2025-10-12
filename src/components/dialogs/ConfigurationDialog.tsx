@@ -8,7 +8,7 @@ import { Checkbox } from '../ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { TableCell } from '../ui/table';
 import { Plus, Trash2, Copy } from 'lucide-react';
-import { ConfigurationDefinition, ConfigurationField } from '../../types/pricing';
+import { ConfigurationDefinition, ConfigurationField } from '../../types/domain';
 import { NumberInput } from '../NumberInput';
 import { DraggableTable } from '../DraggableTable';
 

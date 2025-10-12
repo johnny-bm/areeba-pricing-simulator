@@ -5,7 +5,7 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { NumberInput } from "./NumberInput";
-import { SelectedItem, Category, DynamicClientConfig } from "../types/pricing";
+import { SelectedItem, Category, DynamicClientConfig } from "../types/domain";
 import { formatPrice } from "../utils/formatters";
 import { calculateTieredPrice, getQuantitySourceDescription } from "../utils/tieredPricing";
 import { isOneTimeUnit } from "../utils/unitClassification";
@@ -90,10 +90,10 @@ export function FeeSummary({
   };
 
   const oneTimeItems = selectedItems.filter(item => 
-    item.item.category === 'setup' || isOneTimeUnit(item.item.unit)
+    item.item.categoryId === 'setup' || isOneTimeUnit(item.item.unit)
   );
   const monthlyItems = selectedItems.filter(item => 
-    item.item.category !== 'setup' && !isOneTimeUnit(item.item.unit)
+    item.item.categoryId !== 'setup' && !isOneTimeUnit(item.item.unit)
   );
 
   const oneTimeSubtotal = oneTimeItems.reduce((sum, item) => sum + calculateRowTotal(item), 0);
@@ -161,10 +161,10 @@ export function FeeSummary({
   const totalDiscountAmount = rowDiscountTotal + globalDiscountAmount;
 
   const groupedItems = selectedItems.reduce((acc, item) => {
-    if (!acc[item.item.category]) {
-      acc[item.item.category] = [];
+    if (!acc[item.item.categoryId]) {
+      acc[item.item.categoryId] = [];
     }
-    acc[item.item.category].push(item);
+    acc[item.item.categoryId].push(item);
     return acc;
   }, {} as Record<string, SelectedItem[]>);
 

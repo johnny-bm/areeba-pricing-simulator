@@ -4,7 +4,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Trash2, Copy } from 'lucide-react';
-import { Category } from '../../types/pricing';
+import { Category } from '../../types/domain';
 import { NumberInput } from '../NumberInput';
 
 interface CategoryFormData {

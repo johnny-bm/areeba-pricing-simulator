@@ -1,4 +1,4 @@
-import { ClientConfig, DynamicClientConfig, SelectedItem, Category, ConfigurationDefinition } from '../types/pricing';
+import { ClientConfig, DynamicClientConfig, SelectedItem, Category, ConfigurationDefinition } from '../types/domain';
 import { formatPrice } from './formatters';
 import { calculateTieredPrice } from './tieredPricing';
 import { VersionService } from './versionService';
@@ -51,10 +51,10 @@ function generateDetailedPricingSection(data: PDFData): string {
 
   // Separate one-time and monthly items
   const oneTimeItems = selectedItems.filter(item => 
-    item.item.category === 'setup' || isOneTimeUnit(item.item.unit)
+    item.item.categoryId === 'setup' || isOneTimeUnit(item.item.unit)
   );
   const monthlyItems = selectedItems.filter(item => 
-    item.item.category !== 'setup' && !isOneTimeUnit(item.item.unit)
+    item.item.categoryId !== 'setup' && !isOneTimeUnit(item.item.unit)
   );
 
   // Calculate totals
@@ -111,10 +111,10 @@ function generateDetailedPricingSection(data: PDFData): string {
 
   // Group items by category
   const groupedItems = selectedItems.reduce((acc, item) => {
-    if (!acc[item.item.category]) {
-      acc[item.item.category] = [];
+    if (!acc[item.item.categoryId]) {
+      acc[item.item.categoryId] = [];
     }
-    acc[item.item.category].push(item);
+    acc[item.item.categoryId].push(item);
     return acc;
   }, {} as Record<string, SelectedItem[]>);
 
@@ -581,7 +581,7 @@ function generatePricingTableHTML(selectedItems: SelectedItem[], categories: Cat
   
   selectedItems.forEach(item => {
     html += `<tr>
-      <td>${item.name}</td>
+      <td>${item.item.name}</td>
       <td>${item.quantity}</td>
       <td>${formatPrice(item.unitPrice)}</td>
       <td>${formatPrice(item.quantity * item.unitPrice)}</td>
@@ -661,7 +661,7 @@ async function ensureLegacyTemplate(simulatorType: string): Promise<string> {
     const newTemplate = await PdfBuilderService.createTemplate({
       template_name: 'Legacy Template',
       simulator_type: simulatorType,
-      is_active: true
+      section_ids: []
     });
     
     console.log('pdfHelpers: Created legacy template:', newTemplate.id);

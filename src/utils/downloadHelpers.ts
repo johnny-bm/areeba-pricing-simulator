@@ -1,4 +1,4 @@
-import { ClientConfig, SelectedItem } from '../types/pricing';
+import { ClientConfig, SelectedItem } from '../types/domain';
 import { formatPrice, formatNumber } from './formatters';
 
 export interface DownloadData {

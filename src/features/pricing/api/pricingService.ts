@@ -1,5 +1,5 @@
 import { api } from '../../../utils/api';
-import { PricingItem, Category, Tag, SelectedItem, ScenarioSummary, PricingFilters, PricingSortOptions } from '../types';
+import { PricingItem, Category, Tag, SelectedItem, ScenarioSummary, PricingFilters, PricingSortOptions } from '../../../types/domain';
 import { PRICING_ERRORS } from '../constants';
 
 export class PricingService {

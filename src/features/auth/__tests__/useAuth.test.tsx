@@ -36,7 +36,10 @@ describe('useAuth', () => {
       const mockUser = {
         id: 'user-123',
         email: 'test@example.com',
-        role: 'member',
+        role: 'member' as const,
+        is_active: true,
+        created_at: '2023-01-01T00:00:00Z',
+        updated_at: '2023-01-01T00:00:00Z'
       };
 
       vi.mocked(AuthService.getCurrentUser).mockResolvedValue(mockUser);
@@ -70,7 +73,10 @@ describe('useAuth', () => {
       const mockUser = {
         id: 'user-123',
         email: 'test@example.com',
-        role: 'member',
+        role: 'member' as const,
+        is_active: true,
+        created_at: '2023-01-01T00:00:00Z',
+        updated_at: '2023-01-01T00:00:00Z'
       };
 
       vi.mocked(AuthService.getCurrentUser).mockResolvedValue(null);
@@ -124,7 +130,10 @@ describe('useAuth', () => {
       const mockUser = {
         id: 'user-123',
         email: 'test@example.com',
-        role: 'member',
+        role: 'member' as const,
+        is_active: true,
+        created_at: '2023-01-01T00:00:00Z',
+        updated_at: '2023-01-01T00:00:00Z'
       };
 
       vi.mocked(AuthService.getCurrentUser).mockResolvedValue(mockUser);
@@ -148,7 +157,10 @@ describe('useAuth', () => {
       const mockUser = {
         id: 'user-123',
         email: 'test@example.com',
-        role: 'member',
+        role: 'member' as const,
+        is_active: true,
+        created_at: '2023-01-01T00:00:00Z',
+        updated_at: '2023-01-01T00:00:00Z'
       };
 
       const mockError = new Error('Logout failed');
@@ -175,7 +187,10 @@ describe('useAuth', () => {
       const mockUser = {
         id: 'user-123',
         email: 'test@example.com',
-        role: 'member',
+        role: 'member' as const,
+        is_active: true,
+        created_at: '2023-01-01T00:00:00Z',
+        updated_at: '2023-01-01T00:00:00Z'
       };
 
       vi.mocked(AuthService.getCurrentUser).mockResolvedValue(null);

@@ -111,7 +111,8 @@ export function PdfGenerator({
         config: {
           clientName,
           projectName,
-          preparedBy: pricingData.preparedBy || 'System'
+          preparedBy: pricingData.preparedBy || 'System',
+          configValues: {}
         },
         selectedItems: pricingData.selected_items || [],
         categories: pricingData.categories || [],
@@ -377,7 +378,7 @@ export function PdfGenerator({
                 <Checkbox
                   id="preliminary"
                   checked={includePreliminary}
-                  onCheckedChange={setIncludePreliminary}
+                  onCheckedChange={(checked) => setIncludePreliminary(checked === true)}
                 />
                 <label htmlFor="preliminary" className="text-sm font-medium">
                   Include Preliminary Sections

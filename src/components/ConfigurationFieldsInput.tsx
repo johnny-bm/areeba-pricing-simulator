@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { X, Plus } from 'lucide-react';
-import { ConfigurationDefinition } from '../types/pricing';
+import { ConfigurationDefinition } from '../types/domain';
 
 interface ConfigurationFieldsInputProps {
   selectedFieldIds: string[];

@@ -1,7 +1,7 @@
 // This file has been simplified - complex mapping logic has been removed
 // These are stub implementations to avoid breaking imports
 
-import { PricingItem, ClientConfig } from '../types/pricing';
+import { PricingItem, ClientConfig } from '../types/domain';
 
 export function getDynamicConfigServiceMapping(items: PricingItem[]): Record<string, string[]> {
   // No longer needed with simple system

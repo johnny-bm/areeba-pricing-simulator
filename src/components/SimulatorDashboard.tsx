@@ -22,7 +22,7 @@ import { formatPrice } from '../utils/formatters';
 import { api } from '../utils/api';
 import { SimulatorApi } from '../utils/simulatorApi';
 import { Simulator } from '../types/simulator';
-import { PricingItem } from '../types/pricing';
+import { PricingItem } from '../types/domain';
 
 interface DashboardStats {
   totalSessions: number;
@@ -76,7 +76,13 @@ export function SimulatorDashboard({ simulatorId }: SimulatorDashboardProps) {
       // Calculate stats
       const totalSessions = simulatorScenarios.length + simulatorSubmissions.length;
       const totalSubmissions = simulatorSubmissions.length;
-      const totalRevenue = simulatorScenarios.reduce((sum, s) => sum + (s.summary?.totalProjectCost || 0), 0);
+      let totalRevenue = 0;
+      for (const s of simulatorScenarios) {
+        const cost = s.summary?.totalProjectCost;
+        if (typeof cost === 'number') {
+          totalRevenue += cost;
+        }
+      }
       
       // Calculate average session duration (mock data for now)
       const averageSessionDuration = 15; // minutes
@@ -273,12 +279,12 @@ export function SimulatorDashboard({ simulatorId }: SimulatorDashboardProps) {
                     <div>
                       <p className="text-sm font-medium">{service.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {service.category || 'Uncategorized'}
+                        {service.categoryId || 'Uncategorized'}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium">{formatPrice(service.price || 0)}</p>
+                    <p className="text-sm font-medium">{formatPrice(service.defaultPrice || 0)}</p>
                     <p className="text-xs text-muted-foreground">price</p>
                   </div>
                 </div>

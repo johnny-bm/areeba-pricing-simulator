@@ -7,7 +7,7 @@ import { Badge } from './ui/badge';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Plus, Trash2 } from 'lucide-react';
-import { PricingTier, ClientConfig } from '../types/pricing';
+import { PricingTier, ClientConfig } from '../types/domain';
 import { NumberInput } from './NumberInput';
 
 interface TieredPricingEditorProps {

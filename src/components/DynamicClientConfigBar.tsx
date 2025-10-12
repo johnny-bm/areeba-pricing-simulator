@@ -5,7 +5,7 @@ import { Checkbox } from "./ui/checkbox";
 import { Collapsible, CollapsibleContent } from "./ui/collapsible";
 import { NumberInput } from "./NumberInput";
 import { useEffect, useState, useRef } from "react";
-import { ConfigurationDefinition, DynamicClientConfig } from "../types/pricing";
+import { ConfigurationDefinition, DynamicClientConfig } from "../types/domain";
 import { api } from "../utils/api";
 import { CardHeaderWithCollapse } from "./CardHeaderWithCollapse";
 

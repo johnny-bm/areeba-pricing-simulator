@@ -96,7 +96,7 @@ export function PdfBuilderIntegration({
                 <Checkbox
                   id="use-template"
                   checked={useTemplatePdf}
-                  onCheckedChange={setUseTemplatePdf}
+                  onCheckedChange={(checked) => setUseTemplatePdf(checked === true)}
                 />
                 <label htmlFor="use-template" className="text-sm font-medium">
                   Use PDF Template
@@ -123,7 +123,7 @@ export function PdfBuilderIntegration({
               <Checkbox
                 id="preliminary"
                 checked={includePreliminary}
-                onCheckedChange={setIncludePreliminary}
+                onCheckedChange={(checked) => setIncludePreliminary(checked === true)}
               />
               <label htmlFor="preliminary" className="text-sm font-medium">
                 Generate as Preliminary Proposal

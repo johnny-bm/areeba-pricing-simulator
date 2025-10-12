@@ -10,7 +10,7 @@ import { Badge } from './ui/badge';
 import { TableCell } from './ui/table';
 import { Plus, Edit, Trash2, Copy, Package, Save, Loader2 } from 'lucide-react';
 import { toast } from "sonner";
-import { PricingItem, Category } from '../types/pricing';
+import { PricingItem, Category } from '../types/domain';
 import { SimpleServiceEditor } from './SimpleServiceEditor';
 import { DataTable } from './DataTable';
 import { formatPrice } from '../utils/formatters';
@@ -150,7 +150,7 @@ export function SimpleServiceManager({
     return categories.map(cat => ({
       value: cat.id,
       label: cat.name,
-      count: services.filter(s => s.category === cat.id).length
+      count: services.filter(s => s.categoryId === cat.id).length
     }));
   }, [categories, services]);
 
@@ -167,7 +167,7 @@ export function SimpleServiceManager({
         searchPlaceholder="Search services by name, description, or tags..."
         filterOptions={[
           {
-            key: 'category',
+            key: 'categoryId',
             label: 'Categories',
             options: categoryFilterOptions
           }
@@ -199,7 +199,7 @@ export function SimpleServiceManager({
             </TableCell>
             <TableCell>
               <Badge variant="secondary">
-                {getCategoryName(service.category)}
+                {getCategoryName(service.categoryId)}
               </Badge>
             </TableCell>
             <TableCell>

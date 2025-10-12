@@ -14,7 +14,7 @@ import { BackendConnectionError } from './BackendConnectionError';
 import { ConnectionDiagnostics } from './ConnectionDiagnostics';
 import { GuestContactFormModal } from './GuestContactFormModal';
 import { Header, Footer } from './layout';
-import { ClientConfig, SelectedItem, PricingItem, Category, DynamicClientConfig } from '../types/pricing';
+import { ClientConfig, SelectedItem, PricingItem, Category, DynamicClientConfig } from '../types/domain';
 import { api } from '../utils/api';
 import { SimulatorApi } from '../utils/simulatorApi';
 import { getConfigBasedQuantity, getEffectiveUnitPrice, calculateTieredPrice } from '../utils/tieredPricing';
@@ -369,10 +369,10 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   // Calculate summary
   const calculateSummary = () => {
     const oneTimeItems = selectedItems.filter(item => 
-      item.item.category === 'setup' || isOneTimeUnit(item.item.unit)
+      item.item.categoryId === 'setup' || isOneTimeUnit(item.item.unit)
     );
     const monthlyItems = selectedItems.filter(item => 
-      item.item.category !== 'setup' && !isOneTimeUnit(item.item.unit)
+      item.item.categoryId !== 'setup' && !isOneTimeUnit(item.item.unit)
     );
 
     // Use proper tiered pricing calculations

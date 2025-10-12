@@ -1,7 +1,7 @@
 // Direct Supabase API - uses RLS policies and direct database queries
 // Maps to the schema defined in /config/database.ts
 
-import { PricingItem, Category, ScenarioData, ConfigurationDefinition, Tag } from '../types/pricing';
+import { PricingItem, Category, ScenarioData, ConfigurationDefinition, Tag } from '../types/domain';
 import { supabase } from './supabase/client';
 import { TABLES, COLUMNS } from '../config/database';
 
@@ -450,34 +450,32 @@ async saveGuestScenario(data: {
       
       // Transform to match expected format
       return (scenarios || []).map(scenario => ({
-        scenarioId: scenario.id,
-        submissionCode: scenario.submission_code,
-        clientName: scenario.client_name || 'Unknown Client',
-        projectName: scenario.project_name || 'Unknown Project',
-        preparedBy: scenario.prepared_by || 'Unknown',
-        createdAt: scenario.created_at,
-        status: scenario.status,
-        itemCount: Array.isArray(scenario.selected_services) ? scenario.selected_services.length : 0,
-        oneTimeTotal: scenario.cost_summary?.oneTimeTotal || 0,
-        monthlyTotal: scenario.cost_summary?.monthlyTotal || 0,
-        totalProjectCost: scenario.cost_summary?.totalProjectCost || 0,
-        globalDiscount: scenario.global_discount || 0,
-        globalDiscountType: scenario.global_discount_type || 'percentage',
-        globalDiscountApplication: scenario.global_discount_application || 'none',
+        id: scenario.id,
+        userId: scenario.user_id || '',
+        config: scenario.config || {} as any,
+        legacyConfig: scenario.legacy_config || {} as any,
+        configDefinitions: scenario.config_definitions || [],
+        selectedItems: scenario.selected_services || [],
+        categories: scenario.categories || [],
+        tags: scenario.tags || [],
         summary: scenario.cost_summary || {
           oneTimeTotal: 0,
           monthlyTotal: 0,
           yearlyTotal: 0,
-          totalProjectCost: 0
+          totalProjectCost: 0,
+          savings: {
+            totalSavings: 0,
+            discountSavings: 0,
+            freeSavings: 0,
+            originalPrice: 0,
+            savingsRate: 0
+          }
         },
-        // Add required ScenarioData properties
-        userId: scenario.user_id,
-        config: scenario.client_configuration || {},
-        selectedItems: scenario.selected_services || [],
-        categories: [], // Will be populated separately if needed
         globalDiscount: scenario.global_discount || 0,
         globalDiscountType: scenario.global_discount_type || 'percentage',
-        globalDiscountApplication: scenario.global_discount_application || 'none'
+        globalDiscountApplication: scenario.global_discount_application || 'none',
+        createdAt: scenario.created_at,
+        updatedAt: scenario.updated_at
       })) as ScenarioData[];
     } catch (error) {
       console.error('❌ Failed to load scenarios:', error);
@@ -1043,6 +1041,221 @@ async saveGuestScenario(data: {
     } catch (error) {
       console.error('❌ Failed to delete tag:', error);
       throw error;
+    }
+  },
+
+  // User Management Functions
+  async getUsers(filters?: { role?: string; is_active?: boolean }): Promise<any[]> {
+    try {
+      let query = supabase
+        .from(TABLES.USER_PROFILES)
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (filters?.role) {
+        query = query.eq('role', filters.role);
+      }
+      if (filters?.is_active !== undefined) {
+        query = query.eq('is_active', filters.is_active);
+      }
+
+      const { data, error } = await query;
+      
+      if (error) {
+        throw new Error(`Failed to fetch users: ${error.message}`);
+      }
+      
+      return data || [];
+    } catch (error: any) {
+      throw new Error(`Failed to fetch users: ${error.message}`);
+    }
+  },
+
+  async getUser(id: string): Promise<any | null> {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.USER_PROFILES)
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null; // User not found
+        }
+        throw new Error(`Failed to fetch user: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error: any) {
+      throw new Error(`Failed to fetch user: ${error.message}`);
+    }
+  },
+
+  async updateUser(id: string, updates: any): Promise<any> {
+    try {
+      const user = await getCurrentUser();
+      if (!user) {
+        throw new Error('User must be authenticated to update users');
+      }
+
+      const timestamp = getCurrentTimestamp();
+      const updatesWithAudit = {
+        ...updates,
+        updated_by: user.id,
+        updated_at: timestamp
+      };
+
+      const { data, error } = await supabase
+        .from(TABLES.USER_PROFILES)
+        .update(updatesWithAudit)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) {
+        throw new Error(`Failed to update user: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error: any) {
+      throw new Error(`Failed to update user: ${error.message}`);
+    }
+  },
+
+  async deleteUser(id: string): Promise<void> {
+    try {
+      const user = await getCurrentUser();
+      if (!user) {
+        throw new Error('User must be authenticated to delete users');
+      }
+
+      // Soft delete by setting is_active to false
+      const { error } = await supabase
+        .from(TABLES.USER_PROFILES)
+        .update({ 
+          is_active: false,
+          updated_by: user.id,
+          updated_at: getCurrentTimestamp()
+        })
+        .eq('id', id);
+      
+      if (error) {
+        throw new Error(`Failed to delete user: ${error.message}`);
+      }
+    } catch (error: any) {
+      throw new Error(`Failed to delete user: ${error.message}`);
+    }
+  },
+
+  // Invite Management Functions
+  async getInvites(): Promise<any[]> {
+    try {
+      const { data, error } = await supabase
+        .from('admin_invites')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        throw new Error(`Failed to fetch invites: ${error.message}`);
+      }
+      
+      return data || [];
+    } catch (error: any) {
+      throw new Error(`Failed to fetch invites: ${error.message}`);
+    }
+  },
+
+  async createInvite(inviteData: any): Promise<any> {
+    try {
+      const user = await getCurrentUser();
+      if (!user) {
+        throw new Error('User must be authenticated to create invites');
+      }
+
+      const timestamp = getCurrentTimestamp();
+      const invite = {
+        ...inviteData,
+        created_by: user.id,
+        created_at: timestamp,
+        invite_code: `INV-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+      };
+
+      const { data, error } = await supabase
+        .from('admin_invites')
+        .insert(invite)
+        .select()
+        .single();
+      
+      if (error) {
+        throw new Error(`Failed to create invite: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error: any) {
+      throw new Error(`Failed to create invite: ${error.message}`);
+    }
+  },
+
+  async deleteInvite(id: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('admin_invites')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        throw new Error(`Failed to delete invite: ${error.message}`);
+      }
+    } catch (error: any) {
+      throw new Error(`Failed to delete invite: ${error.message}`);
+    }
+  },
+
+  // Statistics Functions
+  async getAdminStats(): Promise<any> {
+    try {
+      const [usersResult, scenariosResult, guestSubmissionsResult] = await Promise.all([
+        supabase.from(TABLES.USER_PROFILES).select('id', { count: 'exact' }),
+        supabase.from(TABLES.SIMULATOR_SUBMISSIONS).select('id', { count: 'exact' }),
+        supabase.from(TABLES.GUEST_SCENARIOS).select('id', { count: 'exact' })
+      ]);
+
+      const totalUsers = usersResult.count || 0;
+      const totalScenarios = scenariosResult.count || 0;
+      const totalGuestSubmissions = guestSubmissionsResult.count || 0;
+
+      // Calculate active users (users who logged in within last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { count: activeUsers } = await supabase
+        .from(TABLES.USER_PROFILES)
+        .select('id', { count: 'exact' })
+        .gte('last_login', thirtyDaysAgo.toISOString())
+        .eq('is_active', true);
+
+      // Calculate average scenario value
+      const { data: scenarioValues } = await supabase
+        .from(TABLES.SIMULATOR_SUBMISSIONS)
+        .select('total_price')
+        .not('total_price', 'is', null);
+
+      const averageScenarioValue = scenarioValues?.length 
+        ? scenarioValues.reduce((sum, s) => sum + (s.total_price || 0), 0) / scenarioValues.length 
+        : 0;
+
+      return {
+        totalUsers,
+        totalScenarios,
+        totalGuestSubmissions,
+        totalRevenue: scenarioValues?.reduce((sum, s) => sum + (s.total_price || 0), 0) || 0,
+        activeUsers: activeUsers || 0,
+        averageScenarioValue,
+        recentActivity: [] // TODO: Implement recent activity tracking
+      };
+    } catch (error: any) {
+      throw new Error(`Failed to fetch admin stats: ${error.message}`);
     }
   }
 };
