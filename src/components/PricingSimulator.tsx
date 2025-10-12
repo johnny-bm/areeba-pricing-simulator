@@ -131,8 +131,6 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
 
   // Load initial data
   useEffect(() => {
-    let isMounted = true;
-    
     const loadInitialData = async () => {
       try {
         setIsLoading(true);
@@ -140,7 +138,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         // Load pricing services
         try {
           const servicesResponse = await api.loadPricingItems();
-          if (isMounted) setPricingServices(servicesResponse || []);
+          setPricingServices(servicesResponse || []);
         } catch (error) {
           console.error('Failed to load services:', error);
         }
@@ -148,31 +146,27 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         // Load categories
         try {
           const categoriesResponse = await api.loadCategories();
-          if (isMounted) setCategories(deduplicateCategories(categoriesResponse || []));
+          setCategories(deduplicateCategories(categoriesResponse || []));
         } catch (error) {
           console.error('Failed to load categories:', error);
         }
         
         // Load configurations
         const configResponse = await api.loadConfigurations();
-        if (isMounted) setConfigurations(configResponse || []);
+        setConfigurations(configResponse || []);
         
         // Load persisted data
         await loadPersistedData();
         
       } catch (error) {
         console.error('Failed to load initial data:', error);
-        if (isMounted) setBackendConnectionError(true);
+        setBackendConnectionError(true);
       } finally {
-        if (isMounted) setIsLoading(false);
+        setIsLoading(false);
       }
     };
 
     loadInitialData();
-    
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
   // Load persisted data from database
