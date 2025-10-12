@@ -408,6 +408,8 @@ export class PdfBuilderService {
   }
 
   static async getTemplateSections(templateId: string): Promise<TemplateSectionWithDetails[]> {
+    console.log('PdfBuilderService: Fetching template sections for template:', templateId);
+    
     const { data, error } = await supabase
       .from('template_sections_with_details')
       .select('*')
@@ -415,9 +417,13 @@ export class PdfBuilderService {
       .order('position');
 
     if (error) {
+      console.error('PdfBuilderService: Error fetching template sections:', error);
       throw new Error(`Failed to fetch template sections: ${error.message}`);
     }
 
+    console.log('PdfBuilderService: Template sections found:', data?.length || 0);
+    console.log('PdfBuilderService: Template sections data:', data);
+    
     return data || [];
   }
 

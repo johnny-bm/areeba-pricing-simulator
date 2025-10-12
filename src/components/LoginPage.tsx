@@ -72,7 +72,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="h-8 w-32">
+            <div className="h-6 w-auto">
               <WordMarkRed />
             </div>
           </div>

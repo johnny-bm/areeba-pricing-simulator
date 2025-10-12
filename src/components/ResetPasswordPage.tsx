@@ -98,8 +98,10 @@ export function ResetPasswordPage() {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <div className="w-24 h-6 mx-auto mb-4">
-              <WordMarkRed />
+            <div className="flex justify-center mb-4">
+              <div className="h-6 w-auto">
+                <WordMarkRed />
+              </div>
             </div>
             <CardTitle className="text-center">Invalid Reset Link</CardTitle>
           </CardHeader>
@@ -124,8 +126,10 @@ export function ResetPasswordPage() {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <div className="w-24 h-6 mx-auto mb-4">
-              <WordMarkRed />
+            <div className="flex justify-center mb-4">
+              <div className="h-6 w-auto">
+                <WordMarkRed />
+              </div>
             </div>
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-950 flex items-center justify-center">

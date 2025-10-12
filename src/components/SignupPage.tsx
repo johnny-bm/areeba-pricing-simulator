@@ -158,8 +158,10 @@ export function SignupPage() {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <div className="w-24 h-6 mx-auto mb-4">
-              <WordMarkRed />
+            <div className="flex justify-center mb-4">
+              <div className="h-6 w-auto">
+                <WordMarkRed />
+              </div>
             </div>
             <CardTitle className="text-center">Enter Invite Code</CardTitle>
             <CardDescription className="text-center">
@@ -214,8 +216,10 @@ export function SignupPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <div className="w-24 h-6 mx-auto mb-4">
-            <WordMarkRed />
+          <div className="flex justify-center mb-4">
+            <div className="h-6 w-auto">
+              <WordMarkRed />
+            </div>
           </div>
           <CardTitle className="text-center">Complete Your Account</CardTitle>
           <CardDescription className="text-center">

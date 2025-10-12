@@ -2,15 +2,13 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { EXTERNAL_URLS } from '../config/api';
-import { ArrowRight, CreditCard, Calculator, Zap, Shield } from 'lucide-react';
-import { UserProfileHeader } from './UserProfileHeader';
+import { ArrowRight, CreditCard, Calculator, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../config/routes';
 import { Simulator } from '../types/simulator';
 import { SimulatorApi } from '../utils/simulatorApi';
 import { SIMULATOR_ICON_MAP } from '../utils/icons';
-import WordMarkRed from '../imports/WordMarkRed';
+import { Header, Footer } from './layout';
 
 interface SimulatorOption {
   id: string;
@@ -66,21 +64,13 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 p-4">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12 relative">
-            {/* User Profile Header */}
-            <div className="absolute top-0 right-0">
-              <UserProfileHeader onLogout={onLogout} />
-            </div>
-            
-            <div className="w-32 h-8 mx-auto mb-6">
-              <WordMarkRed />
-            </div>
-            <h1 className="text-3xl mb-4">Pricing Simulators</h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Select a pricing simulator to configure and calculate costs for your payment solutions
-            </p>
-          </div>
+          <Header
+            title="Pricing Simulators"
+            subtitle="Select a pricing simulator to configure and calculate costs for your payment solutions"
+            showAdminButton={!!onOpenAdmin}
+            onAdminClick={onOpenAdmin}
+            onLogout={onLogout}
+          />
 
           {/* Simulator Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -207,32 +197,7 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-background">
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="flex justify-between items-center text-sm text-muted-foreground">
-            <p>areeba © {new Date().getFullYear()}. All Rights Reserved.</p>
-            <div className="flex gap-4">
-              <a 
-                href={EXTERNAL_URLS.AREEBA_PRIVACY} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors underline"
-              >
-                Privacy
-              </a>
-              <a 
-                href={EXTERNAL_URLS.AREEBA_WEBSITE} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors underline"
-              >
-                About areeba
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

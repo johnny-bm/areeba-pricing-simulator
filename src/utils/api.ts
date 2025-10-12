@@ -1,127 +1,96 @@
-// Simplified API - loads data directly from database without transformations
+// Direct Supabase API - uses RLS policies and direct database queries
 // Maps to the schema defined in /config/database.ts
 
 import { PricingItem, Category, ScenarioData, ConfigurationDefinition, Tag } from '../types/pricing';
 import { supabase } from './supabase/client';
+import { TABLES, COLUMNS } from '../config/database';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-}
-
-const API_BASE_URL = `${supabaseUrl}/functions/v1/make-server-228aa219`;
-
-const getHeaders = async () => {
-  // Get the user's JWT token from Supabase auth
+// Helper function to get current user for audit fields
+const getCurrentUser = async () => {
   const { data: { session } } = await supabase.auth.getSession();
-  const token = session?.access_token || supabaseAnonKey;
-  
-  return {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache'
-  };
+  return session?.user;
 };
 
-const createApiRequest = async (
-  url: string,
-  options: RequestInit = {},
-  timeoutMs: number = 30000
-): Promise<Response> => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
-
-  // Add cache-busting parameter for GET requests
-  let finalUrl = url;
-  if (!options.method || options.method === 'GET') {
-    const separator = url.includes('?') ? '&' : '?';
-    finalUrl = `${url}${separator}_t=${Date.now()}`;
-  }
-
-  try {
-    const headers = await getHeaders();
-    const response = await fetch(finalUrl, {
-      ...options,
-      signal: controller.signal,
-      headers,
-    });
-    clearTimeout(timeoutId);
-    return response;
-  } catch (error: any) {
-    clearTimeout(timeoutId);
-    
-    // Provide better error messages for common issues
-    if (error.name === 'AbortError') {
-      throw new Error(`Request timeout after ${timeoutMs}ms - server may be slow or unreachable`);
-    }
-    if (error.message && error.message.includes('Failed to fetch')) {
-      throw new Error('Failed to connect to server - check your network connection');
-    }
-    
-    throw error;
-  }
+// Helper function to generate submission code
+const generateSubmissionCode = () => {
+  return `SUB-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 };
+
+// Helper function to get current timestamp
+const getCurrentTimestamp = () => new Date().toISOString();
 
 export const api = {
-  // Health check with retry logic
+  // Health check - test Supabase connection
   async healthCheck(retries = 2): Promise<boolean> {
     for (let i = 0; i <= retries; i++) {
       try {
-        // Increased timeout to 15 seconds on first attempt to handle Edge Function cold starts
-        const timeoutMs = i === 0 ? 15000 : 10000;
-        const response = await createApiRequest(`${API_BASE_URL}/health`, { method: 'GET' }, timeoutMs);
-        if (response.ok) {
-          // // console.log(`✅ Health check passed on attempt ${i + 1}`);
+        // Test basic Supabase connection by querying a simple table
+        const { data, error } = await supabase
+          .from(TABLES.SIMULATORS)
+          .select('id')
+          .limit(1);
+        
+        if (!error) {
           return true;
         }
+        throw new Error(error.message);
       } catch (error: any) {
         console.warn(`Health check attempt ${i + 1}/${retries + 1} failed:`, error.message);
         
-        // If this is the last retry, log the full error
         if (i === retries) {
           console.error('Health check failed after all retries:', error);
           return false;
         }
         
-        // Wait a bit before retrying (exponential backoff)
+        // Wait before retrying
         await new Promise(resolve => setTimeout(resolve, Math.min(1000 * Math.pow(2, i), 3000)));
       }
     }
     return false;
   },
 
-  // Ping check (simple connectivity test)
+  // Ping check - simple connectivity test
   async ping(): Promise<boolean> {
     try {
-      // Increased timeout to 10 seconds to handle Edge Function cold starts
-      const response = await createApiRequest(`${API_BASE_URL}/ping`, { method: 'GET' }, 10000);
-      return response.ok;
+      const { error } = await supabase
+        .from(TABLES.SIMULATORS)
+        .select('id')
+        .limit(1);
+      
+      return !error;
     } catch (error: any) {
       console.error('Ping check failed:', error.message || error);
       return false;
     }
   },
 
-  // Load services
-  async loadPricingItems(): Promise<PricingItem[]> {
+  // Load services - now uses direct Supabase queries with RLS
+  async loadPricingItems(simulatorId?: string): Promise<PricingItem[]> {
     try {
-      // // console.log('📡 Loading services from database...');
-      const response = await createApiRequest(`${API_BASE_URL}/services`);
+      let query = supabase
+        .from(TABLES.SERVICES)
+        .select(`
+          *,
+          category:categories(id, name, color),
+          service_tags:service_tags(tag:tags(id, name)),
+          auto_add_rules:auto_add_rules(id, config_field_id),
+          quantity_rules:quantity_rules(id, config_field_id, multiplier)
+        `)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: true });
+
+      // Filter by simulator if provided
+      if (simulatorId) {
+        query = query.eq('simulator_id', simulatorId);
+      }
+
+      const { data: services, error } = await query;
       
-      if (!response.ok) {
-        throw new Error(`Failed to load services: ${response.status}`);
+      if (error) {
+        throw new Error(`Failed to load services: ${error.message}`);
       }
       
-      const data = await response.json();
-      const services = data.items || [];
-      
-      // console.log(`✅ Loaded ${services.length} services`);
-      return services;
+      return services || [];
     } catch (error) {
       console.error('❌ Failed to load services:', error);
       throw error;
@@ -129,200 +98,272 @@ export const api = {
   },
 
   // Get pricing items (alias for loadPricingItems)
-  async getPricingItems(): Promise<PricingItem[]> {
-    return this.loadPricingItems();
+  async getPricingItems(simulatorId?: string): Promise<PricingItem[]> {
+    return this.loadPricingItems(simulatorId);
   },
 
   // Load services for a specific simulator
   async loadSimulatorServices(simulatorId: string): Promise<PricingItem[]> {
-    try {
-      // console.log(`📡 Loading services for simulator ${simulatorId}...`);
-      const response = await createApiRequest(`${API_BASE_URL}/services?simulator_id=${simulatorId}`);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to load simulator services: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      const services = data.items || [];
-      
-      // console.log(`✅ Loaded ${services.length} services for simulator`);
-      return services;
-    } catch (error) {
-      console.error('❌ Failed to load simulator services:', error);
-      throw error;
-    }
+    return this.loadPricingItems(simulatorId);
   },
 
-  // Save services
-  async savePricingItems(items: PricingItem[]): Promise<void> {
+  // Save services - now uses direct Supabase operations with audit fields
+  async savePricingItems(items: PricingItem[], simulatorId?: string): Promise<void> {
     try {
-      // console.log(`📡 Saving ${items.length} services...`);
-      const response = await createApiRequest(`${API_BASE_URL}/services`, {
-        method: 'POST',
-        body: JSON.stringify({ items }),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to save services: ${response.status}`);
+      // Prepare items with audit fields
+      const itemsWithAudit = items.map(item => ({
+        ...item,
+        simulator_id: simulatorId,
+        created_by: user?.id,
+        updated_by: user?.id,
+        created_at: timestamp,
+        updated_at: timestamp
+      }));
+
+      const { error } = await supabase
+        .from(TABLES.SERVICES)
+        .upsert(itemsWithAudit, { 
+          onConflict: 'id',
+          ignoreDuplicates: false 
+        });
+      
+      if (error) {
+        throw new Error(`Failed to save services: ${error.message}`);
       }
-      
-      // console.log('✅ Services saved successfully');
     } catch (error) {
       console.error('❌ Failed to save services:', error);
       throw error;
     }
   },
 
-  // Load categories
-  async loadCategories(): Promise<Category[]> {
+  // Load categories - now uses direct Supabase queries with RLS
+  async loadCategories(simulatorId?: string): Promise<Category[]> {
     try {
-      // console.log('📡 Loading categories from database...');
-      const response = await createApiRequest(`${API_BASE_URL}/categories`);
+      let query = supabase
+        .from(TABLES.CATEGORIES)
+        .select('*')
+        .is('deleted_at', null)
+        .order('display_order', { ascending: true });
+
+      // Filter by simulator if provided
+      if (simulatorId) {
+        query = query.eq('simulator_id', simulatorId);
+      }
+
+      const { data: categories, error } = await query;
       
-      if (!response.ok) {
-        throw new Error(`Failed to load categories: ${response.status}`);
+      if (error) {
+        throw new Error(`Failed to load categories: ${error.message}`);
       }
       
-      const data = await response.json();
-      const categories = data.categories || [];
-      
-      // console.log(`✅ Loaded ${categories.length} categories`);
-      return categories;
+      return categories || [];
     } catch (error) {
       console.error('❌ Failed to load categories:', error);
       throw error;
     }
   },
 
-  // Save categories
-  async saveCategories(categories: Category[]): Promise<void> {
+  // Save categories - now uses direct Supabase operations with audit fields
+  async saveCategories(categories: Category[], simulatorId?: string): Promise<void> {
     try {
-      // console.log(`📡 Saving ${categories.length} categories...`);
-      const response = await createApiRequest(`${API_BASE_URL}/categories`, {
-        method: 'POST',
-        body: JSON.stringify({ categories }),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to save categories: ${response.status}`);
+      // Prepare categories with audit fields
+      const categoriesWithAudit = categories.map(category => ({
+        ...category,
+        simulator_id: simulatorId,
+        created_by: user?.id,
+        updated_by: user?.id,
+        created_at: timestamp,
+        updated_at: timestamp
+      }));
+
+      const { error } = await supabase
+        .from(TABLES.CATEGORIES)
+        .upsert(categoriesWithAudit, { 
+          onConflict: 'id',
+          ignoreDuplicates: false 
+        });
+      
+      if (error) {
+        throw new Error(`Failed to save categories: ${error.message}`);
       }
-      
-      // console.log('✅ Categories saved successfully');
     } catch (error) {
       console.error('❌ Failed to save categories:', error);
       throw error;
     }
   },
 
-  // Load tags
-  async loadTags(): Promise<Tag[]> {
+  // Load tags - now uses direct Supabase queries with RLS
+  async loadTags(simulatorId?: string): Promise<Tag[]> {
     try {
-      // console.log('📡 Loading tags from database...');
-      const response = await createApiRequest(`${API_BASE_URL}/tags`);
+      let query = supabase
+        .from(TABLES.TAGS)
+        .select('*')
+        .is('deleted_at', null)
+        .order('name', { ascending: true });
+
+      // Filter by simulator if provided
+      if (simulatorId) {
+        query = query.eq('simulator_id', simulatorId);
+      }
+
+      const { data: tags, error } = await query;
       
-      if (!response.ok) {
-        throw new Error(`Failed to load tags: ${response.status}`);
+      if (error) {
+        throw new Error(`Failed to load tags: ${error.message}`);
       }
       
-      const data = await response.json();
-      const tags = data.tags || [];
-      
-      // console.log(`✅ Loaded ${tags.length} tags`);
-      return tags;
+      return tags || [];
     } catch (error) {
       console.error('❌ Failed to load tags:', error);
       throw error;
     }
   },
 
-  // Save tags
-  async saveTags(tags: Tag[]): Promise<void> {
+  // Save tags - now uses direct Supabase operations with audit fields
+  async saveTags(tags: Tag[], simulatorId?: string): Promise<void> {
     try {
-      // console.log(`📡 Saving ${tags.length} tags...`);
-      const response = await createApiRequest(`${API_BASE_URL}/tags`, {
-        method: 'POST',
-        body: JSON.stringify({ tags }),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to save tags: ${response.status}`);
+      // Prepare tags with audit fields
+      const tagsWithAudit = tags.map(tag => ({
+        ...tag,
+        simulator_id: simulatorId,
+        created_by: user?.id,
+        updated_by: user?.id,
+        created_at: timestamp,
+        updated_at: timestamp
+      }));
+
+      const { error } = await supabase
+        .from(TABLES.TAGS)
+        .upsert(tagsWithAudit, { 
+          onConflict: 'id',
+          ignoreDuplicates: false 
+        });
+      
+      if (error) {
+        throw new Error(`Failed to save tags: ${error.message}`);
       }
-      
-      // console.log('✅ Tags saved successfully');
     } catch (error) {
       console.error('❌ Failed to save tags:', error);
       throw error;
     }
   },
 
-  // Load configurations
-  async loadConfigurations(): Promise<ConfigurationDefinition[]> {
+  // Load configurations - now uses direct Supabase queries with RLS
+  async loadConfigurations(simulatorId?: string): Promise<ConfigurationDefinition[]> {
     try {
-      // console.log('📡 Loading configurations from database...');
-      const response = await createApiRequest(`${API_BASE_URL}/configurations`);
+      let query = supabase
+        .from(TABLES.CONFIGURATIONS)
+        .select('*')
+        .is('deleted_at', null)
+        .order('sort_order', { ascending: true });
+
+      // Filter by simulator if provided
+      if (simulatorId) {
+        query = query.eq('simulator_id', simulatorId);
+      }
+
+      const { data: configurations, error } = await query;
       
-      if (!response.ok) {
-        throw new Error(`Failed to load configurations: ${response.status}`);
+      if (error) {
+        throw new Error(`Failed to load configurations: ${error.message}`);
       }
       
-      const data = await response.json();
-      const configurations = data.configurations || [];
-      
-      // console.log(`✅ Loaded ${configurations.length} configurations`);
-      return configurations;
+      return configurations || [];
     } catch (error) {
       console.error('❌ Failed to load configurations:', error);
       throw error;
     }
   },
 
-  // Save configurations
-  async saveConfigurations(configurations: ConfigurationDefinition[]): Promise<void> {
+  // Save configurations - now uses direct Supabase operations with audit fields
+  async saveConfigurations(configurations: ConfigurationDefinition[], simulatorId?: string): Promise<void> {
     try {
-      // console.log(`📡 Saving ${configurations.length} configurations...`);
-      const response = await createApiRequest(`${API_BASE_URL}/configurations`, {
-        method: 'POST',
-        body: JSON.stringify({ configurations }),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to save configurations: ${response.status}`);
+      // Prepare configurations with audit fields
+      const configurationsWithAudit = configurations.map(config => ({
+        ...config,
+        simulator_id: simulatorId,
+        created_by: user?.id,
+        updated_by: user?.id,
+        created_at: timestamp,
+        updated_at: timestamp
+      }));
+
+      const { error } = await supabase
+        .from(TABLES.CONFIGURATIONS)
+        .upsert(configurationsWithAudit, { 
+          onConflict: 'id',
+          ignoreDuplicates: false 
+        });
+      
+      if (error) {
+        throw new Error(`Failed to save configurations: ${error.message}`);
       }
-      
-      // console.log('✅ Configurations saved successfully');
     } catch (error) {
       console.error('❌ Failed to save configurations:', error);
       throw error;
     }
   },
 
-  // Save scenario data
-  async saveScenarioData(data: ScenarioData): Promise<void> {
+  // Save scenario data - now uses direct Supabase operations with audit fields
+  async saveScenarioData(data: ScenarioData, simulatorId?: string): Promise<void> {
     try {
-      // console.log('📡 Saving scenario data...');
-      const response = await createApiRequest(`${API_BASE_URL}/scenarios`, {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to save scenario: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to save scenarios');
       }
+
+      const submissionData = {
+        user_id: user.id,
+        simulator_id: simulatorId,
+        submission_name: (data as any).submissionName || 'Untitled Scenario',
+        submission_code: generateSubmissionCode(),
+        status: 'submitted',
+        client_name: (data as any).clientName || 'Unknown Client',
+        project_name: (data as any).projectName || 'Unknown Project',
+        prepared_by: (data as any).preparedBy || 'Unknown',
+        client_configuration: data.config || {},
+        selected_services: data.selectedItems || [],
+        global_discount: data.globalDiscount || 0,
+        global_discount_type: data.globalDiscountType || 'percentage',
+        global_discount_application: data.globalDiscountApplication || 'none',
+        cost_summary: data.summary || {},
+        simulator_type: (data as any).simulatorType || 'ISS',
+        notes: (data as any).notes || '',
+        submitted_at: timestamp,
+        created_by: user.id,
+        updated_by: user.id,
+        created_at: timestamp,
+        updated_at: timestamp
+      };
+
+      const { error } = await supabase
+        .from(TABLES.SIMULATOR_SUBMISSIONS)
+        .insert(submissionData);
       
-      // console.log('✅ Scenario saved successfully');
+      if (error) {
+        throw new Error(`Failed to save scenario: ${error.message}`);
+      }
     } catch (error) {
       console.error('❌ Failed to save scenario:', error);
       throw error;
     }
   },
 
-  // Save guest scenario data
+  // Save guest scenario data - now uses direct Supabase operations (no auth required)
 async saveGuestScenario(data: {
   sessionId: string | null;
   email: string;
@@ -340,146 +381,239 @@ async saveGuestScenario(data: {
   summary: any;
 }): Promise<{ success: boolean; submissionCode: string; scenarioId: string }> {
   try {
-    // console.log('📡 Saving guest scenario data...');
-    const response = await createApiRequest(`${API_BASE_URL}/guest-scenarios`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `Failed to save guest scenario: ${response.status}`);
-    }
-    
-    const result = await response.json();
-    // console.log('✅ Guest scenario saved successfully');
-    return result;
+      const timestamp = getCurrentTimestamp();
+      const submissionCode = generateSubmissionCode();
+      
+      const guestSubmissionData = {
+        submission_code: submissionCode,
+        session_id: data.sessionId,
+        email: data.email,
+        phone_number: data.phoneNumber,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        company_name: data.companyName,
+        scenario_name: data.scenarioName || `${data.companyName} - Quote`,
+        scenario_data: {
+          config: data.config,
+          selectedItems: data.selectedItems,
+          categories: data.categories,
+          globalDiscount: data.globalDiscount,
+          globalDiscountType: data.globalDiscountType,
+          globalDiscountApplication: data.globalDiscountApplication,
+          summary: data.summary
+        },
+        total_price: data.summary?.totalProjectCost || 0,
+        status: 'submitted',
+        created_at: timestamp
+      };
+
+      const { data: result, error } = await supabase
+        .from(TABLES.GUEST_SCENARIOS)
+        .insert(guestSubmissionData)
+        .select()
+        .single();
+      
+      if (error) {
+        throw new Error(`Failed to save guest scenario: ${error.message}`);
+      }
+      
+      return {
+        success: true,
+        submissionCode: submissionCode,
+        scenarioId: result?.id || ''
+      };
   } catch (error) {
     console.error('❌ Failed to save guest scenario:', error);
     throw error;
   }
 },
 
-  // Load scenarios
-  async loadScenarios(): Promise<ScenarioData[]> {
+  // Load scenarios - now uses direct Supabase queries with RLS
+  async loadScenarios(simulatorId?: string): Promise<ScenarioData[]> {
     try {
-      // console.log('📡 Loading scenarios from database...');
-      const response = await createApiRequest(`${API_BASE_URL}/scenarios`);
+      let query = supabase
+        .from(TABLES.SIMULATOR_SUBMISSIONS)
+        .select('*')
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
+
+      // Filter by simulator if provided
+      if (simulatorId) {
+        query = query.eq('simulator_id', simulatorId);
+      }
+
+      const { data: scenarios, error } = await query;
       
-      if (!response.ok) {
-        throw new Error(`Failed to load scenarios: ${response.status}`);
+      if (error) {
+        throw new Error(`Failed to load scenarios: ${error.message}`);
       }
       
-      const data = await response.json();
-      const scenarios = data.scenarios || [];
-      
-      // console.log(`✅ Loaded ${scenarios.length} scenarios`);
-      return scenarios;
+      // Transform to match expected format
+      return (scenarios || []).map(scenario => ({
+        scenarioId: scenario.id,
+        submissionCode: scenario.submission_code,
+        clientName: scenario.client_name || 'Unknown Client',
+        projectName: scenario.project_name || 'Unknown Project',
+        preparedBy: scenario.prepared_by || 'Unknown',
+        createdAt: scenario.created_at,
+        status: scenario.status,
+        itemCount: Array.isArray(scenario.selected_services) ? scenario.selected_services.length : 0,
+        oneTimeTotal: scenario.cost_summary?.oneTimeTotal || 0,
+        monthlyTotal: scenario.cost_summary?.monthlyTotal || 0,
+        totalProjectCost: scenario.cost_summary?.totalProjectCost || 0,
+        globalDiscount: scenario.global_discount || 0,
+        globalDiscountType: scenario.global_discount_type || 'percentage',
+        globalDiscountApplication: scenario.global_discount_application || 'none',
+        summary: scenario.cost_summary || {
+          oneTimeTotal: 0,
+          monthlyTotal: 0,
+          yearlyTotal: 0,
+          totalProjectCost: 0
+        },
+        // Add required ScenarioData properties
+        userId: scenario.user_id,
+        config: scenario.client_configuration || {},
+        selectedItems: scenario.selected_services || [],
+        categories: [], // Will be populated separately if needed
+        globalDiscount: scenario.global_discount || 0,
+        globalDiscountType: scenario.global_discount_type || 'percentage',
+        globalDiscountApplication: scenario.global_discount_application || 'none'
+      })) as ScenarioData[];
     } catch (error) {
       console.error('❌ Failed to load scenarios:', error);
       throw error;
     }
   },
 
-  // Get scenario data by ID
+  // Get scenario data by ID - now uses direct Supabase queries with RLS
   async getScenarioData(scenarioId: string): Promise<ScenarioData | null> {
     try {
-      // console.log(`📡 Loading scenario data for ID: ${scenarioId}`);
-      const response = await createApiRequest(`${API_BASE_URL}/scenarios/${scenarioId}`);
+      const { data: scenario, error } = await supabase
+        .from(TABLES.SIMULATOR_SUBMISSIONS)
+        .select('*')
+        .eq('id', scenarioId)
+        .is('deleted_at', null)
+        .single();
       
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn(`Scenario not found: ${scenarioId}`);
-          return null;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null; // Not found
         }
-        throw new Error(`Failed to load scenario: ${response.status}`);
+        throw new Error(`Failed to load scenario: ${error.message}`);
       }
       
-      const data = await response.json();
-      // console.log(`✅ Loaded scenario data for ${scenarioId}`);
-      return data.scenario || null;
+      return scenario;
     } catch (error) {
       console.error(`❌ Failed to load scenario ${scenarioId}:`, error);
       throw error;
     }
   },
 
-  // Load guest submissions
+  // Load guest submissions - now uses direct Supabase queries with RLS
   async loadGuestSubmissions(): Promise<any[]> {
     try {
-      // console.log('📡 Loading guest submissions from database...');
-      const response = await createApiRequest(`${API_BASE_URL}/guest-submissions`);
+      const { data: submissions, error } = await supabase
+        .from(TABLES.GUEST_SCENARIOS)
+        .select('*')
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
       
-      if (!response.ok) {
-        throw new Error(`Failed to load guest submissions: ${response.status}`);
+      if (error) {
+        throw new Error(`Failed to load guest submissions: ${error.message}`);
       }
       
-      const data = await response.json();
-      const submissions = data.submissions || [];
-      
-      // console.log(`✅ Loaded ${submissions.length} guest submissions`);
-      return submissions;
+      // Transform to match expected format
+      return (submissions || []).map(sub => ({
+        id: sub.id,
+        submissionCode: sub.submission_code,
+        firstName: sub.first_name,
+        lastName: sub.last_name,
+        email: sub.email,
+        phoneNumber: sub.phone_number,
+        companyName: sub.company_name,
+        scenarioName: sub.scenario_name,
+        totalPrice: sub.total_price || 0,
+        servicesCount: sub.scenario_data?.selectedItems?.length || 0,
+        status: sub.status || 'submitted',
+        createdAt: sub.created_at,
+        scenario_data: sub.scenario_data || {}
+      }));
     } catch (error) {
       console.error('❌ Failed to load guest submissions:', error);
       throw error;
     }
   },
 
-  // Get guest scenario data by ID
+  // Get guest scenario data by ID - now uses direct Supabase queries with RLS
   async getGuestScenarioData(submissionId: string): Promise<any | null> {
     try {
-      // console.log(`📡 Loading guest scenario data for ID: ${submissionId}`);
-      const response = await createApiRequest(`${API_BASE_URL}/guest-submissions/${submissionId}`);
+      const { data: submission, error } = await supabase
+        .from(TABLES.GUEST_SCENARIOS)
+        .select('*')
+        .eq('id', submissionId)
+        .is('deleted_at', null)
+        .single();
       
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn(`Guest scenario not found: ${submissionId}`);
-          return null;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null; // Not found
         }
-        throw new Error(`Failed to load guest scenario: ${response.status}`);
+        throw new Error(`Failed to load guest scenario: ${error.message}`);
       }
       
-      const data = await response.json();
-      // console.log(`✅ Loaded guest scenario data for ${submissionId}`);
-      return data.submission || null;
+      return submission;
     } catch (error) {
       console.error(`❌ Failed to load guest scenario ${submissionId}:`, error);
       throw error;
     }
   },
 
-  // Delete scenario
+  // Delete scenario - now uses soft delete with audit fields
   async deleteScenario(scenarioId: string): Promise<void> {
     try {
-      // console.log(`📡 Deleting scenario ${scenarioId}...`);
-      const response = await createApiRequest(`${API_BASE_URL}/scenarios/${scenarioId}`, {
-        method: 'DELETE',
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to delete scenario: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to delete scenarios');
       }
+
+      const { error } = await supabase
+        .from(TABLES.SIMULATOR_SUBMISSIONS)
+        .update({
+          deleted_at: timestamp,
+          deleted_by: user.id,
+          updated_by: user.id,
+          updated_at: timestamp
+        })
+        .eq('id', scenarioId);
       
-      // console.log('✅ Scenario deleted successfully');
+      if (error) {
+        throw new Error(`Failed to delete scenario: ${error.message}`);
+      }
     } catch (error) {
       console.error('❌ Failed to delete scenario:', error);
       throw error;
     }
   },
 
-  // Session data persistence for multi-user support
+  // Session data persistence - now uses KV store with direct Supabase queries
   async saveSessionData(sessionId: string, key: string, value: any): Promise<void> {
     try {
       const fullKey = `${sessionId}_${key}`;
-      const response = await createApiRequest(`${API_BASE_URL}/saveSessionData`, {
-        method: 'POST',
-        body: JSON.stringify({ key: fullKey, data: value }),
-      });
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to save session data: ${response.status}`);
+      const { error } = await supabase
+        .from('kv_store')
+        .upsert({
+          key: fullKey,
+          value: value,
+          created_at: timestamp,
+          updated_at: timestamp
+        }, { onConflict: 'key' });
+      
+      if (error) {
+        throw new Error(`Failed to save session data: ${error.message}`);
       }
     } catch (error) {
       console.error(`❌ Failed to save session data for ${key}:`, error);
@@ -490,14 +624,18 @@ async saveGuestScenario(data: {
   async loadSessionData<T>(sessionId: string, key: string, fallback: T): Promise<T> {
     try {
       const fullKey = `${sessionId}_${key}`;
-      const response = await createApiRequest(`${API_BASE_URL}/loadSessionData?key=${encodeURIComponent(fullKey)}`);
       
-      if (!response.ok) {
+      const { data, error } = await supabase
+        .from('kv_store')
+        .select('value')
+        .eq('key', fullKey)
+        .single();
+      
+      if (error || !data) {
         return fallback;
       }
       
-      const result = await response.json();
-      return result.data !== null && result.data !== undefined ? result.data : fallback;
+      return data.value !== null && data.value !== undefined ? data.value : fallback;
     } catch (error) {
       console.warn(`Failed to load session data for ${key}:`, error);
       return fallback;
@@ -507,14 +645,14 @@ async saveGuestScenario(data: {
   async deleteSessionData(sessionId: string, key: string): Promise<void> {
     try {
       const fullKey = `${sessionId}_${key}`;
-      const response = await createApiRequest(`${API_BASE_URL}/deleteSessionData`, {
-        method: 'POST',
-        body: JSON.stringify({ key: fullKey }),
-      });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to delete session data: ${response.status}`);
+      const { error } = await supabase
+        .from('kv_store')
+        .delete()
+        .eq('key', fullKey);
+      
+      if (error) {
+        throw new Error(`Failed to delete session data: ${error.message}`);
       }
     } catch (error) {
       console.error(`❌ Failed to delete session data for ${key}:`, error);
@@ -524,48 +662,72 @@ async saveGuestScenario(data: {
 
   async clearSessionData(sessionId: string): Promise<void> {
     try {
-      // This would require a backend endpoint to clear all keys for a session
-      // For now, we'll just skip it or implement individual key deletion
-      console.warn('clearSessionData: Not fully implemented');
+      const { error } = await supabase
+        .from('kv_store')
+        .delete()
+        .like('key', `${sessionId}_%`);
+      
+      if (error) {
+        throw new Error(`Failed to clear session data: ${error.message}`);
+      }
     } catch (error) {
       console.error('Failed to clear session data:', error);
+      throw error;
     }
   },
 
 
-  // Save configuration (single) - works by loading all, updating one, and saving all
-  async saveConfiguration(config: ConfigurationDefinition): Promise<void> {
+  // Save configuration (single) - now uses direct Supabase operations with audit fields
+  async saveConfiguration(config: ConfigurationDefinition, simulatorId?: string): Promise<void> {
     try {
-      // Load all configurations
-      const allConfigs = await this.loadConfigurations();
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      // Find and update or add the configuration
-      const existingIndex = allConfigs.findIndex(c => c.id === config.id);
-      if (existingIndex >= 0) {
-        allConfigs[existingIndex] = config;
-      } else {
-        allConfigs.push(config);
+      const configWithAudit = {
+        ...config,
+        simulator_id: simulatorId,
+        created_by: user?.id,
+        updated_by: user?.id,
+        created_at: timestamp,
+        updated_at: timestamp
+      };
+
+      const { error } = await supabase
+        .from(TABLES.CONFIGURATIONS)
+        .upsert(configWithAudit, { onConflict: 'id' });
+      
+      if (error) {
+        throw new Error(`Failed to save configuration: ${error.message}`);
       }
-      
-      // Save all configurations
-      await this.saveConfigurations(allConfigs);
     } catch (error) {
       console.error('Failed to save configuration:', error);
       throw error;
     }
   },
 
-  // Delete configuration - works by loading all, removing one, and saving all
+  // Delete configuration - now uses soft delete with audit fields
   async deleteConfiguration(configId: string): Promise<void> {
     try {
-      // Load all configurations
-      const allConfigs = await this.loadConfigurations();
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      // Filter out the configuration to delete
-      const filteredConfigs = allConfigs.filter(c => c.id !== configId);
+      if (!user) {
+        throw new Error('User must be authenticated to delete configurations');
+      }
+
+      const { error } = await supabase
+        .from(TABLES.CONFIGURATIONS)
+        .update({
+          deleted_at: timestamp,
+          deleted_by: user.id,
+          updated_by: user.id,
+          updated_at: timestamp
+        })
+        .eq('id', configId);
       
-      // Save remaining configurations
-      await this.saveConfigurations(filteredConfigs);
+      if (error) {
+        throw new Error(`Failed to delete configuration: ${error.message}`);
+      }
     } catch (error) {
       console.error('Failed to delete configuration:', error);
       throw error;
@@ -573,31 +735,44 @@ async saveGuestScenario(data: {
   },
 
   // Get categories (alias for loadCategories)
-  async getCategories(): Promise<Category[]> {
-    return this.loadCategories();
+  async getCategories(simulatorId?: string): Promise<Category[]> {
+    return this.loadCategories(simulatorId);
   },
 
   // Get configurations (alias for loadConfigurations)
-  async getConfigurations(): Promise<ConfigurationDefinition[]> {
-    return this.loadConfigurations();
+  async getConfigurations(simulatorId?: string): Promise<ConfigurationDefinition[]> {
+    return this.loadConfigurations(simulatorId);
   },
 
-  // Create pricing item
-  async createPricingItem(item: Partial<PricingItem>): Promise<PricingItem> {
+  // Create pricing item - now uses direct Supabase operations with audit fields
+  async createPricingItem(item: Partial<PricingItem>, simulatorId?: string): Promise<PricingItem> {
     try {
-      // console.log('📡 Creating pricing item...');
-      const response = await createApiRequest(`${API_BASE_URL}/services`, {
-        method: 'POST',
-        body: JSON.stringify(item),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to create pricing item: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to create pricing items');
+      }
+
+      const itemWithAudit = {
+        ...item,
+        simulator_id: simulatorId,
+        created_by: user.id,
+        updated_by: user.id,
+        created_at: timestamp,
+        updated_at: timestamp
+      };
+
+      const { data, error } = await supabase
+        .from(TABLES.SERVICES)
+        .insert(itemWithAudit)
+        .select()
+        .single();
+      
+      if (error) {
+        throw new Error(`Failed to create pricing item: ${error.message}`);
       }
       
-      const data = await response.json();
-      // console.log('✅ Pricing item created successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to create pricing item:', error);
@@ -605,22 +780,33 @@ async saveGuestScenario(data: {
     }
   },
 
-  // Update pricing item
+  // Update pricing item - now uses direct Supabase operations with audit fields
   async updatePricingItem(id: string, updates: Partial<PricingItem>): Promise<PricingItem> {
     try {
-      // console.log(`📡 Updating pricing item ${id}...`);
-      const response = await createApiRequest(`${API_BASE_URL}/services/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(updates),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to update pricing item: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to update pricing items');
+      }
+
+      const updatesWithAudit = {
+        ...updates,
+        updated_by: user.id,
+        updated_at: timestamp
+      };
+
+      const { data, error } = await supabase
+        .from(TABLES.SERVICES)
+        .update(updatesWithAudit)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) {
+        throw new Error(`Failed to update pricing item: ${error.message}`);
       }
       
-      const data = await response.json();
-      // console.log('✅ Pricing item updated successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to update pricing item:', error);
@@ -628,42 +814,64 @@ async saveGuestScenario(data: {
     }
   },
 
-  // Delete pricing item
+  // Delete pricing item - now uses soft delete with audit fields
   async deletePricingItem(id: string): Promise<void> {
     try {
-      // console.log(`📡 Deleting pricing item ${id}...`);
-      const response = await createApiRequest(`${API_BASE_URL}/services/${id}`, {
-        method: 'DELETE',
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to delete pricing item: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to delete pricing items');
       }
+
+      const { error } = await supabase
+        .from(TABLES.SERVICES)
+        .update({
+          deleted_at: timestamp,
+          deleted_by: user.id,
+          updated_by: user.id,
+          updated_at: timestamp
+        })
+        .eq('id', id);
       
-      // console.log('✅ Pricing item deleted successfully');
+      if (error) {
+        throw new Error(`Failed to delete pricing item: ${error.message}`);
+      }
     } catch (error) {
       console.error('❌ Failed to delete pricing item:', error);
       throw error;
     }
   },
 
-  // Create category
-  async createCategory(category: Partial<Category>): Promise<Category> {
+  // Create category - now uses direct Supabase operations with audit fields
+  async createCategory(category: Partial<Category>, simulatorId?: string): Promise<Category> {
     try {
-      // console.log('📡 Creating category...');
-      const response = await createApiRequest(`${API_BASE_URL}/categories`, {
-        method: 'POST',
-        body: JSON.stringify(category),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to create category: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to create categories');
+      }
+
+      const categoryWithAudit = {
+        ...category,
+        simulator_id: simulatorId,
+        created_by: user.id,
+        updated_by: user.id,
+        created_at: timestamp,
+        updated_at: timestamp
+      };
+
+      const { data, error } = await supabase
+        .from(TABLES.CATEGORIES)
+        .insert(categoryWithAudit)
+        .select()
+        .single();
+      
+      if (error) {
+        throw new Error(`Failed to create category: ${error.message}`);
       }
       
-      const data = await response.json();
-      // console.log('✅ Category created successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to create category:', error);
@@ -671,22 +879,33 @@ async saveGuestScenario(data: {
     }
   },
 
-  // Update category
+  // Update category - now uses direct Supabase operations with audit fields
   async updateCategory(id: string, updates: Partial<Category>): Promise<Category> {
     try {
-      // console.log(`📡 Updating category ${id}...`);
-      const response = await createApiRequest(`${API_BASE_URL}/categories/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(updates),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to update category: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to update categories');
+      }
+
+      const updatesWithAudit = {
+        ...updates,
+        updated_by: user.id,
+        updated_at: timestamp
+      };
+
+      const { data, error } = await supabase
+        .from(TABLES.CATEGORIES)
+        .update(updatesWithAudit)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) {
+        throw new Error(`Failed to update category: ${error.message}`);
       }
       
-      const data = await response.json();
-      // console.log('✅ Category updated successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to update category:', error);
@@ -694,63 +913,69 @@ async saveGuestScenario(data: {
     }
   },
 
-  // Delete category
+  // Delete category - now uses soft delete with audit fields
   async deleteCategory(id: string): Promise<void> {
     try {
-      // console.log(`📡 Deleting category ${id}...`);
-      const response = await createApiRequest(`${API_BASE_URL}/categories/${id}`, {
-        method: 'DELETE',
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to delete category: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to delete categories');
       }
+
+      const { error } = await supabase
+        .from(TABLES.CATEGORIES)
+        .update({
+          deleted_at: timestamp,
+          deleted_by: user.id,
+          updated_by: user.id,
+          updated_at: timestamp
+        })
+        .eq('id', id);
       
-      // console.log('✅ Category deleted successfully');
+      if (error) {
+        throw new Error(`Failed to delete category: ${error.message}`);
+      }
     } catch (error) {
       console.error('❌ Failed to delete category:', error);
       throw error;
     }
   },
 
-  // Get tags
-  async getTags(): Promise<Tag[]> {
-    try {
-      // console.log('📡 Loading tags from database...');
-      const response = await createApiRequest(`${API_BASE_URL}/tags`);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to load tags: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      const tags = data.tags || [];
-      
-      // console.log(`✅ Loaded ${tags.length} tags`);
-      return tags;
-    } catch (error) {
-      console.error('❌ Failed to load tags:', error);
-      throw error;
-    }
+  // Get tags (alias for loadTags)
+  async getTags(simulatorId?: string): Promise<Tag[]> {
+    return this.loadTags(simulatorId);
   },
 
-  // Create tag
-  async createTag(tag: Partial<Tag>): Promise<Tag> {
+  // Create tag - now uses direct Supabase operations with audit fields
+  async createTag(tag: Partial<Tag>, simulatorId?: string): Promise<Tag> {
     try {
-      // console.log('📡 Creating tag...');
-      const response = await createApiRequest(`${API_BASE_URL}/tags`, {
-        method: 'POST',
-        body: JSON.stringify(tag),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to create tag: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to create tags');
+      }
+
+      const tagWithAudit = {
+        ...tag,
+        simulator_id: simulatorId,
+        created_by: user.id,
+        updated_by: user.id,
+        created_at: timestamp,
+        updated_at: timestamp
+      };
+
+      const { data, error } = await supabase
+        .from(TABLES.TAGS)
+        .insert(tagWithAudit)
+        .select()
+        .single();
+      
+      if (error) {
+        throw new Error(`Failed to create tag: ${error.message}`);
       }
       
-      const data = await response.json();
-      // console.log('✅ Tag created successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to create tag:', error);
@@ -758,22 +983,33 @@ async saveGuestScenario(data: {
     }
   },
 
-  // Update tag
+  // Update tag - now uses direct Supabase operations with audit fields
   async updateTag(id: string, updates: Partial<Tag>): Promise<Tag> {
     try {
-      // console.log(`📡 Updating tag ${id}...`);
-      const response = await createApiRequest(`${API_BASE_URL}/tags/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(updates),
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to update tag: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to update tags');
+      }
+
+      const updatesWithAudit = {
+        ...updates,
+        updated_by: user.id,
+        updated_at: timestamp
+      };
+
+      const { data, error } = await supabase
+        .from(TABLES.TAGS)
+        .update(updatesWithAudit)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) {
+        throw new Error(`Failed to update tag: ${error.message}`);
       }
       
-      const data = await response.json();
-      // console.log('✅ Tag updated successfully');
       return data;
     } catch (error) {
       console.error('❌ Failed to update tag:', error);
@@ -781,20 +1017,29 @@ async saveGuestScenario(data: {
     }
   },
 
-  // Delete tag
+  // Delete tag - now uses soft delete with audit fields
   async deleteTag(id: string): Promise<void> {
     try {
-      // console.log(`📡 Deleting tag ${id}...`);
-      const response = await createApiRequest(`${API_BASE_URL}/tags/${id}`, {
-        method: 'DELETE',
-      });
+      const user = await getCurrentUser();
+      const timestamp = getCurrentTimestamp();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to delete tag: ${response.status}`);
+      if (!user) {
+        throw new Error('User must be authenticated to delete tags');
       }
+
+      const { error } = await supabase
+        .from(TABLES.TAGS)
+        .update({
+          deleted_at: timestamp,
+          deleted_by: user.id,
+          updated_by: user.id,
+          updated_at: timestamp
+        })
+        .eq('id', id);
       
-      // console.log('✅ Tag deleted successfully');
+      if (error) {
+        throw new Error(`Failed to delete tag: ${error.message}`);
+      }
     } catch (error) {
       console.error('❌ Failed to delete tag:', error);
       throw error;

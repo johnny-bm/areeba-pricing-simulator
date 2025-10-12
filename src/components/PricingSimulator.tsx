@@ -1,21 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from './ui/button';
-import { ArrowLeft } from 'lucide-react';
 import { toast } from "sonner";
 import { SimulatorLanding } from './SimulatorLanding';
 import { DynamicClientConfigBar } from './DynamicClientConfigBar';
 import { ItemLibrary } from './ItemLibrary';
 import { ScenarioBuilder } from './ScenarioBuilder';
 import { FeeSummary } from './FeeSummary';
-import { VersionInfo } from './VersionInfo';
 import { ScenarioSummaryDialog } from './dialogs/ScenarioSummaryDialog';
 import { AdminInterface } from './AdminInterface';
 import { AutoAddConfigPanel } from './AutoAddConfigPanel';
 import { BackendConnectionError } from './BackendConnectionError';
 import { ConnectionDiagnostics } from './ConnectionDiagnostics';
-import { UserProfileHeader } from './UserProfileHeader';
 import { GuestContactFormModal } from './GuestContactFormModal';
+import { Header, Footer } from './layout';
 import { ClientConfig, SelectedItem, PricingItem, Category, DynamicClientConfig } from '../types/pricing';
 import { api } from '../utils/api';
 import { SimulatorApi } from '../utils/simulatorApi';
@@ -456,30 +454,13 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedSimulator(null)}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Simulators
-              </Button>
-              <div className="h-4 w-px bg-border" />
-              <WordMarkRed className="h-4" />
-            </div>
-            
-            {isAuthenticated && (
-              <UserProfileHeader onLogout={handleLogout} />
-            )}
-          </div>
-        </div>
-      </div>
+      <Header
+        showBackButton={true}
+        backButtonText="Back to Simulators"
+        onBackClick={() => setSelectedSimulator(null)}
+        showUserMenu={isAuthenticated}
+        onLogout={handleLogout}
+      />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
@@ -577,27 +558,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="border-t bg-card mt-12">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <div>
-              areeba © {new Date().getFullYear()}. All Rights Reserved. 
-              <VersionInfo simple={true} />
-            </div>
-            <div className="flex items-center gap-4">
-              <a 
-                href={EXTERNAL_URLS.AREEBA_PRIVACY} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
-              >
-                Privacy
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Modals */}
       {showSummaryDialog && (

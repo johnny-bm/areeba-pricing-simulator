@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../features/auth';
 import { ROUTES } from '../config/routes';
@@ -255,12 +255,111 @@ export function AppRouter() {
         } 
       />
       
+      
       {/* Guest routes - explicit guest access */}
       <Route path={ROUTES.GUEST} element={<PricingSimulator isGuestMode />} />
+      
+      {/* Preview routes - public access to generated previews */}
+      <Route path="/preview/:previewId" element={<PreviewPage />} />
       
       {/* Catch all */}
       <Route path="*" element={<Navigate to={ROUTES.HOME} />} />
     </Routes>
+  );
+}
+
+// Preview Page Component
+function PreviewPage() {
+  const { previewId } = useParams<{ previewId: string }>();
+  const [htmlContent, setHtmlContent] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!previewId) {
+      setError('Invalid preview ID');
+      setIsLoading(false);
+      return;
+    }
+
+    // Load HTML content from Supabase
+    const loadPreview = async () => {
+      try {
+        // Try to load from Supabase first
+        const { loadPreviewFromSupabase } = await import('../utils/pdfHelpers');
+        const supabaseContent = await loadPreviewFromSupabase(previewId);
+        
+        if (supabaseContent) {
+          setHtmlContent(supabaseContent);
+          setIsLoading(false);
+          return;
+        }
+        
+        // Fallback to localStorage
+        const storedContent = localStorage.getItem(`preview-${previewId}`);
+        
+        if (storedContent) {
+          setHtmlContent(storedContent);
+          setIsLoading(false);
+        } else {
+          setError('Preview not found or has expired');
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Failed to load preview:', error);
+        setError('Failed to load preview');
+        setIsLoading(false);
+      }
+    };
+
+    loadPreview();
+  }, [previewId]);
+
+  const downloadPDF = () => {
+    // This will be implemented to convert HTML to PDF
+    alert('PDF download functionality will be implemented here');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Preview Not Found</h2>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <button 
+            onClick={() => window.close()}
+            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen">
+      <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      
+      {/* Override the download function */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.downloadPDF = function() {
+              alert('PDF download functionality will be implemented here');
+            };
+          `
+        }}
+      />
+    </div>
   );
 }
 

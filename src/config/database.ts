@@ -12,11 +12,13 @@ export const TABLES = {
   ADMIN_AUDIT_LOG: 'admin_audit_log',
   
   // Core Business Data
+  SIMULATORS: 'simulators',
   SERVICES: 'services',
   CATEGORIES: 'categories',
   TAGS: 'tags',
   CONFIGURATIONS: 'configurations',
   SIMULATOR_SUBMISSIONS: 'simulator_submissions',
+  GUEST_SCENARIOS: 'guest_scenarios',
   
   // Relationships & Rules
   SERVICE_TAGS: 'service_tags',

@@ -4,14 +4,6 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { 
-  Breadcrumb, 
-  BreadcrumbList, 
-  BreadcrumbItem, 
-  BreadcrumbLink, 
-  BreadcrumbPage, 
-  BreadcrumbSeparator 
-} from './ui/breadcrumb';
-import { 
   Sidebar, 
   SidebarContent, 
   SidebarFooter, 
@@ -38,7 +30,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { ArrowLeft, LogOut, Settings, Package, Tags, History, CreditCard, Calculator, Zap, Users, Plus, ChevronLeft, ChevronRight, Edit, Copy, RefreshCw, Download, User, UserCheck, ChevronDown, ChevronRight as ChevronRightIcon, BarChart3, FileText, Building, Image } from 'lucide-react';
+import { ArrowLeft, LogOut, Settings, Package, Tags, History, CreditCard, Calculator, Zap, Users, Plus, ChevronLeft, ChevronRight, Edit, Copy, RefreshCw, Download, UserCheck, ChevronDown, ChevronRight as ChevronRightIcon, BarChart3, FileText, Building, Image } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Separator } from './ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
@@ -48,6 +40,8 @@ import { ScenarioHistoryTab } from './ScenarioHistoryTab';
 import { ConfigurationDialog } from './dialogs/ConfigurationDialog';
 import { ScenarioDialog } from './dialogs/ScenarioDialog';
 import { GuestSubmissionDetailDialog } from './dialogs/GuestSubmissionDetailDialog';
+import { Header } from './layout/Header';
+import type { BreadcrumbItem } from './layout/Header';
 import { DataTable } from './DataTable';
 import { CategoryManager } from './CategoryManager';
 import { TagManager } from './TagManager';
@@ -160,6 +154,7 @@ export function AdminInterface({
   const [simulatorsLoading, setSimulatorsLoading] = useState(false);
   const [expandedSimulators, setExpandedSimulators] = useState<Set<string>>(new Set());
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
+  const [theme, setTheme] = useState<string>(localStorage.getItem('theme') || 'system');
   
   // Find the actual simulator by slug
   const currentSimulator = currentSimulatorSlug ? simulators.find(s => s.urlSlug === currentSimulatorSlug)?.id : null;
@@ -226,6 +221,24 @@ export function AdminInterface({
 
   const handleClose = () => {
     navigate('/simulators');
+  };
+
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme);
+    if (newTheme === 'light') {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      localStorage.removeItem('theme');
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
   };
 
   const toggleSimulatorDropdown = (simulatorId: string) => {
@@ -683,158 +696,14 @@ export function AdminInterface({
 
       {/* Main Content */}
       <SidebarInset className="md:ml-[var(--sidebar-width)]">
-        <header className="flex h-auto shrink-0 flex-col gap-2 border-b px-4 py-3">
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              {/* Breadcrumbs */}
-              <Breadcrumb>
-                <BreadcrumbList className="text-xs">
-                  {getBreadcrumbs().map((crumb, index) => (
-                    <React.Fragment key={index}>
-                      <BreadcrumbItem>
-                        {crumb.isCurrent ? (
-                          <BreadcrumbPage className="text-xs">{crumb.label}</BreadcrumbPage>
-                        ) : (
-                          <BreadcrumbLink 
-                            href={crumb.href}
-                            className="text-xs"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              navigate(crumb.href);
-                            }}
-                          >
-                            {crumb.label}
-                          </BreadcrumbLink>
-                        )}
-                      </BreadcrumbItem>
-                      {index < getBreadcrumbs().length - 1 && <BreadcrumbSeparator className="text-xs" />}
-                    </React.Fragment>
-                  ))}
-                </BreadcrumbList>
-              </Breadcrumb>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-8 rounded-md px-3 text-xs gap-2"
-                >
-                  <Avatar className="h-6 w-6">
-                    <AvatarFallback 
-                      className="text-xs font-medium bg-cyan-500 text-white"
-                    >
-                      OA
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="hidden sm:inline">Owner areeba</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">Owner areeba</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      owner@areeba.com
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      Owner
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem disabled className="opacity-50">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                  <span className="ml-auto text-xs text-muted-foreground">Coming soon</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem disabled className="opacity-50">
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                  <span className="ml-auto text-xs text-muted-foreground">Coming soon</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="p-0">
-                  <div className="flex items-center gap-1 p-1 bg-muted rounded-md w-full">
-                    <Button
-                      variant={localStorage.getItem('theme') === 'light' ? 'default' : 'ghost'}
-                      size="sm"
-                      className="flex-1 h-6 px-2 text-xs"
-                      onClick={() => {
-                        // Set light theme
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('theme', 'light');
-                        // Force re-render
-                        window.location.reload();
-                      }}
-                    >
-                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="4"></circle>
-                        <path d="M12 2v2"></path>
-                        <path d="M12 20v2"></path>
-                        <path d="m4.93 4.93 1.41 1.41"></path>
-                        <path d="m17.66 17.66 1.41 1.41"></path>
-                        <path d="M2 12h2"></path>
-                        <path d="M20 12h2"></path>
-                        <path d="m6.34 17.66-1.41 1.41"></path>
-                        <path d="m19.07 4.93-1.41 1.41"></path>
-                      </svg>
-                    </Button>
-                    <Button
-                      variant={localStorage.getItem('theme') === 'dark' ? 'default' : 'ghost'}
-                      size="sm"
-                      className="flex-1 h-6 px-2 text-xs"
-                      onClick={() => {
-                        // Set dark theme
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('theme', 'dark');
-                        // Force re-render
-                        window.location.reload();
-                      }}
-                    >
-                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                      </svg>
-                    </Button>
-                    <Button
-                      variant={!localStorage.getItem('theme') ? 'default' : 'ghost'}
-                      size="sm"
-                      className="flex-1 h-6 px-2 text-xs"
-                      onClick={() => {
-                        // Set system theme
-                        localStorage.removeItem('theme');
-                        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                          document.documentElement.classList.add('dark');
-                        } else {
-                          document.documentElement.classList.remove('dark');
-                        }
-                        // Force re-render
-                        window.location.reload();
-                      }}
-                    >
-                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                        <line x1="8" y1="21" x2="16" y2="21"></line>
-                        <line x1="12" y1="17" x2="12" y2="21"></line>
-                      </svg>
-                    </Button>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onLogout} className="text-red-600 focus:text-red-600">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <h1 className="text-lg font-semibold text-foreground">
-                {getPageTitle()}
-              </h1>
-            </div>
-          </div>
-        </header>
+        <Header
+          breadcrumbs={getBreadcrumbs()}
+          showUserMenu={true}
+          onLogout={onLogout}
+          showThemeToggle={true}
+          theme={theme}
+          setTheme={handleThemeChange}
+        />
         <div className="flex flex-1 flex-col gap-4 p-4">
 
           {/* Content */}
