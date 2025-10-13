@@ -1,16 +1,30 @@
-import { z } from 'zod';
+// Centralized environment variable validation
+const requiredEnvVars = [
+  'VITE_SUPABASE_URL',
+  'VITE_SUPABASE_ANON_KEY',
+] as const;
 
-// Environment variable validation schema
-const envSchema = z.object({
-  VITE_SUPABASE_URL: z.string().url('Invalid Supabase URL'),
-  VITE_SUPABASE_ANON_KEY: z.string().min(1, 'Supabase anon key is required'),
-});
+export function validateEnvironment(): void {
+  const missing = requiredEnvVars.filter(
+    (key) => !import.meta.env[key]
+  );
 
-// Validate environment variables
-const env = envSchema.parse({
-  VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
-  VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
-});
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required environment variables: ${missing.join(', ')}`
+    );
+  }
+}
 
-export { env };
-export type Env = z.infer<typeof envSchema>;
+export const env = {
+  supabase: {
+    url: import.meta.env.VITE_SUPABASE_URL,
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  },
+  features: {
+    useNewArchitecture: import.meta.env.VITE_USE_NEW_ARCHITECTURE === 'true',
+    useNewPricing: import.meta.env.VITE_USE_NEW_PRICING === 'true',
+  },
+  isDevelopment: import.meta.env.DEV,
+  isProduction: import.meta.env.PROD,
+} as const;

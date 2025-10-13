@@ -2,8 +2,8 @@ import { env } from './env';
 
 // API configuration
 export const API_CONFIG = {
-  BASE_URL: env.VITE_SUPABASE_URL,
-  ANON_KEY: env.VITE_SUPABASE_ANON_KEY,
+  BASE_URL: env.supabase.url,
+  ANON_KEY: env.supabase.anonKey,
   ENDPOINTS: {
     AUTH: {
       LOGIN: '/auth/v1/token?grant_type=password',

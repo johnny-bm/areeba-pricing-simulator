@@ -50,6 +50,39 @@ export default [
       'no-prototype-builtins': 'off',
       'no-unsafe-finally': 'off',
       'no-useless-escape': 'off',
+      // Clean Architecture boundaries
+      'import/no-restricted-paths': [
+        'error',
+        {
+          zones: [
+            {
+              target: './src/core/domain',
+              from: './src/core/infrastructure',
+              message: 'Domain layer cannot depend on infrastructure layer'
+            },
+            {
+              target: './src/core/domain',
+              from: './src/presentation',
+              message: 'Domain layer cannot depend on presentation layer'
+            },
+            {
+              target: './src/core/domain',
+              from: './src/state',
+              message: 'Domain layer cannot depend on state layer'
+            },
+            {
+              target: './src/core/application',
+              from: './src/presentation',
+              message: 'Application layer cannot depend on presentation layer'
+            },
+            {
+              target: './src/core/application',
+              from: './src/state',
+              message: 'Application layer cannot depend on state layer'
+            }
+          ]
+        }
+      ],
     },
   },
 ];
