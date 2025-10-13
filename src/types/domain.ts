@@ -33,7 +33,8 @@ export interface PricingItem {
   id: string;
   name: string;
   description?: string;
-  pricingType: 'fixed' | 'tiered';
+  pricingType: 'one_time' | 'recurring' | 'per_unit' | 'tiered';
+  billingCycle?: 'one_time' | 'monthly' | 'quarterly' | 'yearly';
   defaultPrice: number;
   categoryId: string;
   unit: string;

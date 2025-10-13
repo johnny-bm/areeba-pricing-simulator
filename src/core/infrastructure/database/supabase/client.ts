@@ -51,13 +51,13 @@ export async function checkDatabaseConnection(): Promise<boolean> {
       .limit(1);
     
     if (error) {
-      console.error('Database connection check failed:', error);
+      // // console.error('Database connection check failed:', error);
       return false;
     }
     
     return true;
   } catch (error) {
-    console.error('Database connection check failed:', error);
+    // // console.error('Database connection check failed:', error);
     return false;
   }
 }

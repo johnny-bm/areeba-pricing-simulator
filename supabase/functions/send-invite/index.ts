@@ -91,7 +91,7 @@ serve(async (req) => {
 
     if (!res.ok) {
       const error = await res.text()
-      console.error('Resend API error:', { 
+      // console.error('Resend API error:', { 
         status: res.status, 
         statusText: res.statusText,
         error: error,
@@ -116,7 +116,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Send invite error:', error)
+    // console.error('Send invite error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 

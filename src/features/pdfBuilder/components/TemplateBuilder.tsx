@@ -170,7 +170,7 @@ export function TemplateBuilder({ permissions }: TemplateBuilderProps) {
 
   const handleSelectPreset = (preset: any) => {
     // TODO: Implement preset selection logic
-    console.log('Selected preset:', preset);
+    // // console.log('Selected preset:', preset);
     toast.success(`Selected ${preset.name} template structure`);
   };
 
@@ -180,7 +180,7 @@ export function TemplateBuilder({ permissions }: TemplateBuilderProps) {
 
   const handleUpdateNumbering = (sectionId: string, numbering: 'roman' | 'letters' | 'numbers' | 'decimal' | 'none') => {
     // TODO: Implement numbering update logic
-    console.log('Update numbering for section:', sectionId, 'to:', numbering);
+    // // console.log('Update numbering for section:', sectionId, 'to:', numbering);
     toast.success('Numbering updated');
   };
 
@@ -425,8 +425,8 @@ export function TemplateBuilder({ permissions }: TemplateBuilderProps) {
               order: ts.position
             })) || []}
             numbering={templateNumbering as {[level: number]: 'roman' | 'letters' | 'numbers' | 'decimal' | 'none'}}
-            onEdit={(sectionId) => console.log('Edit section:', sectionId)}
-            onDelete={(sectionId) => console.log('Delete section:', sectionId)}
+            onEdit={(sectionId) => // // console.log('Edit section:', sectionId)}
+            onDelete={(sectionId) => // // console.log('Delete section:', sectionId)}
           />
         </TabsContent>
       </Tabs>

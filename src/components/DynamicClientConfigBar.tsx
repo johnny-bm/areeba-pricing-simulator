@@ -63,7 +63,7 @@ export function DynamicClientConfigBar({
         }
         
       } catch (error) {
-        console.error('Failed to load configurations:', error);
+        // // console.error('Failed to load configurations:', error);
         // Fall back to empty array if loading fails
         setConfigurations([]);
       } finally {

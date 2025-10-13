@@ -43,7 +43,7 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
       const data = await SimulatorApi.loadAllSimulators();
       setSimulators(data);
     } catch (error) {
-      console.error('Failed to load simulators:', error);
+      // // console.error('Failed to load simulators:', error);
       toast.error('Failed to load simulators');
     } finally {
       setIsLoading(false);
@@ -88,7 +88,7 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
       toast.success('Simulator deleted successfully');
       loadSimulators();
     } catch (error) {
-      console.error('Failed to delete simulator:', error);
+      // // console.error('Failed to delete simulator:', error);
       toast.error('Failed to delete simulator');
     }
   };
@@ -112,7 +112,7 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
       setSimulators(reorderedSimulators);
       toast.success('Simulators reordered successfully!');
     } catch (error) {
-      console.error('Error reordering simulators:', error);
+      // // console.error('Error reordering simulators:', error);
       toast.error(`Failed to reorder simulators: ${(error as Error).message}`);
     }
   };
@@ -141,7 +141,7 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
       setShowSimulatorDialog(false);
       loadSimulators();
     } catch (error) {
-      console.error('Failed to save simulator:', error);
+      // // console.error('Failed to save simulator:', error);
       toast.error('Failed to save simulator');
     }
   };
@@ -159,7 +159,7 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
       await SimulatorApi.reorderSimulators(simulatorIds);
       toast.success('Simulators reordered successfully');
     } catch (error) {
-      console.error('Failed to reorder simulators:', error);
+      // // console.error('Failed to reorder simulators:', error);
       toast.error('Failed to reorder simulators');
       // Revert on error
       loadSimulators();

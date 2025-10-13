@@ -23,7 +23,7 @@ function safeParseJSON<T>(value: string | null, fallback: T): T {
   try {
     return JSON.parse(value);
   } catch (error) {
-    console.warn('Failed to parse stored JSON:', error);
+    // // console.warn('Failed to parse stored JSON:', error);
     return fallback;
   }
 }
@@ -36,7 +36,7 @@ function safeSetJSON(key: string, value: any): boolean {
     localStorage.setItem(key, JSON.stringify(value));
     return true;
   } catch (error) {
-    console.warn(`Failed to save to localStorage (${key}):`, error);
+    // // console.warn(`Failed to save to localStorage (${key}):`, error);
     return false;
   }
 }

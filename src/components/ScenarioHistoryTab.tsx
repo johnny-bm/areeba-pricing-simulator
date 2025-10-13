@@ -74,7 +74,7 @@ export function ScenarioHistoryTab({ scenarios, isLoading, onRefresh }: Scenario
       downloadPDF(pdfData);
 
     } catch (error) {
-      console.error('❌ Failed to download PDF for scenario:', scenarioId, error);
+      // // console.error('❌ Failed to download PDF for scenario:', scenarioId, error);
       alert('Failed to download PDF. Please try again.');
     }
   };

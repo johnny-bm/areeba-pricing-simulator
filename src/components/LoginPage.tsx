@@ -51,7 +51,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       // Use the auth context login method
       await login({ email: email.trim(), password });
       
-      console.log('✅ Login successful via auth context');
+      // // console.log('✅ Login successful via auth context');
       
       // Callback to update auth state
       if (onLoginSuccess) {
@@ -61,7 +61,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       // Navigate to home page (router will handle redirect to simulator)
       navigate('/');
     } catch (err) {
-      console.error('❌ Login error:', err);
+      // // console.error('❌ Login error:', err);
       setError((err as Error).message || 'Login failed. Please try again.');
       setIsLoading(false);
     }

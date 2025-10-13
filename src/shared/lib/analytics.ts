@@ -25,7 +25,7 @@ class AnalyticsService {
     // Initialize analytics in production
     if (import.meta.env.PROD) {
       // TODO: Initialize your analytics service (e.g., Google Analytics, Mixpanel, etc.)
-      console.log('Analytics initialized');
+      // // console.log('Analytics initialized');
     }
 
     this.isInitialized = true;
@@ -39,7 +39,7 @@ class AnalyticsService {
 
     if (import.meta.env.PROD) {
       // TODO: Send user properties to analytics service
-      console.log('User identified:', properties);
+      // // console.log('User identified:', properties);
     }
   }
 
@@ -56,9 +56,9 @@ class AnalyticsService {
 
     if (import.meta.env.PROD) {
       // TODO: Send event to analytics service
-      console.log('Event tracked:', eventData);
+      // // console.log('Event tracked:', eventData);
     } else {
-      console.log('Analytics Event:', eventData);
+      // // console.log('Analytics Event:', eventData);
     }
   }
 

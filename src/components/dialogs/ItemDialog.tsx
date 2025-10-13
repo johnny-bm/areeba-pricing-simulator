@@ -89,7 +89,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           
           // Loaded existing tags
         } catch (error) {
-          console.error('Failed to load configuration data:', error);
+          // // console.error('Failed to load configuration data:', error);
           // Continue with empty arrays if loading fails
           setConfigurations([]);
           setAvailableServices([]);
@@ -169,7 +169,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
       };
 
       // Saving service with tags
-      console.log('Saving service with tags:', {
+      // // console.log('Saving service with tags:', {
         serviceId: newItem.id,
         serviceName: newItem.name,
         tags: newItem.tags,
@@ -199,12 +199,12 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         // Clear temporary tags since they're now permanent
         setTemporaryTags([]);
       } catch (refreshError) {
-        console.warn('Failed to refresh existing tags after save:', refreshError);
+        // // console.warn('Failed to refresh existing tags after save:', refreshError);
       }
       
       onClose();
     } catch (error) {
-      console.error('Failed to save service:', error);
+      // // console.error('Failed to save service:', error);
       
       // 🔧 CRITICAL FIX: Handle auto-add related errors gracefully  
       if ((error as Error).message && (
@@ -243,7 +243,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
       await onDelete(item);
       onClose();
     } catch (error) {
-      console.error('Failed to delete service:', error);
+      // // console.error('Failed to delete service:', error);
       alert(`Failed to delete service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDeleting(false);
@@ -258,7 +258,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
       await onDuplicate(item);
       onClose();
     } catch (error) {
-      console.error('Failed to duplicate service:', error);
+      // // console.error('Failed to duplicate service:', error);
       alert(`Failed to duplicate service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDuplicating(false);

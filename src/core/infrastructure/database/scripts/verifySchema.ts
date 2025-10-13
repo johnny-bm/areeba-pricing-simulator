@@ -21,7 +21,7 @@ export interface SchemaVerificationResult {
  * Verify database schema
  */
 export async function verifyDatabaseSchema(): Promise<SchemaVerificationResult> {
-  console.log('🔍 Verifying database schema...');
+  // Verifying database schema...
   
   const result: SchemaVerificationResult = {
     success: true,
@@ -45,7 +45,7 @@ export async function verifyDatabaseSchema(): Promise<SchemaVerificationResult> 
         result.success = false;
       } else {
         result.tables.pricing_items = true;
-        console.log('✅ pricing_items table accessible');
+        // // console.log('✅ pricing_items table accessible');
       }
     } catch (error) {
       result.errors.push(`pricing_items table missing or inaccessible: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -64,7 +64,7 @@ export async function verifyDatabaseSchema(): Promise<SchemaVerificationResult> 
         result.success = false;
       } else {
         result.tables.categories = true;
-        console.log('✅ categories table accessible');
+        // // console.log('✅ categories table accessible');
       }
     } catch (error) {
       result.errors.push(`categories table missing or inaccessible: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -90,7 +90,7 @@ export async function verifyDatabaseSchema(): Promise<SchemaVerificationResult> 
           result.errors.push(`Foreign key relationship error: ${error.message}`);
           result.success = false;
         } else {
-          console.log('✅ Foreign key relationship working');
+          // // console.log('✅ Foreign key relationship working');
         }
       } catch (error) {
         result.errors.push(`Foreign key relationship failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -99,10 +99,10 @@ export async function verifyDatabaseSchema(): Promise<SchemaVerificationResult> 
     }
 
     if (result.success) {
-      console.log('🎉 Database schema verification completed successfully');
+      // // console.log('🎉 Database schema verification completed successfully');
     } else {
-      console.error('❌ Database schema verification failed:');
-      result.errors.forEach(error => console.error(`  - ${error}`));
+      // // console.error('❌ Database schema verification failed:');
+      result.errors.forEach(error => // // console.error(`  - ${error}`));
     }
 
     return result;
@@ -110,7 +110,7 @@ export async function verifyDatabaseSchema(): Promise<SchemaVerificationResult> 
     const message = `Database connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
     result.errors.push(message);
     result.success = false;
-    console.error('❌', message);
+    // // console.error('❌', message);
     return result;
   }
 }
@@ -120,34 +120,34 @@ export async function verifyDatabaseSchema(): Promise<SchemaVerificationResult> 
  * This is a development helper - not for production
  */
 export async function createRequiredTables(): Promise<void> {
-  console.log('🔧 Creating required database tables...');
+  // // console.log('🔧 Creating required database tables...');
   
   try {
     // Note: In a real application, you would use Supabase migrations
     // This is just a development helper
-    console.log('⚠️  Please ensure the following tables exist in your Supabase database:');
-    console.log('');
-    console.log('CREATE TABLE categories (');
-    console.log('  id TEXT PRIMARY KEY,');
-    console.log('  name TEXT NOT NULL,');
-    console.log('  description TEXT,');
-    console.log('  "order" INTEGER DEFAULT 0,');
-    console.log('  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),');
-    console.log('  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()');
-    console.log(');');
-    console.log('');
-    console.log('CREATE TABLE pricing_items (');
-    console.log('  id TEXT PRIMARY KEY,');
-    console.log('  name TEXT NOT NULL,');
-    console.log('  description TEXT,');
-    console.log('  base_price DECIMAL NOT NULL,');
-    console.log('  currency TEXT DEFAULT \'USD\',');
-    console.log('  category_id TEXT REFERENCES categories(id),');
-    console.log('  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),');
-    console.log('  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()');
-    console.log(');');
-    console.log('');
-    console.log('Please run these SQL commands in your Supabase SQL editor.');
+    // // console.log('⚠️  Please ensure the following tables exist in your Supabase database:');
+    // // console.log('');
+    // // console.log('CREATE TABLE categories (');
+    // // console.log('  id TEXT PRIMARY KEY,');
+    // // console.log('  name TEXT NOT NULL,');
+    // // console.log('  description TEXT,');
+    // // console.log('  "order" INTEGER DEFAULT 0,');
+    // // console.log('  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),');
+    // // console.log('  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()');
+    // // console.log(');');
+    // // console.log('');
+    // // console.log('CREATE TABLE pricing_items (');
+    // // console.log('  id TEXT PRIMARY KEY,');
+    // // console.log('  name TEXT NOT NULL,');
+    // // console.log('  description TEXT,');
+    // // console.log('  base_price DECIMAL NOT NULL,');
+    // // console.log('  currency TEXT DEFAULT \'USD\',');
+    // // console.log('  category_id TEXT REFERENCES categories(id),');
+    // // console.log('  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),');
+    // // console.log('  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()');
+    // // console.log(');');
+    // // console.log('');
+    // // console.log('Please run these SQL commands in your Supabase SQL editor.');
   } catch (error) {
     throw new DatabaseConnectionError(
       `Failed to create tables: ${error instanceof Error ? error.message : 'Unknown error'}`
@@ -162,8 +162,8 @@ export async function runSchemaVerification(): Promise<void> {
   const result = await verifyDatabaseSchema();
   
   if (!result.success) {
-    console.log('');
-    console.log('🔧 Attempting to create required tables...');
+    // // console.log('');
+    // // console.log('🔧 Attempting to create required tables...');
     await createRequiredTables();
     
     // Try verification again

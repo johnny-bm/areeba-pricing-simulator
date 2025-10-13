@@ -111,7 +111,7 @@ export function PdfBuilderSetup() {
       });
 
       if (error) {
-        console.error('Failed to create bucket via RPC:', error);
+        // // console.error('Failed to create bucket via RPC:', error);
         throw new Error(`Failed to create storage bucket: ${error.message}`);
       }
 
@@ -122,7 +122,7 @@ export function PdfBuilderSetup() {
       // Recheck setup after creating bucket
       await checkSetup();
     } catch (error) {
-      console.error('Error creating storage bucket:', error);
+      // // console.error('Error creating storage bucket:', error);
       throw error;
     }
   };
@@ -136,7 +136,7 @@ export function PdfBuilderSetup() {
         .upload('test.txt', testContent);
 
       if (error) {
-        console.error('Storage bucket test failed:', error);
+        // // console.error('Storage bucket test failed:', error);
         return false;
       }
 
@@ -149,7 +149,7 @@ export function PdfBuilderSetup() {
 
       return true;
     } catch (error) {
-      console.error('Storage bucket test error:', error);
+      // // console.error('Storage bucket test error:', error);
       return false;
     }
   };

@@ -73,7 +73,7 @@ export function ResetPasswordPage() {
       });
 
       if (error) {
-        console.error('Password update error:', error);
+        // // console.error('Password update error:', error);
         setError(error.message);
         setIsLoading(false);
         return;
@@ -87,7 +87,7 @@ export function ResetPasswordPage() {
       }, 3000);
       
     } catch (err) {
-      console.error('Unexpected error:', err);
+      // // console.error('Unexpected error:', err);
       setError('An unexpected error occurred. Please try again.');
       setIsLoading(false);
     }

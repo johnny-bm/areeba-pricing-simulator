@@ -58,7 +58,7 @@ const debouncedSave = (key: string, value: any, delay: number = 1000): Promise<b
         await api.saveSessionData(sessionId, key, value);
         resolve(true);
       } catch (error) {
-        console.warn(`Failed to save ${key} to database:`, error);
+        // // console.warn(`Failed to save ${key} to database:`, error);
         resolve(false);
       }
     }, delay);
@@ -77,7 +77,7 @@ const saveToDatabase = async (key: string, value: any, debounce: boolean = true)
     await api.saveSessionData(sessionId, key, value);
     return true;
   } catch (error) {
-    console.warn(`Failed to save ${key} to database:`, error);
+    // // console.warn(`Failed to save ${key} to database:`, error);
     return false;
   }
 };
@@ -89,9 +89,9 @@ async function loadFromDatabase<T>(key: string, fallback: T): Promise<T> {
   } catch (error) {
     // Enhanced error handling for timeouts
     if ((error as Error).name === 'AbortError' || (error as Error).message?.includes('timeout')) {
-      console.warn(`⏰ Load timeout for ${key} - using fallback value`);
+      // // console.warn(`⏰ Load timeout for ${key} - using fallback value`);
     } else {
-      console.warn(`Failed to load ${key} from database:`, error);
+      // // console.warn(`Failed to load ${key} from database:`, error);
     }
     return fallback;
   }
@@ -104,9 +104,9 @@ const deleteFromDatabase = async (key: string): Promise<void> => {
   } catch (error) {
     // Enhanced error handling for timeouts
     if ((error as Error).name === 'AbortError' || (error as Error).message?.includes('timeout')) {
-      console.warn(`⏰ Delete timeout for ${key} - operation may not have completed`);
+      // // console.warn(`⏰ Delete timeout for ${key} - operation may not have completed`);
     } else {
-      console.warn(`Failed to delete ${key} from database:`, error);
+      // // console.warn(`Failed to delete ${key} from database:`, error);
     }
   }
 };
@@ -292,7 +292,7 @@ export const clearAllSessionData = async (): Promise<void> => {
     // Also clear the session ID from sessionStorage
     sessionStorage.removeItem('pricing_simulator_session_id');
   } catch (error) {
-    console.warn('Failed to clear all session data:', error);
+    // // console.warn('Failed to clear all session data:', error);
   }
 };
 
@@ -312,7 +312,7 @@ export const getSessionInfo = async () => {
       timestamp: new Date().toISOString()
     };
   } catch (error) {
-    console.warn('Failed to get session info:', error);
+    // // console.warn('Failed to get session info:', error);
     return {
       sessionId,
       error: (error as Error).message,
@@ -334,7 +334,7 @@ export const flushPendingSaves = (): void => {
         // This will trigger the actual save without debounce
         // Flushing pending save for ${key}
       } catch (error) {
-        console.warn(`Failed to flush save for ${key}:`, error);
+        // // console.warn(`Failed to flush save for ${key}:`, error);
       }
     }, 0);
   }
@@ -395,7 +395,7 @@ export const debugAutoAddPersistence = async (): Promise<{
       syncStatus
     };
   } catch (error) {
-    console.error('Failed to debug auto-add persistence:', error);
+    // // console.error('Failed to debug auto-add persistence:', error);
     return {
       sessionId,
       serviceMappings: {},

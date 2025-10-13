@@ -17,7 +17,7 @@ export class SimulatorApi {
 
       return data?.map(this.mapDatabaseToSimulator) || [];
     } catch (error) {
-      console.error('Failed to load simulators:', error);
+      // // console.error('Failed to load simulators:', error);
       throw error;
     }
   }
@@ -36,7 +36,7 @@ export class SimulatorApi {
 
       return data?.map(this.mapDatabaseToSimulator) || [];
     } catch (error) {
-      console.error('Failed to load all simulators:', error);
+      // // console.error('Failed to load all simulators:', error);
       throw error;
     }
   }
@@ -60,7 +60,7 @@ export class SimulatorApi {
 
       return data ? this.mapDatabaseToSimulator(data) : null;
     } catch (error) {
-      console.error('Failed to load simulator by slug:', error);
+      // // console.error('Failed to load simulator by slug:', error);
       throw error;
     }
   }
@@ -94,7 +94,7 @@ export class SimulatorApi {
 
       return this.mapDatabaseToSimulator(data);
     } catch (error) {
-      console.error('Failed to create simulator:', error);
+      // // console.error('Failed to create simulator:', error);
       throw error;
     }
   }
@@ -128,7 +128,7 @@ export class SimulatorApi {
 
       return this.mapDatabaseToSimulator(data);
     } catch (error) {
-      console.error('Failed to update simulator:', error);
+      // // console.error('Failed to update simulator:', error);
       throw error;
     }
   }
@@ -145,7 +145,7 @@ export class SimulatorApi {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Failed to delete simulator:', error);
+      // // console.error('Failed to delete simulator:', error);
       throw error;
     }
   }
@@ -169,7 +169,7 @@ export class SimulatorApi {
         if (error) throw error;
       }
     } catch (error) {
-      console.error('Failed to reorder simulators:', error);
+      // // console.error('Failed to reorder simulators:', error);
       throw error;
     }
   }
@@ -252,7 +252,7 @@ export class SimulatorApi {
       }
 
     } catch (error) {
-      console.error('Failed to copy simulator data:', error);
+      // // console.error('Failed to copy simulator data:', error);
       throw error;
     }
   }
@@ -273,7 +273,7 @@ export class SimulatorApi {
       
       return newSimulator;
     } catch (error) {
-      console.error('Failed to create simulator from template:', error);
+      // // console.error('Failed to create simulator from template:', error);
       throw error;
     }
   }

@@ -424,12 +424,12 @@ export function useActiveTemplate(simulatorType: string) {
     try {
       setLoading(true);
       setError(null);
-      console.log('useActiveTemplate: Fetching template for:', simulatorType);
+      // // console.log('useActiveTemplate: Fetching template for:', simulatorType);
       const activeTemplate = await PdfBuilderService.getActiveTemplate(simulatorType);
-      console.log('useActiveTemplate: Template result:', activeTemplate);
+      // // console.log('useActiveTemplate: Template result:', activeTemplate);
       setTemplate(activeTemplate);
     } catch (err) {
-      console.error('useActiveTemplate: Error fetching template:', err);
+      // // console.error('useActiveTemplate: Error fetching template:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch active template';
       setError(errorMessage);
       // Set template to null to allow fallback

@@ -1,11 +1,13 @@
-import { useState, useEffect, useMemo } from 'react';
+"use client"
+
+import { useState } from 'react';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { TableCell } from './ui/table';
-import { Plus, Edit, Trash2, Package, Copy } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Plus } from 'lucide-react';
 import { Category, PricingItem } from '../types/domain';
-import { DataTable } from './DataTable';
 import { CategoryDialog } from './dialogs/CategoryDialog';
+import { DataTable } from '../shared/components/ui/data-table';
+import { createCategoryColumns } from './categories-columns';
 
 interface CategoryManagerProps {
   categories: Category[];
@@ -50,7 +52,7 @@ export function CategoryManager({
       setIsCategoryDialogOpen(false);
       setEditingCategory(null);
     } catch (error) {
-      console.error('Error saving category:', error);
+      // // console.error('Error saving category:', error);
       throw error; // Re-throw to let the dialog handle the error display
     }
   };
@@ -69,7 +71,7 @@ export function CategoryManager({
       setIsCategoryDialogOpen(false);
       setEditingCategory(null);
     } catch (error) {
-      console.error('Error deleting category:', error);
+      // // console.error('Error deleting category:', error);
       throw error; // Re-throw to let the dialog handle the error display
     }
   };
@@ -86,8 +88,19 @@ export function CategoryManager({
       const updatedCategories = [...categories, duplicatedCategory];
       await onUpdateCategories(updatedCategories);
     } catch (error) {
-      console.error('Error duplicating category:', error);
+      // // console.error('Error duplicating category:', error);
       throw error;
+    }
+  };
+
+  const handleToggleActive = async (categoryId: string) => {
+    try {
+      const updatedCategories = categories.map(c => 
+        c.id === categoryId ? { ...c, is_active: !c.is_active } : c
+      );
+      await onUpdateCategories(updatedCategories);
+    } catch (error) {
+      // // console.error('Error toggling category status:', error);
     }
   };
 
@@ -105,98 +118,38 @@ export function CategoryManager({
     }
   };
 
-  const handleReorderCategories = async (reorderedCategories: Category[]) => {
-    try {
-      await onUpdateCategories(reorderedCategories);
-    } catch (error) {
-      console.error('Error reordering categories:', error);
-    }
-  };
-
-  // Get services count for each category
-  const getCategoryServiceCount = (categoryId: string) => {
-    return services.filter(service => service.categoryId === categoryId).length;
-  };
+  const columns = createCategoryColumns(
+    services,
+    handleEditCategory,
+    handleQuickDelete,
+    handleDuplicateCategory,
+    handleToggleActive
+  );
 
   return (
-    <div>
-      <DataTable
-        title="Category Management"
-        description="Organize pricing services into logical categories"
-        headers={['Name', 'Description', 'Order', 'Services', 'Actions']}
-        items={categories}
-        getItemKey={(category) => category.id}
-        onReorder={handleReorderCategories}
-        onRowClick={handleEditCategory}
-        searchFields={['name', 'description']}
-        searchPlaceholder="Search categories..."
-        actionButton={
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Category Management</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Organize pricing services into logical categories
+            </p>
+          </div>
           <Button onClick={handleCreateCategory}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Category
+            <Plus className="mr-2 h-4 w-4" />
+            Create New
           </Button>
-        }
-        emptyStateTitle="No categories created yet"
-        emptyStateDescription="Create your first category to organize pricing services"
-        emptyStateIcon={<Package className="h-12 w-12 text-muted-foreground" />}
-        emptyStateAction={
-          <Button onClick={handleCreateCategory}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create First Category
-          </Button>
-        }
-        renderRow={(category) => (
-          <>
-            <TableCell>
-              <div className="font-medium">{category.name}</div>
-            </TableCell>
-            <TableCell>
-              <div className="text-sm text-muted-foreground max-w-xs truncate">
-                {category.description}
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline">
-                {category.order_index}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge variant="secondary">
-                {getCategoryServiceCount(category.id)} services
-              </Badge>
-            </TableCell>
-            <TableCell onClick={(e) => e.stopPropagation()}>
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleEditCategory(category)}
-                  title="Edit category"
-                >
-                  <Edit className="h-3 w-3" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleDuplicateCategory(category)}
-                  title="Duplicate category"
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleQuickDelete(category)}
-                  className="text-destructive hover:text-destructive/80"
-                  title="Delete category"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
-            </TableCell>
-          </>
-        )}
-      />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <DataTable 
+          columns={columns} 
+          data={categories}
+          searchKey="name"
+          searchPlaceholder="Search categories..."
+        />
+      </CardContent>
 
       {/* Category Dialog */}
       <CategoryDialog
@@ -212,6 +165,6 @@ export function CategoryManager({
         categories={categories}
         isCreating={isCreating}
       />
-    </div>
+    </Card>
   );
 }

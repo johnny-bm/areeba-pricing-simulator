@@ -23,13 +23,13 @@ export class VersionService {
         .rpc('get_current_version');
       
       if (error) {
-        console.error('Error getting current version:', error);
+        // // console.error('Error getting current version:', error);
         return '1.0.0'; // Fallback version
       }
       
       return data || '1.0.0';
     } catch (error) {
-      console.error('Error getting current version:', error);
+      // // console.error('Error getting current version:', error);
       return '1.0.0';
     }
   }
@@ -45,13 +45,13 @@ export class VersionService {
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.error('Error getting versions:', error);
+        // // console.error('Error getting versions:', error);
         return [];
       }
       
       return data || [];
     } catch (error) {
-      console.error('Error getting versions:', error);
+      // // console.error('Error getting versions:', error);
       return [];
     }
   }
@@ -75,13 +75,13 @@ export class VersionService {
         });
       
       if (error) {
-        console.error('Error incrementing version:', error);
+        // // console.error('Error incrementing version:', error);
         throw new Error('Failed to increment version');
       }
       
       return data;
     } catch (error) {
-      console.error('Error incrementing version:', error);
+      // // console.error('Error incrementing version:', error);
       throw error;
     }
   }
@@ -103,7 +103,7 @@ export class VersionService {
         .single();
       
       if (error) {
-        console.error('Error getting version info:', error);
+        // // console.error('Error getting version info:', error);
         return {
           currentVersion: '1.0.0',
           buildNumber: 1,
@@ -118,7 +118,7 @@ export class VersionService {
         deployedAt: data.deployed_at
       };
     } catch (error) {
-      console.error('Error getting version info:', error);
+      // // console.error('Error getting version info:', error);
       return {
         currentVersion: '1.0.0',
         buildNumber: 1,

@@ -49,13 +49,13 @@ export class AuthService {
       profile = data;
       profileError = error;
     } catch (error) {
-      console.error('Profile fetch error:', error);
+      // // console.error('Profile fetch error:', error);
       profileError = error;
     }
 
     // If profile doesn't exist, create one automatically
     if (profileError || !profile) {
-      console.log('Profile not found, creating one automatically...');
+      // // console.log('Profile not found, creating one automatically...');
       
       const newProfile = {
         id: authData.user.id,
@@ -74,14 +74,14 @@ export class AuthService {
           .single();
 
         if (createError) {
-          console.error('Failed to create profile:', createError);
+          // // console.error('Failed to create profile:', createError);
           // Use the new profile data as fallback
           profile = newProfile;
         } else {
           profile = createdProfile;
         }
       } catch (createError) {
-        console.error('Profile creation failed:', createError);
+        // // console.error('Profile creation failed:', createError);
         // Use the new profile data as fallback
         profile = newProfile;
       }
@@ -208,13 +208,13 @@ export class AuthService {
       profile = data;
       error = profileError;
     } catch (err) {
-      console.error('Profile fetch error:', err);
+      // // console.error('Profile fetch error:', err);
       error = err;
     }
 
     // If profile doesn't exist, create one automatically
     if (error || !profile) {
-      console.log('Profile not found, creating one automatically...');
+      // // console.log('Profile not found, creating one automatically...');
       
       const newProfile = {
         id: session.user.id,
@@ -233,14 +233,14 @@ export class AuthService {
           .single();
 
         if (createError) {
-          console.error('Failed to create profile:', createError);
+          // // console.error('Failed to create profile:', createError);
           // Use the new profile data as fallback
           profile = newProfile;
         } else {
           profile = createdProfile;
         }
       } catch (createError) {
-        console.error('Profile creation failed:', createError);
+        // // console.error('Profile creation failed:', createError);
         // Use the new profile data as fallback
         profile = newProfile;
       }

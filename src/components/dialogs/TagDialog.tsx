@@ -44,7 +44,7 @@ export function TagDialog({
         await onDeleteTag(tag.name);
         onClose();
       } catch (error) {
-        console.error('Failed to delete tag:', error);
+        // // console.error('Failed to delete tag:', error);
         alert(`Failed to delete tag: ${(error as Error).message || 'Unknown error'}`);
       } finally {
         setIsDeleting(false);
@@ -60,7 +60,7 @@ export function TagDialog({
       await onCreateTag(newTagName.trim());
       onClose();
     } catch (error) {
-      console.error('Failed to create tag:', error);
+      // // console.error('Failed to create tag:', error);
       alert(`Failed to create tag: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsSaving(false);

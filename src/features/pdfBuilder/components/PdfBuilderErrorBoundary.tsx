@@ -27,7 +27,7 @@ export class PdfBuilderErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('PDF Builder Error:', error, errorInfo);
+    // // console.error('PDF Builder Error:', error, errorInfo);
   }
 
   handleReset = () => {

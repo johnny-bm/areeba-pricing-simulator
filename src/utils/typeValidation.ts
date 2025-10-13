@@ -13,9 +13,9 @@ export function validateDatabaseFields<T extends Record<string, any>>(
   const missingFields = expectedFields.filter(field => !(field in obj));
   
   if (missingFields.length > 0) {
-    console.warn(`⚠️ ${context}: Missing database fields:`, missingFields);
-    console.warn('Expected fields:', expectedFields);
-    console.warn('Actual object keys:', Object.keys(obj));
+    // // console.warn(`⚠️ ${context}: Missing database fields:`, missingFields);
+    // // console.warn('Expected fields:', expectedFields);
+    // // console.warn('Actual object keys:', Object.keys(obj));
   }
 }
 
@@ -38,10 +38,10 @@ export function validateFieldMapping<T extends Record<string, any>>(
   }
   
   if (mappingErrors.length > 0) {
-    console.error(`❌ ${context}: Field mapping errors:`, mappingErrors);
-    console.error('Original object:', original);
-    console.error('Mapped object:', mapped);
-    console.error('Expected mappings:', fieldMappings);
+    // // console.error(`❌ ${context}: Field mapping errors:`, mappingErrors);
+    // // console.error('Original object:', original);
+    // // console.error('Mapped object:', mapped);
+    // // console.error('Expected mappings:', fieldMappings);
   }
 }
 

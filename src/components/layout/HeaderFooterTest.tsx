@@ -8,15 +8,15 @@ import { ROUTES } from '../../config/routes';
  */
 export function HeaderFooterTest() {
   const handleLogout = () => {
-    console.log('Logout clicked');
+    // // console.log('Logout clicked');
   };
 
   const handleAdminClick = () => {
-    console.log('Admin clicked');
+    // // console.log('Admin clicked');
   };
 
   const handleBackClick = () => {
-    console.log('Back clicked');
+    // // console.log('Back clicked');
   };
 
   const navigationItems = [

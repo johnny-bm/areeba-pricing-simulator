@@ -1,11 +1,13 @@
+"use client"
+
 import { useState, useMemo } from 'react';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { TableCell } from './ui/table';
-import { Plus, Edit, Trash2, Tags, Copy } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Plus } from 'lucide-react';
 import { PricingItem } from '../types/domain';
-import { DataTable } from './DataTable';
 import { TagDialog } from './dialogs/TagDialog';
+import { DataTable } from '../shared/components/ui/data-table';
+import { createTagColumns } from './tags-columns';
 
 interface TagData {
   name: string;
@@ -109,82 +111,36 @@ export function TagManager({
     alert(`Tag "${newTagName}" created successfully! You can now assign it to services through the service editor.`);
   };
 
+  const columns = createTagColumns(
+    handleViewTag,
+    handleQuickDelete,
+    handleDuplicateTag
+  );
+
   return (
-    <div>
-      <DataTable
-        title="Tags"
-        headers={['Tag Name', 'Usage Count', 'Services', 'Actions']}
-        items={tagData}
-        getItemKey={(tag) => tag.name}
-        onRowClick={handleViewTag}
-        searchFields={['name']}
-        searchPlaceholder="Search tags..."
-        filterOptions={[]}
-        actionButton={
-          <Button onClick={handleCreateTag} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Tag
-          </Button>
-        }
-        emptyStateTitle="No tags found"
-        emptyStateDescription="Tags are created when you assign them to services. Create your first tag or add tags to services."
-        emptyStateIcon={<Tags className="h-12 w-12 text-muted-foreground" />}
-        emptyStateAction={
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Tag Management</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Manage tags for organizing services with advanced table features
+            </p>
+          </div>
           <Button onClick={handleCreateTag}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create First Tag
+            <Plus className="mr-2 h-4 w-4" />
+            Create New
           </Button>
-        }
-        renderRow={(tag) => (
-          <>
-            <TableCell>
-              <Badge variant="secondary">
-                {tag.name}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge variant="default">
-                {tag.count} service{tag.count !== 1 ? 's' : ''}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <div className="text-sm text-muted-foreground max-w-xs">
-                {tag.items.slice(0, 3).map(item => item.name).join(', ')}
-                {tag.items.length > 3 && ` +${tag.items.length - 3} more`}
-              </div>
-            </TableCell>
-            <TableCell onClick={(e) => e.stopPropagation()}>
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleViewTag(tag)}
-                  title="View tag details"
-                >
-                  <Edit className="h-3 w-3" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleDuplicateTag(tag.name)}
-                  title="Duplicate tag"
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleQuickDelete(tag.name)}
-                  className="text-destructive hover:text-destructive/80"
-                  title="Delete tag"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
-            </TableCell>
-          </>
-        )}
-      />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <DataTable 
+          columns={columns} 
+          data={tagData}
+          searchKey="name"
+          searchPlaceholder="Search tags..."
+        />
+      </CardContent>
 
       {/* Tag Dialog */}
       <TagDialog
@@ -199,6 +155,6 @@ export function TagManager({
         onCreateTag={handleSaveNewTag}
         isCreating={isCreatingTag}
       />
-    </div>
+    </Card>
   );
 }

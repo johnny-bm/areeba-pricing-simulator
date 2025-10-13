@@ -42,7 +42,7 @@ export function SimulatorInfoPage({ simulatorId }: SimulatorInfoPageProps) {
         toast.error('Simulator not found');
       }
     } catch (error) {
-      console.error('Failed to load simulator:', error);
+      // // console.error('Failed to load simulator:', error);
       toast.error('Failed to load simulator details');
     } finally {
       setIsLoading(false);
@@ -59,7 +59,7 @@ export function SimulatorInfoPage({ simulatorId }: SimulatorInfoPageProps) {
       setIsEditing(false);
       toast.success('Simulator updated successfully');
     } catch (error) {
-      console.error('Failed to save simulator:', error);
+      // // console.error('Failed to save simulator:', error);
       toast.error('Failed to save simulator');
     } finally {
       setIsSaving(false);

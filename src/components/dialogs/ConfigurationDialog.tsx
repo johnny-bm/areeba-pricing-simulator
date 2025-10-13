@@ -96,7 +96,7 @@ export function ConfigurationDialog({
       await onSave(newConfig);
       onClose();
     } catch (error) {
-      console.error('Failed to save configuration:', error);
+      // // console.error('Failed to save configuration:', error);
       alert(`Failed to save configuration: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsSaving(false);
@@ -114,7 +114,7 @@ export function ConfigurationDialog({
       await onDelete(configuration);
       onClose();
     } catch (error) {
-      console.error('Failed to delete configuration:', error);
+      // // console.error('Failed to delete configuration:', error);
       alert(`Failed to delete configuration: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDeleting(false);
@@ -135,7 +135,7 @@ export function ConfigurationDialog({
       await onDuplicate(duplicatedConfig);
       onClose();
     } catch (error) {
-      console.error('Failed to duplicate configuration:', error);
+      // // console.error('Failed to duplicate configuration:', error);
       alert(`Failed to duplicate configuration: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDuplicating(false);

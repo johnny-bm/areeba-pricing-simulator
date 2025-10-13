@@ -82,9 +82,9 @@ class PerformanceService {
     const threshold = this.thresholds.find(t => t.metric === name);
     if (threshold) {
       if (value >= threshold.error) {
-        console.error(`Performance Error: ${name} took ${value}ms (threshold: ${threshold.error}ms)`);
+        // // console.error(`Performance Error: ${name} took ${value}ms (threshold: ${threshold.error}ms)`);
       } else if (value >= threshold.warning) {
-        console.warn(`Performance Warning: ${name} took ${value}ms (threshold: ${threshold.warning}ms)`);
+        // // console.warn(`Performance Warning: ${name} took ${value}ms (threshold: ${threshold.warning}ms)`);
       }
     }
 

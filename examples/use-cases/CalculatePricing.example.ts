@@ -90,4 +90,4 @@ export class CalculatePricingUseCase {
 //     { name: 'Domain', price: 15, quantity: 1 }
 //   ]
 // });
-// console.log(result.total.amount); // 65
+// // console.log(result.total.amount); // 65

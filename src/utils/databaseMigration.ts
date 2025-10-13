@@ -298,21 +298,21 @@ export const USAGE_EXAMPLES = {
  * Development console helper to check current migration status
  */
 export function checkMigrationStatus() {
-  console.log('📊 Database Configuration Migration Status');
-  console.log('==========================================');
-  console.log('✅ Database constants loaded:', Object.keys(TABLES).length, 'tables');
-  console.log('✅ Column mappings available:', Object.keys(COLUMNS).length, 'table schemas');
-  console.log('✅ KV keys standardized:', Object.keys(KV_KEYS).length, 'keys');
-  console.log('✅ Validation helpers ready:', Object.keys(VALIDATION_HELPERS).length, 'validators');
-  console.log('✅ Query helpers available:', Object.keys(QUERY_HELPERS).length, 'query builders');
-  console.log('');
-  console.log('Next steps:');
-  console.log('1. Update API queries to use TABLES and COLUMNS constants');
-  console.log('2. Update persistence logic to use KV_KEYS constants');
-  console.log('3. Add validation using VALIDATION_HELPERS');
-  console.log('4. Use DB_HELPERS for generating new records');
-  console.log('');
-  console.log('See MIGRATION_CHECKLIST and USAGE_EXAMPLES for detailed guidance.');
+  // // console.log('📊 Database Configuration Migration Status');
+  // // console.log('==========================================');
+  // // console.log('✅ Database constants loaded:', Object.keys(TABLES).length, 'tables');
+  // // console.log('✅ Column mappings available:', Object.keys(COLUMNS).length, 'table schemas');
+  // // console.log('✅ KV keys standardized:', Object.keys(KV_KEYS).length, 'keys');
+  // // console.log('✅ Validation helpers ready:', Object.keys(VALIDATION_HELPERS).length, 'validators');
+  // // console.log('✅ Query helpers available:', Object.keys(QUERY_HELPERS).length, 'query builders');
+  // // console.log('');
+  // // console.log('Next steps:');
+  // // console.log('1. Update API queries to use TABLES and COLUMNS constants');
+  // // console.log('2. Update persistence logic to use KV_KEYS constants');
+  // // console.log('3. Add validation using VALIDATION_HELPERS');
+  // // console.log('4. Use DB_HELPERS for generating new records');
+  // // console.log('');
+  // // console.log('See MIGRATION_CHECKLIST and USAGE_EXAMPLES for detailed guidance.');
 }
 
 // Auto-run migration status check in development

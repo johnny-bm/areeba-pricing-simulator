@@ -42,7 +42,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
     // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
+      // // console.error('ErrorBoundary caught an error:', error, errorInfo);
     }
 
     // Call custom error handler if provided
@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<Props, State> {
     // Log error to external service in production
     if (process.env.NODE_ENV === 'production') {
       // TODO: Implement error logging service (e.g., Sentry, LogRocket)
-      console.error('Production error:', error, errorInfo);
+      // // console.error('Production error:', error, errorInfo);
     }
   }
 

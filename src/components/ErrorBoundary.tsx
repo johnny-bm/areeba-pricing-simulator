@@ -33,15 +33,15 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('🚨 Error Boundary caught an error:', error, errorInfo);
+    // // console.error('🚨 Error Boundary caught an error:', error, errorInfo);
     
     // Log specific details for JSON parsing errors
     if (error.message && error.message.includes('JSON')) {
-      console.error('🚨 JSON parsing error in React component:', {
-        error: error.message,
-        stack: error.stack,
-        componentStack: errorInfo.componentStack
-      });
+      // // console.error('🚨 JSON parsing error in React component:', {
+      //   error: error.message,
+      //   stack: error.stack,
+      //   componentStack: errorInfo.componentStack
+      // });
       
       // Show a toast notification for JSON errors
       toast.error('Data parsing error', {

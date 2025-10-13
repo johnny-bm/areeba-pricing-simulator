@@ -57,7 +57,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   // Get simulator type from URL parameters
   const { simulatorType } = useParams<{ simulatorType?: string }>();
   
-  console.log('🎯 PricingSimulator loaded with simulatorType:', simulatorType);
+  // // console.log('🎯 PricingSimulator loaded with simulatorType:', simulatorType);
   
   // NEW: Clean Architecture hooks
   const useNewArchitecture = FEATURES.USE_NEW_PRICING;
@@ -362,7 +362,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
           onClose={() => setShowGuestContactForm(false)}
           onSubmit={(data) => {
             // Handle guest contact form submission
-            console.log('Guest contact form submitted:', data);
+            // // console.log('Guest contact form submitted:', data);
             setShowGuestContactForm(false);
           }}
         />

@@ -35,7 +35,8 @@ interface ServiceFormData {
   unit: string;
   defaultPrice: number;
   tags: string[];
-  pricingType: 'fixed' | 'tiered';
+  pricingType: 'one_time' | 'recurring' | 'per_unit' | 'tiered';
+  billingCycle: 'one_time' | 'monthly' | 'quarterly' | 'yearly';
   tiers: PricingTier[];
   quantitySourceFields: string[];
   autoAddServices: string[];
@@ -58,10 +59,11 @@ export function SimpleServiceEditor({
     description: '',
     category: categories.length > 0 ? categories[0].id : '',
     categoryId: categories.length > 0 ? categories[0].id : '',
-    unit: 'per month',
+    unit: 'Per User',
     defaultPrice: 0,
     tags: [],
-    pricingType: 'fixed',
+    pricingType: 'one_time',
+    billingCycle: 'monthly',
     tiers: [],
     quantitySourceFields: [],
     autoAddServices: []
@@ -94,7 +96,7 @@ export function SimpleServiceEditor({
           });
           setExistingTags(Array.from(allTags).sort());
         } catch (error) {
-          console.error('Failed to load configuration data:', error);
+          // // // console.error('Failed to load configuration data:', error);
           setConfigurations([]);
           setExistingTags([]);
         }
@@ -121,7 +123,8 @@ export function SimpleServiceEditor({
           unit: service.unit,
           defaultPrice: service.defaultPrice,
           tags: service.tags || [],
-          pricingType: service.pricingType || 'fixed',
+          pricingType: service.pricingType || 'one_time',
+          billingCycle: service.billingCycle || 'monthly',
           tiers: service.tiers || [],
           quantitySourceFields: service.quantitySourceFields || [],
           autoAddServices: service.autoAddServices?.map(item => item.configFieldId) || []
@@ -134,10 +137,11 @@ export function SimpleServiceEditor({
           description: '',
           category: categories.length > 0 ? categories[0].id : '',
           categoryId: categories.length > 0 ? categories[0].id : '',
-          unit: 'per month',
+          unit: 'Per User',
           defaultPrice: 0,
           tags: [],
-          pricingType: 'fixed',
+          pricingType: 'one_time',
+          billingCycle: 'monthly',
           tiers: [],
           quantitySourceFields: [],
           autoAddServices: []
@@ -186,7 +190,8 @@ export function SimpleServiceEditor({
         defaultPrice: formData.defaultPrice,
         tags: formData.tags,
         pricingType: formData.pricingType,
-        tiers: formData.pricingType === PRICING_TYPES.TIERED ? formData.tiers : undefined,
+        billingCycle: formData.billingCycle,
+        tiers: formData.pricingType === 'tiered' ? formData.tiers : undefined,
         quantitySourceFields: formData.quantitySourceFields,
         autoAddServices: formData.autoAddServices.map(configFieldId => ({
           configFieldId,
@@ -212,12 +217,12 @@ export function SimpleServiceEditor({
         // Clear temporary tags since they're now permanent
         setTemporaryTags([]);
       } catch (refreshError) {
-        console.warn('Failed to refresh existing tags after save:', refreshError);
+        // // // console.warn('Failed to refresh existing tags after save:', refreshError);
       }
       
       onClose();
     } catch (error) {
-      console.error('Error saving service:', error);
+      // // // console.error('Error saving service:', error);
       alert(`Failed to save service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsSaving(false);
@@ -238,7 +243,7 @@ export function SimpleServiceEditor({
       await onDelete(service);
       onClose();
     } catch (error) {
-      console.error('Error deleting service:', error);
+      // // // console.error('Error deleting service:', error);
       alert(`Failed to delete service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDeleting(false);
@@ -263,7 +268,7 @@ export function SimpleServiceEditor({
       await onSave(duplicateService);
       onClose();
     } catch (error) {
-      console.error('Failed to duplicate service:', error);
+      // // // console.error('Failed to duplicate service:', error);
       alert(`Failed to duplicate service: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsDuplicating(false);
@@ -349,7 +354,7 @@ export function SimpleServiceEditor({
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="item-unit">Unit *</Label>
               <Select value={formData.unit} onValueChange={(value) => updateField('unit', value)}>
@@ -375,24 +380,46 @@ export function SimpleServiceEditor({
                 min={0}
               />
             </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Pricing Type</Label>
               <Select 
                 value={formData.pricingType} 
-                onValueChange={(value: 'fixed' | 'tiered') => updateField('pricingType', value)}
+                onValueChange={(value: 'one_time' | 'recurring' | 'per_unit' | 'tiered') => updateField('pricingType', value)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="simple">Simple Pricing</SelectItem>
-                  <SelectItem value="tiered">Tiered Pricing</SelectItem>
+                  <SelectItem value="one_time">One Time</SelectItem>
+                  <SelectItem value="recurring">Recurring</SelectItem>
+                  <SelectItem value="per_unit">Per Unit</SelectItem>
+                  <SelectItem value="tiered">Tiered</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Billing Cycle</Label>
+              <Select 
+                value={formData.billingCycle} 
+                onValueChange={(value: 'one_time' | 'monthly' | 'quarterly' | 'yearly') => updateField('billingCycle', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="one_time">One Time</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="quarterly">Quarterly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          {formData.pricingType === PRICING_TYPES.TIERED && (
+          {formData.pricingType === 'tiered' && (
             <div className="space-y-2">
               <Label>Tiered Pricing</Label>
               <TieredPricingEditor

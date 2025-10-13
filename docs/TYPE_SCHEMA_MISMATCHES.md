@@ -6,9 +6,9 @@ Generated: 2025-01-13
 
 **GOOD NEWS**: Most type/schema mismatches are already handled correctly in the API layer!
 
-**Total Mismatches Found**: 1 critical mismatch (services table) + 1 potential issue (user_profiles)
+**Total Mismatches Found**: 2 critical mismatches (services + categories tables)
 
-**Impact**: Services table was the main issue causing data persistence failures
+**Impact**: Services and categories tables were causing data persistence failures
 
 ---
 
@@ -37,17 +37,19 @@ Generated: 2025-01-13
 
 **Status**: Previously fixed
 
-### 3. categories table (Category type) ❌ NEEDS FIX
+### 3. categories table (Category type) ✅ FIXED
 
 | Domain Type Field | Database Column | Status | Impact |
 |---|---|---|---|
-| `display_order` | `display_order` | ✅ Match | - |
-| `order_index` | `order_index` | ✅ Match | - |
-| `is_active` | `is_active` | ✅ Match | - |
-| `created_at` | `created_at` | ✅ Match | - |
-| `updated_at` | `updated_at` | ✅ Match | - |
+| `description?` | `description` (required) | ❌ MISMATCH | Categories not saving |
+| `display_order?` | `display_order` | ✅ Match | - |
+| `order_index?` | `order_index` | ✅ Match | - |
+| `is_active?` | `is_active` | ✅ Match | - |
+| `color?` | `color` | ✅ Match | - |
+| `created_at?` | `created_at` | ✅ Match | - |
+| `updated_at?` | `updated_at` | ✅ Match | - |
 
-**Status**: No mismatches found
+**Fix Applied**: Added proper field mapping and default values in `src/utils/api.ts`
 
 ### 4. user_profiles table (User type) ✅ ALREADY FIXED
 
@@ -95,6 +97,7 @@ Generated: 2025-01-13
 
 ### P0 (Critical) - Data Not Persisting
 - ✅ services table (FIXED)
+- ✅ categories table (FIXED)
 - ✅ simulator_submissions table (ALREADY FIXED)
 - ✅ guest_scenarios table (ALREADY FIXED)
 - ✅ user_profiles table (ALREADY FIXED)
@@ -103,7 +106,7 @@ Generated: 2025-01-13
 - ✅ All major tables handled correctly
 
 ### P2 (Medium) - Display Issues
-- ✅ categories table (No issues)
+- ✅ All tables working correctly
 
 ---
 

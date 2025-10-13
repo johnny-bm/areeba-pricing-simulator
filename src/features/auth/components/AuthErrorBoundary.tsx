@@ -34,7 +34,7 @@ export class AuthErrorBoundary extends Component<Props, State> {
     this.setState({ error });
 
     // Log auth-specific errors
-    console.error('Auth ErrorBoundary caught an error:', error, errorInfo);
+    // // console.error('Auth ErrorBoundary caught an error:', error, errorInfo);
 
     if (this.props.onError) {
       this.props.onError(error, errorInfo);

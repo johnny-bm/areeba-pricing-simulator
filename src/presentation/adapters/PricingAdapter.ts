@@ -56,7 +56,7 @@ export class PricingAdapter {
         const result = await useCase.execute(input);
         return result.items;
       } catch (error) {
-        console.error('New architecture failed, falling back to legacy:', error);
+        // // console.error('New architecture failed, falling back to legacy:', error);
         // Fall through to legacy
       }
     }
@@ -81,7 +81,7 @@ export class PricingAdapter {
         const useCase = new CalculatePricingUseCase(repository);
         return await useCase.execute(input);
       } catch (error) {
-        console.error('New architecture failed, falling back to legacy:', error);
+        // // console.error('New architecture failed, falling back to legacy:', error);
         // Fall through to legacy
       }
     }
@@ -107,7 +107,7 @@ export class PricingAdapter {
         const result = await useCase.execute(input);
         return result.item;
       } catch (error) {
-        console.error('New architecture failed, falling back to legacy:', error);
+        // // console.error('New architecture failed, falling back to legacy:', error);
         // Fall through to legacy
       }
     }

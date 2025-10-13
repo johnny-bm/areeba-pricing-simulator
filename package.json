@@ -5,8 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc -b && vite build",
-        "build:prod": "vite build --mode production",
+        "build": "node scripts/set-version.js && tsc -b && vite build",
+        "build:prod": "node scripts/set-version.js && vite build --mode production",
         "preview": "vite preview",
         "test": "vitest",
         "test:ui": "vitest --ui",
@@ -70,6 +70,7 @@
         "@radix-ui/react-toggle-group": "^1.1.11",
         "@radix-ui/react-tooltip": "^1.2.8",
         "@supabase/supabase-js": "^2.45.4",
+        "@tanstack/react-table": "^8.21.3",
         "@tiptap/extension-bullet-list": "^3.6.6",
         "@tiptap/extension-image": "^3.6.6",
         "@tiptap/extension-list-item": "^3.6.6",

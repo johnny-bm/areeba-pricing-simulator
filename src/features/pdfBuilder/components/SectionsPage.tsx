@@ -19,7 +19,7 @@ import {
 } from '../../../components/ui/dialog';
 import { 
   Plus, 
-  Edit, 
+  Pencil, 
   Trash2, 
   FileText,
   Layout
@@ -128,7 +128,10 @@ export function SectionsPage({ permissions }: SectionsPageProps) {
               </div>
             </TableCell>
             <TableCell>
-              <Badge variant="outline">
+              <Badge 
+                variant="outline"
+                className="bg-blue-100 text-blue-800 hover:bg-blue-100"
+              >
                 Content Section
               </Badge>
             </TableCell>
@@ -137,20 +140,19 @@ export function SectionsPage({ permissions }: SectionsPageProps) {
                 {new Date(section.created_at).toLocaleDateString()}
               </p>
             </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
+            <TableCell className="text-right">
+              <div className="flex items-center justify-end gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setEditingSection(section)}
                 >
-                  <Edit className="h-4 w-4" />
+                  <Pencil className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleDeleteSection(section)}
-                  className="text-destructive hover:text-destructive"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

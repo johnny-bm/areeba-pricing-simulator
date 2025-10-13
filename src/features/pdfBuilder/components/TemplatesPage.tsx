@@ -133,7 +133,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
           .eq('template_id', templateResult.id);
           
         if (deleteError) {
-          console.error('Failed to delete existing sections:', deleteError);
+          // // console.error('Failed to delete existing sections:', deleteError);
           toast.error('Failed to clear existing template sections');
           return;
         }
@@ -165,7 +165,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
           .insert(allSections);
           
         if (error) {
-          console.error('Failed to add template sections:', error);
+          // // console.error('Failed to add template sections:', error);
           if (error.code === '23505') {
             toast.error('Duplicate section detected. Please check your template sections.');
           } else {
@@ -181,7 +181,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
       // Reset template sections for next creation
       setTemplateSections([]);
     } catch (error) {
-      console.error('Failed to create template:', error);
+      // // console.error('Failed to create template:', error);
       toast.error('Failed to create template');
     }
   };
@@ -235,7 +235,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
           .insert(allSections);
           
         if (error) {
-          console.error('Failed to add template sections:', error);
+          // // console.error('Failed to add template sections:', error);
           if (error.code === '23505') {
             toast.error('Duplicate section detected. Please check your template sections.');
           } else {
@@ -248,7 +248,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
       setEditingTemplate(null);
       toast.success('Template updated successfully');
     } catch (error) {
-      console.error('Failed to update template:', error);
+      // // console.error('Failed to update template:', error);
       toast.error('Failed to update template');
     }
   };
@@ -441,7 +441,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
       toast.dismiss(loadingToast);
       toast.success(`Loaded ${loadedSections.length} sections for editing`);
     } catch (error) {
-      console.error('Failed to load template for editing:', error);
+      // // console.error('Failed to load template for editing:', error);
       
       // Dismiss loading toast and show error
       toast.dismiss(loadingToast);
@@ -473,7 +473,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
           platformVersion = `v${data}`;
         }
       } catch (error) {
-        console.warn('Could not fetch platform version from database, using fallback:', error);
+        // // console.warn('Could not fetch platform version from database, using fallback:', error);
       }
       
       // areeba logo SVG (from the actual logo used in the app)
@@ -954,7 +954,7 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
       toast.success('Template preview opened for printing. Use "Save as PDF" in the print dialog.');
       
     } catch (error) {
-      console.error('Preview generation error:', error);
+      // // console.error('Preview generation error:', error);
       toast.error('Failed to generate PDF preview');
     }
   };

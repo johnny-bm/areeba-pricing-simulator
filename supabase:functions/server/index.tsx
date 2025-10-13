@@ -81,7 +81,7 @@ const guestRateLimiter = rateLimiter({
   },
   handler: (c) => {
     const ip = getRealIP(c);
-    console.log(`⏱️ Rate limit exceeded for guest submission from IP: ${ip}`);
+    // console.log(`⏱️ Rate limit exceeded for guest submission from IP: ${ip}`);
     return c.json({ 
       error: 'Too many requests. Please try again later.',
       retryAfter: '1 hour',
@@ -109,7 +109,7 @@ const userRateLimiter = rateLimiter({
   handler: (c) => {
     const user = c.get('user');
     const identifier = user?.id || getRealIP(c);
-    console.log(`⏱️ Rate limit exceeded for user: ${identifier}`);
+    // console.log(`⏱️ Rate limit exceeded for user: ${identifier}`);
     return c.json({ 
       error: 'Rate limit exceeded. Please slow down.',
       retryAfter: '1 hour',
@@ -130,7 +130,7 @@ const generalRateLimiter = rateLimiter({
   },
   handler: (c) => {
     const ip = getRealIP(c);
-    console.log(`⏱️ General rate limit exceeded from IP: ${ip}`);
+    // console.log(`⏱️ General rate limit exceeded from IP: ${ip}`);
     return c.json({ 
       error: 'Too many requests from your IP address.',
       retryAfter: '1 hour',
@@ -254,15 +254,15 @@ const sanitizeString = (input: any, maxLength: number = 500): string => {
 app.all('/make-server-228aa219', async (c) => {
   const method = c.req.method;
   const url = c.req.url;
-  console.log('🔧 Server: Root route hit - method:', method, 'url:', url);
+  // console.log('🔧 Server: Root route hit - method:', method, 'url:', url);
   
   let body = null;
   if (method === 'POST' || method === 'PUT') {
     try {
       body = await c.req.json();
-      console.log('🔧 Server: Root route body:', body);
+      // console.log('🔧 Server: Root route body:', body);
     } catch (e) {
-      console.log('🔧 Server: Could not parse body:', e.message);
+      // console.log('🔧 Server: Could not parse body:', e.message);
     }
   }
   
@@ -307,7 +307,7 @@ app.all('/make-server-228aa219', async (c) => {
 
 // Ping endpoint - Ultra lightweight, returns immediately
 app.get('/make-server-228aa219/ping', (c) => {
-  console.log('🏓 Ping received from:', getRealIP(c));
+  // console.log('🏓 Ping received from:', getRealIP(c));
   c.header('Content-Type', 'application/json');
   c.header('Cache-Control', 'no-store, no-cache, must-revalidate');
   c.header('Pragma', 'no-cache');
@@ -317,7 +317,7 @@ app.get('/make-server-228aa219/ping', (c) => {
 // Debug services count endpoint
 app.get('/make-server-228aa219/services-count', async (c) => {
   try {
-    console.log('🔍 Server: Checking services count...');
+    // console.log('🔍 Server: Checking services count...');
     
     const { count: servicesCount, error: servicesError } = await withTimeout(
       supabase.from(DB_TABLES.SERVICES).select('*', { count: 'exact', head: true }),
@@ -350,12 +350,12 @@ app.get('/make-server-228aa219/services-count', async (c) => {
       database_accessible: !servicesError && !categoriesError
     };
     
-    console.log('🔍 Server: Services count result:', result);
+    // console.log('🔍 Server: Services count result:', result);
     
     c.header('Content-Type', 'application/json');
     return c.json(result);
   } catch (error) {
-    console.error('❌ Server: Services count error:', error);
+    // console.error('❌ Server: Services count error:', error);
     c.header('Content-Type', 'application/json');
     return c.json({
       error: 'Failed to check services count',
@@ -434,7 +434,7 @@ app.get('/make-server-228aa219/health-check', async (c) => {
       message: allHealthy ? 'All systems healthy' : 'Some systems need attention'
     });
   } catch (error) {
-    console.error('Health check failed:', error);
+    // console.error('Health check failed:', error);
     c.header('Content-Type', 'application/json');
     return c.json({
       success: false,
@@ -452,7 +452,7 @@ app.all('/make-server-228aa219/debug', async (c) => {
   const url = c.req.url;
   const timestamp = new Date().toISOString();
   
-  console.log(`🔧 Server: Debug endpoint hit - ${method} ${url} at ${timestamp}`);
+  // console.log(`🔧 Server: Debug endpoint hit - ${method} ${url} at ${timestamp}`);
   
   try {
     let body = null;
@@ -477,7 +477,7 @@ app.all('/make-server-228aa219/debug', async (c) => {
       }
     });
   } catch (error) {
-    console.error('❌ Server: Debug endpoint error:', error);
+    // console.error('❌ Server: Debug endpoint error:', error);
     c.header('Content-Type', 'application/json');
     return c.json({
       error: 'Debug endpoint failed',
@@ -490,7 +490,7 @@ app.all('/make-server-228aa219/debug', async (c) => {
 // Schema status debug endpoint - comprehensive database schema verification
 app.get('/make-server-228aa219/schema-status', async (c) => {
   const timestamp = new Date().toISOString();
-  console.log(`🔍 Server: Schema status check initiated at ${timestamp}`);
+  // console.log(`🔍 Server: Schema status check initiated at ${timestamp}`);
   
   try {
     const schemaStatus = {
@@ -520,7 +520,7 @@ app.get('/make-server-228aa219/schema-status', async (c) => {
       
       if (!viewError && viewData !== null) {
         schemaStatus.services_overview_view.exists = true;
-        console.log('✅ services_overview view exists and accessible');
+        // console.log('✅ services_overview view exists and accessible');
         
         // Get sample data from view
         const { data: sampleViewData } = await withTimeout(
@@ -541,7 +541,7 @@ app.get('/make-server-228aa219/schema-status', async (c) => {
       } else {
         schemaStatus.services_overview_view.error = viewError?.message || 'View not found';
         schemaStatus.issues.push('services_overview view is missing - run create_services_overview_view.sql');
-        console.log('❌ services_overview view not found:', viewError?.message);
+        // console.log('❌ services_overview view not found:', viewError?.message);
       }
     } catch (error) {
       schemaStatus.services_overview_view.error = error.message;
@@ -594,11 +594,11 @@ app.get('/make-server-228aa219/schema-status', async (c) => {
             tableStatus.error = `Column check failed: ${columnCheckError.message}`;
           }
           
-          console.log(`✅ ${table.name} table exists with ${count || 0} records`);
+          // console.log(`✅ ${table.name} table exists with ${count || 0} records`);
         } else {
           tableStatus.error = error.message;
           schemaStatus.issues.push(`${table.name} table not accessible: ${error.message}`);
-          console.log(`❌ ${table.name} table error:`, error.message);
+          // console.log(`❌ ${table.name} table error:`, error.message);
         }
       } catch (error) {
         tableStatus.error = error.message;
@@ -624,7 +624,7 @@ app.get('/make-server-228aa219/schema-status', async (c) => {
             has_auto_add_fields: Array.isArray(data.services[0].auto_add_trigger_fields)
           } : null
         };
-        console.log('✅ services-overview endpoint working:', data.source);
+        // console.log('✅ services-overview endpoint working:', data.source);
       } else {
         schemaStatus.issues.push('services-overview endpoint not responding correctly');
       }
@@ -654,14 +654,14 @@ app.get('/make-server-228aa219/schema-status', async (c) => {
       }
     }
 
-    console.log(`🔍 Schema status check completed: ${schemaStatus.overall_status}`);
-    console.log(`Issues found: ${schemaStatus.issues.length}`);
+    // console.log(`🔍 Schema status check completed: ${schemaStatus.overall_status}`);
+    // console.log(`Issues found: ${schemaStatus.issues.length}`);
     
     c.header('Content-Type', 'application/json');
     return c.json(schemaStatus);
     
   } catch (error) {
-    console.error('❌ Server: Schema status check failed:', error);
+    // console.error('❌ Server: Schema status check failed:', error);
     c.header('Content-Type', 'application/json');
     return c.json({
       timestamp,
@@ -677,7 +677,7 @@ app.get('/make-server-228aa219/schema-status', async (c) => {
 // Health check - Always returns 200 immediately to confirm server is running
 // Does NOT check database to avoid timeouts
 app.get('/make-server-228aa219/health', (c) => {
-  console.log('💚 Health check received from:', getRealIP(c));
+  // console.log('💚 Health check received from:', getRealIP(c));
   c.header('Content-Type', 'application/json');
   c.header('Cache-Control', 'no-store, no-cache, must-revalidate');
   c.header('Pragma', 'no-cache');
@@ -694,7 +694,7 @@ app.get('/make-server-228aa219/health', (c) => {
 // Get services with all related data (auto_add_rules, quantity_rules, tags)
 app.get('/make-server-228aa219/services', async (c) => {
   try {
-    console.log('📤 Server: Loading services with related data...');
+    // console.log('📤 Server: Loading services with related data...');
     
     // Fetch services with all relations in a single query
     const { data: dbServices, error: dbError } = await withTimeout(
@@ -710,7 +710,7 @@ app.get('/make-server-228aa219/services', async (c) => {
       20000
     );
     
-    console.log('📤 Server: Services query result:', {
+    // console.log('📤 Server: Services query result:', {
       servicesCount: dbServices?.length || 0,
       hasError: !!dbError,
       errorMessage: dbError?.message || null,
@@ -725,7 +725,7 @@ app.get('/make-server-228aa219/services', async (c) => {
     });
     
     if (dbError) {
-      console.error('❌ Server: Services query failed:', dbError.message);
+      // console.error('❌ Server: Services query failed:', dbError.message);
       return c.json({ 
         items: [], 
         error: 'Database query failed',
@@ -779,7 +779,7 @@ app.get('/make-server-228aa219/services', async (c) => {
             }
           }
         } catch (parseError) {
-          console.warn('Failed to parse configuration_based_quantity for service:', service.id, parseError);
+          // console.warn('Failed to parse configuration_based_quantity for service:', service.id, parseError);
         }
       }
 
@@ -797,7 +797,7 @@ app.get('/make-server-228aa219/services', async (c) => {
             }
           }
         } catch (parseError) {
-          console.warn('Failed to parse auto_add_related_services for service:', service.id, parseError);
+          // console.warn('Failed to parse auto_add_related_services for service:', service.id, parseError);
         }
       }
 
@@ -816,7 +816,7 @@ app.get('/make-server-228aa219/services', async (c) => {
             }
           }
         } catch (parseError) {
-          console.warn('Failed to parse tiered_pricing for service:', service.id, parseError);
+          // console.warn('Failed to parse tiered_pricing for service:', service.id, parseError);
         }
       }
 
@@ -833,10 +833,10 @@ app.get('/make-server-228aa219/services', async (c) => {
       return transformed;
     });
     
-    console.log(`✅ Server: Transformed ${transformedServices.length} services with related data`);
+    // console.log(`✅ Server: Transformed ${transformedServices.length} services with related data`);
     return c.json({ items: transformedServices });
   } catch (error) {
-    console.error('❌ Server: Failed to load services:', error);
+    // console.error('❌ Server: Failed to load services:', error);
     return c.json({ 
       items: [], 
       error: 'Failed to load services',
@@ -848,8 +848,8 @@ app.get('/make-server-228aa219/services', async (c) => {
 // Get services from normalized services_overview view (NEW)
 app.get('/make-server-228aa219/services-overview', async (c) => {
   try {
-    console.log('🚀 Server: Loading services from services_overview view...');
-    console.log('🔍 Server: Current timestamp:', new Date().toISOString());
+    // console.log('🚀 Server: Loading services from services_overview view...');
+    // console.log('🔍 Server: Current timestamp:', new Date().toISOString());
     
     // First, try to query the services_overview view
     const { data: viewServices, error: viewError } = await withTimeout(
@@ -859,7 +859,7 @@ app.get('/make-server-228aa219/services-overview', async (c) => {
     
     if (viewError) {
       // If view doesn't exist, create a fallback query that mimics the view structure
-      console.log('⚠️ services_overview view not found, creating fallback query...');
+      // console.log('⚠️ services_overview view not found, creating fallback query...');
       
       const { data: services, error: serviceError } = await withTimeout(
         supabase
@@ -895,7 +895,7 @@ app.get('/make-server-228aa219/services-overview', async (c) => {
         created_at: service.created_at
       }));
       
-      console.log('✅ Server: Successfully loaded services using fallback query:', {
+      // console.log('✅ Server: Successfully loaded services using fallback query:', {
         servicesCount: transformedServices.length,
         usedFallback: true
       });
@@ -907,7 +907,7 @@ app.get('/make-server-228aa219/services-overview', async (c) => {
       });
     }
     
-    console.log('✅ Server: Successfully loaded services from services_overview view:', {
+    // console.log('✅ Server: Successfully loaded services from services_overview view:', {
       servicesCount: viewServices?.length || 0,
       usedView: true,
       sampleService: viewServices?.[0] ? {
@@ -926,7 +926,7 @@ app.get('/make-server-228aa219/services-overview', async (c) => {
     });
     
   } catch (error) {
-    console.error('❌ Server: Failed to load services overview:', error);
+    // console.error('❌ Server: Failed to load services overview:', error);
     return c.json({
       services: [],
       error: 'Failed to load services overview',
@@ -941,11 +941,11 @@ app.get('/make-server-228aa219/services-overview', async (c) => {
 // Save services (with input sanitization)
 app.post('/make-server-228aa219/services', async (c) => {
   try {
-    console.log('💾 Server: Saving services...');
+    // console.log('💾 Server: Saving services...');
     const requestData = await c.req.json();
     const { items } = requestData;
 
-    console.log('💾 Server: Received service save request:', {
+    // console.log('💾 Server: Received service save request:', {
       itemsCount: Array.isArray(items) ? items.length : 'not array',
       hasItems: !!items,
       itemsType: typeof items,
@@ -960,7 +960,7 @@ app.post('/make-server-228aa219/services', async (c) => {
     });
 
     if (!Array.isArray(items)) {
-      console.error('❌ Server: Invalid items format - must be array');
+      // console.error('❌ Server: Invalid items format - must be array');
       return c.json({ error: 'Invalid input: items must be an array' }, 400);
     }
 
@@ -981,38 +981,38 @@ app.post('/make-server-228aa219/services', async (c) => {
       auto_add_trigger_fields: item.auto_add_trigger_fields ? sanitizeObject(item.auto_add_trigger_fields) : null,
     }));
 
-    console.log('🧹 Input sanitization completed for', sanitizedItems.length, 'services');
+    // console.log('🧹 Input sanitization completed for', sanitizedItems.length, 'services');
 
     if (sanitizedItems.length === 0) {
-      console.log('📋 Server: No items to save, clearing all services');
+      // console.log('📋 Server: No items to save, clearing all services');
     } else {
-      console.log('📋 Server: Will save', sanitizedItems.length, 'service(s)');
+      // console.log('📋 Server: Will save', sanitizedItems.length, 'service(s)');
     }
 
     // Delete existing services
-    console.log('🗑️ Server: Clearing existing services...');
+    // console.log('🗑️ Server: Clearing existing services...');
     const { error: deleteError } = await withTimeout(
       supabase.from(DB_TABLES.SERVICES).delete().neq(DB_COLUMNS.SERVICES.ID, ''),
       15000
     );
 
     if (deleteError) {
-      console.error('❌ Server: Failed to clear existing services:', deleteError.message);
+      // console.error('❌ Server: Failed to clear existing services:', deleteError.message);
       return c.json({ error: 'Failed to clear existing services', details: deleteError.message }, 500);
     }
-    console.log('✅ Server: Existing services cleared successfully');
+    // console.log('✅ Server: Existing services cleared successfully');
 
     // Insert new services if any
     if (sanitizedItems.length > 0) {
       // Validate categories before attempting insert
-      console.log('🔍 Server: Validating categories before insert...');
+      // console.log('🔍 Server: Validating categories before insert...');
       const { data: existingCategories, error: catError } = await withTimeout(
         supabase.from(DB_TABLES.CATEGORIES).select(DB_COLUMNS.CATEGORIES.ID),
         10000
       );
 
       if (catError) {
-        console.error('❌ Server: Failed to load categories for validation:', catError.message);
+        // console.error('❌ Server: Failed to load categories for validation:', catError.message);
         return c.json({ 
           error: 'Failed to validate categories', 
           details: catError.message 
@@ -1020,7 +1020,7 @@ app.post('/make-server-228aa219/services', async (c) => {
       }
 
       const validCategoryIds = new Set((existingCategories || []).map(cat => cat.id));
-      console.log('✅ Server: Found', validCategoryIds.size, 'valid categories:', Array.from(validCategoryIds));
+      // console.log('✅ Server: Found', validCategoryIds.size, 'valid categories:', Array.from(validCategoryIds));
 
       // Check for invalid categories
       const invalidServices = [];
@@ -1039,7 +1039,7 @@ app.post('/make-server-228aa219/services', async (c) => {
       }
 
       if (invalidServices.length > 0) {
-        console.error('❌ Server: Invalid categories detected:', invalidServices);
+        // console.error('❌ Server: Invalid categories detected:', invalidServices);
         return c.json({ 
           error: 'Invalid categories detected', 
           details: `${invalidServices.length} service(s) have invalid categories`,
@@ -1048,7 +1048,7 @@ app.post('/make-server-228aa219/services', async (c) => {
         }, 400);
       }
 
-      console.log('✅ Server: All service categories validated successfully');
+      // console.log('✅ Server: All service categories validated successfully');
 
       // Clean and map fields for basic database schema (core fields only)
       // NOTE: auto_add_trigger_fields and quantity_source_fields are stored in junction tables,
@@ -1079,7 +1079,7 @@ app.post('/make-server-228aa219/services', async (c) => {
                               quantitySourceFields || 
                               [];
         
-        console.log(`📝 Server: Preparing service "${item.name}" for save:`, {
+        // console.log(`📝 Server: Preparing service "${item.name}" for save:`, {
           autoAddFields: autoAddFields,
           quantityFields: quantityFields,
           hasAutoAdd: autoAddFields.length > 0,
@@ -1107,7 +1107,7 @@ app.post('/make-server-228aa219/services', async (c) => {
         return mappedItem;
       });
 
-      console.log('💾 Server: Inserting services with core fields only...', {
+      // console.log('💾 Server: Inserting services with core fields only...', {
         itemsToInsert: cleanedItems.length,
         sampleItem: cleanedItems[0] ? {
           id: cleanedItems[0].id,
@@ -1123,12 +1123,12 @@ app.post('/make-server-228aa219/services', async (c) => {
       );
 
       if (insertError) {
-        console.error('❌ Server: Service insertion failed:', insertError.message);
-        console.error('❌ Server: Failed items sample:', cleanedItems.slice(0, 2));
+        // console.error('❌ Server: Service insertion failed:', insertError.message);
+        // console.error('❌ Server: Failed items sample:', cleanedItems.slice(0, 2));
         
         // Enhanced fallback - try with even more minimal fields
         if (insertError.message.includes('column') || insertError.message.includes('schema cache')) {
-          console.log('🔄 Attempting minimal field save fallback...');
+          // console.log('🔄 Attempting minimal field save fallback...');
           
           const minimalItems = items.map(item => ({
             id: item.id,
@@ -1149,7 +1149,7 @@ app.post('/make-server-228aa219/services', async (c) => {
             return c.json({ error: 'Failed to save services', details: fallbackError.message }, 500);
           }
           
-          console.log('✅ Server: Services saved successfully using minimal field fallback');
+          // console.log('✅ Server: Services saved successfully using minimal field fallback');
           return c.json({ 
             success: true, 
             message: 'Services saved successfully (auto-add functionality works via application state)' 
@@ -1159,10 +1159,10 @@ app.post('/make-server-228aa219/services', async (c) => {
         return c.json({ error: 'Failed to save services', details: insertError.message }, 500);
       }
       
-      console.log('✅ Server: Services saved successfully');
+      // console.log('✅ Server: Services saved successfully');
       
       // Now save auto-add rules, quantity rules, and tags to junction tables
-      console.log('📋 Server: Saving auto-add rules, quantity rules, and tags...');
+      // console.log('📋 Server: Saving auto-add rules, quantity rules, and tags...');
       
       for (const item of items) {
         const serviceId = item.id;
@@ -1188,9 +1188,9 @@ app.post('/make-server-228aa219/services', async (c) => {
             .insert(autoAddRules);
           
           if (autoAddError) {
-            console.warn(`⚠️ Server: Failed to save auto-add rules for service ${serviceId}:`, autoAddError.message);
+            // console.warn(`⚠️ Server: Failed to save auto-add rules for service ${serviceId}:`, autoAddError.message);
           } else {
-            console.log(`✅ Server: Saved ${autoAddRules.length} auto-add rules for service ${serviceId}`);
+            // console.log(`✅ Server: Saved ${autoAddRules.length} auto-add rules for service ${serviceId}`);
           }
         } else {
           // Delete auto-add rules if none specified
@@ -1222,9 +1222,9 @@ app.post('/make-server-228aa219/services', async (c) => {
             .insert(quantityRules);
           
           if (quantityError) {
-            console.warn(`⚠️ Server: Failed to save quantity rules for service ${serviceId}:`, quantityError.message);
+            // console.warn(`⚠️ Server: Failed to save quantity rules for service ${serviceId}:`, quantityError.message);
           } else {
-            console.log(`✅ Server: Saved ${quantityRules.length} quantity rules for service ${serviceId}`);
+            // console.log(`✅ Server: Saved ${quantityRules.length} quantity rules for service ${serviceId}`);
           }
         } else {
           // Delete quantity rules if none specified
@@ -1283,9 +1283,9 @@ app.post('/make-server-228aa219/services', async (c) => {
               .insert(serviceTags);
             
             if (tagError) {
-              console.warn(`⚠️ Server: Failed to save tags for service ${serviceId}:`, tagError.message);
+              // console.warn(`⚠️ Server: Failed to save tags for service ${serviceId}:`, tagError.message);
             } else {
-              console.log(`✅ Server: Saved ${serviceTags.length} tags for service ${serviceId}`);
+              // console.log(`✅ Server: Saved ${serviceTags.length} tags for service ${serviceId}`);
             }
           }
         } else {
@@ -1297,18 +1297,18 @@ app.post('/make-server-228aa219/services', async (c) => {
         }
       }
       
-      console.log('✅ Server: All junction table data saved successfully');
-      console.log('📊 Server: Verification - services with auto-add:', 
+      // console.log('✅ Server: All junction table data saved successfully');
+      // console.log('📊 Server: Verification - services with auto-add:', 
         cleanedItems.filter(item => item.auto_add_trigger_fields && item.auto_add_trigger_fields.length > 0).length
       );
-      console.log('📊 Server: Verification - services with quantity rules:', 
+      // console.log('📊 Server: Verification - services with quantity rules:', 
         cleanedItems.filter(item => item.quantity_source_fields && item.quantity_source_fields.length > 0).length
       );
     }
 
     // Auto-add and quantity rules are handled in application state, not in database
-    console.log('💡 Server: Auto-add functionality is handled by application state');
-    console.log('💡 Server: Services saved successfully - auto-add rules will be managed by the frontend');
+    // console.log('💡 Server: Auto-add functionality is handled by application state');
+    // console.log('💡 Server: Services saved successfully - auto-add rules will be managed by the frontend');
 
     return c.json({ success: true });
   } catch (error) {
@@ -1427,7 +1427,7 @@ app.post('/make-server-228aa219/categories', async (c) => {
 
         // Warn about categories that couldn't be deleted
         if (stillReferencedIds.length > 0) {
-          console.warn('Cannot delete categories still referenced by services:', stillReferencedIds);
+          // console.warn('Cannot delete categories still referenced by services:', stillReferencedIds);
         }
       } else {
         // Safe to delete all categories marked for deletion
@@ -1462,7 +1462,7 @@ app.post('/make-server-228aa219/categories', async (c) => {
       );
 
       if (updateError) {
-        console.warn('Failed to update category:', category.id, updateError.message);
+        // console.warn('Failed to update category:', category.id, updateError.message);
         // Continue with other updates rather than failing completely
       }
     }
@@ -1502,7 +1502,7 @@ app.get('/make-server-228aa219/configurations', async (c) => {
     }
 
     // Fallback to KV store if table doesn't exist or is empty
-    console.log('Falling back to KV store for configurations');
+    // console.log('Falling back to KV store for configurations');
     const configurations = await kv.get(KV_KEYS.CONFIGURATIONS);
     return c.json({ configurations: configurations || [] });
   } catch (error) {
@@ -1558,7 +1558,7 @@ app.post('/make-server-228aa219/configurations', async (c) => {
 
       return c.json({ success: true, method: 'database' });
     } catch (dbError) {
-      console.log('Database save failed, using KV store fallback:', dbError.message);
+      // console.log('Database save failed, using KV store fallback:', dbError.message);
       
       // Fallback to KV store
       await kv.set(KV_KEYS.CONFIGURATIONS, configurations);
@@ -1591,16 +1591,16 @@ app.get('/make-server-228aa219/tags', async (c) => {
         updatedAt: tag.updated_at
       }));
       
-      console.log(`Loaded ${tags.length} tags from database`);
+      // console.log(`Loaded ${tags.length} tags from database`);
       return c.json({ tags });
     }
 
     if (tagError) {
-      console.log('Tags table query error:', tagError.message);
+      // console.log('Tags table query error:', tagError.message);
     }
 
     // Fallback: extract tags from services in KV store and calculate usage
-    console.log('Extracting tags from services in KV store');
+    // console.log('Extracting tags from services in KV store');
     const services = await kv.get(KV_KEYS.SERVICES) || [];
     const tagUsage = new Map();
     
@@ -1671,7 +1671,7 @@ app.post('/make-server-228aa219/tags', async (c) => {
         if (insertError) {
           // If insert fails due to missing usage_count column, try without it
           if (insertError.message.includes('usage_count')) {
-            console.log('🔄 Retrying tag save without usage_count column...');
+            // console.log('🔄 Retrying tag save without usage_count column...');
             
             const basicDbTags = dbTags.map(tag => {
               const { usage_count, ...basicTag } = tag;
@@ -1687,18 +1687,18 @@ app.post('/make-server-228aa219/tags', async (c) => {
               throw basicInsertError;
             }
             
-            console.log('✅ Tags saved without usage_count column');
+            // console.log('✅ Tags saved without usage_count column');
           } else {
             throw insertError;
           }
         } else {
-          console.log('✅ Tags saved with all columns including usage_count');
+          // console.log('✅ Tags saved with all columns including usage_count');
         }
       }
 
       return c.json({ success: true, method: 'database' });
     } catch (dbError) {
-      console.log('Database save failed for tags:', dbError.message);
+      // console.log('Database save failed for tags:', dbError.message);
       return c.json({ error: 'Failed to save tags to database', details: dbError.message }, 500);
     }
   } catch (error) {
@@ -1709,26 +1709,26 @@ app.post('/make-server-228aa219/tags', async (c) => {
 // Save session data
 app.post('/make-server-228aa219/saveSessionData', async (c) => {
   try {
-    console.log('🚀 Server: Save session data request received');
+    // console.log('🚀 Server: Save session data request received');
     const body = await c.req.json();
-    console.log('🚀 Server: Request body:', { keyPresent: !!body.key, dataType: typeof body.data });
+    // console.log('🚀 Server: Request body:', { keyPresent: !!body.key, dataType: typeof body.data });
     
     const { key, data } = body;
     
     if (!key || typeof key !== 'string') {
-      console.log('❌ Server: Invalid key provided:', key);
+      // console.log('❌ Server: Invalid key provided:', key);
       c.header('Content-Type', 'application/json');
       return c.json({ error: 'Invalid key provided' }, 400);
     }
     
-    console.log('🚀 Server: Saving to KV store with key:', key.substring(0, 20) + '...');
+    // console.log('🚀 Server: Saving to KV store with key:', key.substring(0, 20) + '...');
     await kv.set(key, data);
-    console.log('✅ Server: Session data saved successfully');
+    // console.log('✅ Server: Session data saved successfully');
     
     c.header('Content-Type', 'application/json');
     return c.json({ success: true });
   } catch (error) {
-    console.error('❌ Server: Save session data error:', error);
+    // console.error('❌ Server: Save session data error:', error);
     c.header('Content-Type', 'application/json');
     return c.json({ 
       error: 'Failed to save session data', 
@@ -1760,26 +1760,26 @@ app.get('/make-server-228aa219/loadSessionData', async (c) => {
 // Delete session data
 app.post('/make-server-228aa219/deleteSessionData', async (c) => {
   try {
-    console.log('🚀 Server: Delete session data request received');
+    // console.log('🚀 Server: Delete session data request received');
     const body = await c.req.json();
-    console.log('🚀 Server: Request body:', { keyPresent: !!body.key });
+    // console.log('🚀 Server: Request body:', { keyPresent: !!body.key });
     
     const { key } = body;
     
     if (!key || typeof key !== 'string') {
-      console.log('❌ Server: Invalid key provided:', key);
+      // console.log('❌ Server: Invalid key provided:', key);
       c.header('Content-Type', 'application/json');
       return c.json({ error: 'Invalid key provided' }, 400);
     }
     
-    console.log('🚀 Server: Deleting from KV store with key:', key.substring(0, 20) + '...');
+    // console.log('🚀 Server: Deleting from KV store with key:', key.substring(0, 20) + '...');
     await kv.del(key);
-    console.log('✅ Server: Session data deleted successfully');
+    // console.log('✅ Server: Session data deleted successfully');
     
     c.header('Content-Type', 'application/json');
     return c.json({ success: true });
   } catch (error) {
-    console.error('❌ Server: Delete session data error:', error);
+    // console.error('❌ Server: Delete session data error:', error);
     c.header('Content-Type', 'application/json');
     return c.json({ 
       error: 'Failed to delete session data', 
@@ -1800,7 +1800,7 @@ app.post('/make-server-228aa219/admin/login', async (c) => {
     }
     
     if (password !== adminPassword) {
-      console.log('❌ Server: Invalid password provided');
+      // console.log('❌ Server: Invalid password provided');
       return c.json({ error: 'Invalid password' }, 401);
     }
     
@@ -1813,13 +1813,13 @@ app.post('/make-server-228aa219/admin/login', async (c) => {
       expiresAt: expiresAt.toISOString()
     };
     
-    console.log('✅ Server: Creating admin session:', sessionKey);
+    // console.log('✅ Server: Creating admin session:', sessionKey);
     await kv.set(sessionKey, sessionData);
-    console.log('✅ Server: Session created successfully');
+    // console.log('✅ Server: Session created successfully');
     
     // 🔧 CRITICAL DEBUG: Immediately verify the session was saved
     const verifySession = await kv.get(sessionKey);
-    console.log('🔧 Server: Session verification after creation:', {
+    // console.log('🔧 Server: Session verification after creation:', {
       sessionKey,
       sessionExists: !!verifySession,
       sessionData: verifySession
@@ -1878,28 +1878,28 @@ app.post('/make-server-228aa219/admin/check-session', async (c) => {
 app.get('/make-server-228aa219/admin/session/:token', async (c) => {
   try {
     const token = c.req.param('token');
-    console.log('🔧 Server: Session check for token:', token ? `${token.substring(0, 8)}...` : 'NULL');
+    // console.log('🔧 Server: Session check for token:', token ? `${token.substring(0, 8)}...` : 'NULL');
     
     const session = await kv.get(`areeba_admin_session_${token}`);
-    console.log('🔧 Server: Session found:', !!session);
+    // console.log('🔧 Server: Session found:', !!session);
     
     if (!session) {
-      console.log('❌ Server: Session not found');
+      // console.log('❌ Server: Session not found');
       return c.json({ valid: false }, 404);
     }
     
     // Check if session is expired using proper ISO date
     const expiresAt = new Date(session.expiresAt);
     if (expiresAt < new Date()) {
-      console.log('❌ Server: Session is expired');
+      // console.log('❌ Server: Session is expired');
       await kv.del(`areeba_admin_session_${token}`);
       return c.json({ valid: false }, 404);
     }
     
-    console.log('✅ Server: Session is valid');
+    // console.log('✅ Server: Session is valid');
     return c.json({ valid: true });
   } catch (error) {
-    console.log('❌ Server: Session check error:', error);
+    // console.log('❌ Server: Session check error:', error);
     return c.json({ valid: false }, 500);
   }
 });
@@ -1979,16 +1979,16 @@ app.get('/make-server-228aa219/test-columns', async (c) => {
 // Database schema management endpoint
 app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
   try {
-    console.log('🔧 Server: Received add-service-columns request');
-    console.log('🔧 Server: Request headers:', Object.fromEntries(c.req.headers.entries()));
+    // console.log('🔧 Server: Received add-service-columns request');
+    // console.log('🔧 Server: Request headers:', Object.fromEntries(c.req.headers.entries()));
     
     const authHeader = c.req.header('Authorization');
-    console.log('🔧 Server: Auth header present:', !!authHeader);
-    console.log('🔧 Server: Auth header value:', authHeader ? `${authHeader.substring(0, 20)}...` : 'NULL');
+    // console.log('🔧 Server: Auth header present:', !!authHeader);
+    // console.log('🔧 Server: Auth header value:', authHeader ? `${authHeader.substring(0, 20)}...` : 'NULL');
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('❌ Server: Missing or invalid authorization header');
-      console.log('🔍 Server: All request headers for debugging:', {
+      // console.log('❌ Server: Missing or invalid authorization header');
+      // console.log('🔍 Server: All request headers for debugging:', {
         authorization: c.req.header('Authorization'),
         contentType: c.req.header('Content-Type'),
         userAgent: c.req.header('User-Agent'),
@@ -1997,7 +1997,7 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
       
       // Check if there are any admin sessions in the KV store
       const allSessions = await kv.getByPrefix('areeba_admin_session_');
-      console.log('🔧 Server: Total admin sessions in KV store:', allSessions.length);
+      // console.log('🔧 Server: Total admin sessions in KV store:', allSessions.length);
       
       return c.json({ 
         error: 'Missing or invalid authorization header',
@@ -2010,24 +2010,24 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
     }
     
     const token = authHeader.substring(7);
-    console.log('���� Server: Extracted token:', token ? `${token.substring(0, 8)}...` : 'NULL');
-    console.log('🔧 Server: Token length:', token?.length || 0);
-    console.log('🔧 Server: Token type:', typeof token);
+    // console.log('���� Server: Extracted token:', token ? `${token.substring(0, 8)}...` : 'NULL');
+    // console.log('🔧 Server: Token length:', token?.length || 0);
+    // console.log('🔧 Server: Token type:', typeof token);
     
     const sessionKey = `areeba_admin_session_${token}`;
-    console.log('🔧 Server: Looking for session with key:', sessionKey);
+    // console.log('🔧 Server: Looking for session with key:', sessionKey);
     
     const session = await kv.get(sessionKey);
-    console.log('🔧 Server: Session found:', !!session);
-    console.log('🔧 Server: Session data:', session);
+    // console.log('🔧 Server: Session found:', !!session);
+    // console.log('🔧 Server: Session data:', session);
     
     if (!session) {
-      console.log('❌ Server: Session not found in KV store');
+      // console.log('❌ Server: Session not found in KV store');
       
       // Debug: Check what sessions actually exist
       const allSessions = await kv.getByPrefix('areeba_admin_session_');
-      console.log('���� Server: Total admin sessions in KV store:', allSessions.length);
-      console.log('🔧 Server: Session keys in KV store:', allSessions.map(s => s.key || 'no-key').slice(0, 5));
+      // console.log('���� Server: Total admin sessions in KV store:', allSessions.length);
+      // console.log('🔧 Server: Session keys in KV store:', allSessions.map(s => s.key || 'no-key').slice(0, 5));
       
       return c.json({ 
         error: 'Session not found',
@@ -2042,7 +2042,7 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
     }
     
     if (!session.valid) {
-      console.log('❌ Server: Session exists but marked invalid');
+      // console.log('❌ Server: Session exists but marked invalid');
       return c.json({ 
         error: 'Session marked invalid',
         debug: {
@@ -2055,7 +2055,7 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
     // Check session age
     const sessionAge = Date.now() - session.created;
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-    console.log('🔧 Server: Session age check:', {
+    // console.log('🔧 Server: Session age check:', {
       sessionAge,
       maxAge,
       expired: sessionAge > maxAge,
@@ -2063,7 +2063,7 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
     });
     
     if (sessionAge > maxAge) {
-      console.log('❌ Server: Session expired, deleting');
+      // console.log('❌ Server: Session expired, deleting');
       await kv.del(sessionKey);
       return c.json({ 
         error: 'Session expired',
@@ -2075,9 +2075,9 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
       }, 401);
     }
     
-    console.log('✅ Server: Session validation passed, proceeding with column addition');
+    // console.log('✅ Server: Session validation passed, proceeding with column addition');
 
-    console.log('🔧 Admin requesting to add service columns...');
+    // console.log('🔧 Admin requesting to add service columns...');
     
     // Check if columns already exist
     const { error: checkError } = await withTimeout(
@@ -2119,7 +2119,7 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
       );
 
       if (alterError1 || alterError2) {
-        console.warn('RPC SQL execution failed:', { alterError1, alterError2 });
+        // console.warn('RPC SQL execution failed:', { alterError1, alterError2 });
         
         // Fallback: Try using Supabase's built-in schema modification (if available)
         return c.json({
@@ -2149,7 +2149,7 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
         }, 500);
       }
 
-      console.log('✅ Successfully added service columns');
+      // console.log('✅ Successfully added service columns');
       return c.json({ 
         success: true, 
         message: 'Successfully added new columns to services table',
@@ -2157,7 +2157,7 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
       });
 
     } catch (sqlError) {
-      console.error('SQL execution error:', sqlError);
+      // console.error('SQL execution error:', sqlError);
       return c.json({
         success: false,
         error: 'Failed to execute SQL commands',
@@ -2172,7 +2172,7 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
     }
 
   } catch (error) {
-    console.error('Add columns endpoint error:', error);
+    // console.error('Add columns endpoint error:', error);
     return c.json({ 
       error: 'Failed to add service columns', 
       details: error.message 
@@ -2184,23 +2184,23 @@ app.post('/make-server-228aa219/admin/add-service-columns', async (c) => {
 app.post('/make-server-228aa219/admin/debug-session', async (c) => {
   try {
     const { token } = await c.req.json();
-    console.log('🔧 Debug: Inspecting session for token:', token ? `${token.substring(0, 8)}...` : 'NULL');
+    // console.log('🔧 Debug: Inspecting session for token:', token ? `${token.substring(0, 8)}...` : 'NULL');
     
     if (!token) {
       return c.json({ error: 'No token provided' }, 400);
     }
     
     const sessionKey = `areeba_admin_session_${token}`;
-    console.log('🔧 Debug: Looking up session key:', sessionKey);
+    // console.log('🔧 Debug: Looking up session key:', sessionKey);
     
     const session = await kv.get(sessionKey);
-    console.log('🔧 Debug: Session found:', !!session);
-    console.log('🔧 Debug: Session data:', session);
+    // console.log('🔧 Debug: Session found:', !!session);
+    // console.log('🔧 Debug: Session data:', session);
     
     // Also get all admin sessions to see what's in the KV store
     const allAdminSessions = await kv.getByPrefix('areeba_admin_session_');
-    console.log('🔧 Debug: All admin sessions count:', allAdminSessions.length);
-    console.log('🔧 Debug: All admin session keys:', allAdminSessions.map(s => s.key || 'no-key'));
+    // console.log('🔧 Debug: All admin sessions count:', allAdminSessions.length);
+    // console.log('🔧 Debug: All admin session keys:', allAdminSessions.map(s => s.key || 'no-key'));
     
     return c.json({
       sessionKey,
@@ -2212,7 +2212,7 @@ app.post('/make-server-228aa219/admin/debug-session', async (c) => {
       tokenLength: token?.length || 0
     });
   } catch (error) {
-    console.error('Debug session endpoint error:', error);
+    // console.error('Debug session endpoint error:', error);
     return c.json({ 
       error: 'Debug session failed', 
       details: error.message 
@@ -2223,11 +2223,11 @@ app.post('/make-server-228aa219/admin/debug-session', async (c) => {
 // Session cleanup endpoint - removes expired sessions
 app.post('/make-server-228aa219/admin/cleanup-sessions', async (c) => {
   try {
-    console.log('🧹 Server: Starting session cleanup...');
+    // console.log('🧹 Server: Starting session cleanup...');
     
     // Get all sessions
     const allSessions = await kv.getByPrefix('areeba_admin_session_');
-    console.log('🧹 Server: Found', allSessions.length, 'total sessions');
+    // console.log('🧹 Server: Found', allSessions.length, 'total sessions');
     
     let expiredCount = 0;
     let oldFormatCount = 0;
@@ -2258,7 +2258,7 @@ app.post('/make-server-228aa219/admin/cleanup-sessions', async (c) => {
       }
     }
     
-    console.log('🧹 Server: Cleanup complete. Removed:', expiredCount, 'expired,', oldFormatCount, 'old format');
+    // console.log('🧹 Server: Cleanup complete. Removed:', expiredCount, 'expired,', oldFormatCount, 'old format');
     
     return c.json({
       success: true,
@@ -2269,7 +2269,7 @@ app.post('/make-server-228aa219/admin/cleanup-sessions', async (c) => {
     });
     
   } catch (error) {
-    console.error('❌ Server: Session cleanup failed:', error);
+    // console.error('❌ Server: Session cleanup failed:', error);
     return c.json({ error: 'Session cleanup failed' }, 500);
   }
 });
@@ -2278,19 +2278,19 @@ app.post('/make-server-228aa219/admin/cleanup-sessions', async (c) => {
 app.get('/make-server-228aa219/admin/debug-session-check/:token', async (c) => {
   try {
     const token = c.req.param('token');
-    console.log('🔧 Debug Session Check: Token received:', token ? `${token.substring(0, 8)}...` : 'NULL');
+    // console.log('🔧 Debug Session Check: Token received:', token ? `${token.substring(0, 8)}...` : 'NULL');
     
     const sessionKey = `areeba_admin_session_${token}`;
-    console.log('🔧 Debug Session Check: Session key:', sessionKey);
+    // console.log('🔧 Debug Session Check: Session key:', sessionKey);
     
     const session = await kv.get(sessionKey);
-    console.log('🔧 Debug Session Check: Session exists:', !!session);
-    console.log('🔧 Debug Session Check: Session data:', session);
+    // console.log('🔧 Debug Session Check: Session exists:', !!session);
+    // console.log('🔧 Debug Session Check: Session data:', session);
     
     if (!session) {
       // Check if there are any admin sessions at all
       const allSessions = await kv.getByPrefix('areeba_admin_session_');
-      console.log('🔧 Debug Session Check: Total admin sessions in KV:', allSessions.length);
+      // console.log('🔧 Debug Session Check: Total admin sessions in KV:', allSessions.length);
       
       return c.json({ 
         valid: false, 
@@ -2302,7 +2302,7 @@ app.get('/make-server-228aa219/admin/debug-session-check/:token', async (c) => {
     }
     
     if (!session.valid) {
-      console.log('🔧 Debug Session Check: Session exists but marked invalid');
+      // console.log('🔧 Debug Session Check: Session exists but marked invalid');
       return c.json({ 
         valid: false, 
         error: 'Session marked invalid',
@@ -2313,12 +2313,12 @@ app.get('/make-server-228aa219/admin/debug-session-check/:token', async (c) => {
     // Check session age
     const sessionAge = Date.now() - session.created;
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-    console.log('🔧 Debug Session Check: Session age (ms):', sessionAge);
-    console.log('🔧 Debug Session Check: Max age (ms):', maxAge);
-    console.log('🔧 Debug Session Check: Session expired:', sessionAge > maxAge);
+    // console.log('🔧 Debug Session Check: Session age (ms):', sessionAge);
+    // console.log('🔧 Debug Session Check: Max age (ms):', maxAge);
+    // console.log('🔧 Debug Session Check: Session expired:', sessionAge > maxAge);
     
     if (sessionAge > maxAge) {
-      console.log('🔧 Debug Session Check: Session expired, deleting');
+      // console.log('🔧 Debug Session Check: Session expired, deleting');
       await kv.del(sessionKey);
       return c.json({ 
         valid: false, 
@@ -2328,14 +2328,14 @@ app.get('/make-server-228aa219/admin/debug-session-check/:token', async (c) => {
       }, 401);
     }
     
-    console.log('✅ Debug Session Check: Session is valid');
+    // console.log('✅ Debug Session Check: Session is valid');
     return c.json({ 
       valid: true,
       sessionAge,
       sessionData: session 
     });
   } catch (error) {
-    console.error('Debug session check error:', error);
+    // console.error('Debug session check error:', error);
     return c.json({ 
       valid: false, 
       error: 'Debug session check failed',
@@ -2347,7 +2347,7 @@ app.get('/make-server-228aa219/admin/debug-session-check/:token', async (c) => {
 // Database analysis endpoint for health checking
 app.post('/make-server-228aa219/debug/database-analysis', async (c) => {
   try {
-    console.log('🔍 Starting database health analysis...');
+    // console.log('🔍 Starting database health analysis...');
     
     const analysis = {
       timestamp: new Date().toISOString(),
@@ -2426,11 +2426,11 @@ app.post('/make-server-228aa219/debug/database-analysis', async (c) => {
     // Update summary
     analysis.summary = `Found ${analysis.issues.length} issues, ${analysis.foreignKeyIssues} foreign key problems`;
     
-    console.log('✅ Database analysis complete:', analysis);
+    // console.log('✅ Database analysis complete:', analysis);
     return c.json(analysis);
     
   } catch (error) {
-    console.error('Database analysis failed:', error);
+    // console.error('Database analysis failed:', error);
     return c.json({
       timestamp: new Date().toISOString(),
       error: 'Database analysis failed',
@@ -2446,7 +2446,7 @@ app.post('/make-server-228aa219/debug/database-analysis', async (c) => {
 // Sync tag usage counts from services to database
 app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
   try {
-    console.log('🔄 Syncing tag usage counts and service mappings from services to database...');
+    // console.log('🔄 Syncing tag usage counts and service mappings from services to database...');
     
     // First, ensure the required columns exist in the tags table
     try {
@@ -2456,7 +2456,7 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
       );
       
       if (checkColumnError && checkColumnError.message.includes('column')) {
-        console.log('🔧 Adding missing columns to tags table...');
+        // console.log('🔧 Adding missing columns to tags table...');
         
         // Add the required columns
         const { error: alterError1 } = await withTimeout(
@@ -2474,13 +2474,13 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
         );
         
         if (alterError1 || alterError2) {
-          console.warn('Could not add required columns via RPC');
+          // console.warn('Could not add required columns via RPC');
         } else {
-          console.log('✅ Successfully added required columns to tags table');
+          // console.log('✅ Successfully added required columns to tags table');
         }
       }
     } catch (columnError) {
-      console.warn('Column check failed, proceeding anyway:', columnError.message);
+      // console.warn('Column check failed, proceeding anyway:', columnError.message);
     }
 
     
@@ -2494,7 +2494,7 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
       throw new Error(`Failed to fetch services: ${servicesError.message}`);
     }
     
-    console.log(`📋 Found ${services?.length || 0} services in database`);
+    // console.log(`📋 Found ${services?.length || 0} services in database`);
     
     // Calculate real tag usage and service mappings from service_tags junction table
     const tagUsage = new Map<string, { count: number; serviceIds: string[] }>();
@@ -2512,7 +2512,7 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
       );
       
       if (serviceTagsError) {
-        console.log('⚠️ service_tags table not available, skipping tag usage calculation');
+        // console.log('⚠️ service_tags table not available, skipping tag usage calculation');
       } else if (serviceTags) {
         serviceTags.forEach(serviceTag => {
           if (serviceTag.tags && serviceTag.tags.name) {
@@ -2529,10 +2529,10 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
         });
       }
     } catch (junctionError) {
-      console.log('⚠️ Could not calculate tag usage from service_tags table:', junctionError.message);
+      // console.log('⚠️ Could not calculate tag usage from service_tags table:', junctionError.message);
     }
     
-    console.log('📊 Real tag usage calculated:', Object.fromEntries(
+    // console.log('📊 Real tag usage calculated:', Object.fromEntries(
       Array.from(tagUsage.entries()).map(([name, data]) => [name, { count: data.count, services: data.serviceIds }])
     ));
     
@@ -2548,7 +2548,7 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
       throw new Error(`Failed to fetch tags: ${fetchError.message}`);
     }
     
-    console.log(`🏷️ Found ${currentTags?.length || 0} tags in database`);
+    // console.log(`🏷️ Found ${currentTags?.length || 0} tags in database`);
     
     // Create missing tags from service tags
     const existingTagNames = new Set(currentTags?.map(tag => tag.name) || []);
@@ -2588,7 +2588,7 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
         missingTags.push(newTag);
         existingTagIds.add(uniqueId); // Track this ID to prevent duplicates in this batch
         
-        console.log(`🏷️ Preparing new tag: "${tagName}" -> ID: "${uniqueId}" (usage: ${newTag.usage_count}, services: ${newTag.used_in_items.join(', ')})`);
+        // console.log(`🏷️ Preparing new tag: "${tagName}" -> ID: "${uniqueId}" (usage: ${newTag.usage_count}, services: ${newTag.used_in_items.join(', ')})`);
       }
     }
     
@@ -2597,7 +2597,7 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
     let failedInserts = 0;
     
     if (missingTags.length > 0) {
-      console.log(`➕ Creating ${missingTags.length} missing tags:`, missingTags.map(t => t.name));
+      // console.log(`➕ Creating ${missingTags.length} missing tags:`, missingTags.map(t => t.name));
       
       // Process tags one by one to handle conflicts gracefully
       for (const tag of missingTags) {
@@ -2613,19 +2613,19 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
           );
           
           if (upsertError) {
-            console.error(`Failed to upsert tag ${tag.name}:`, upsertError.message);
+            // console.error(`Failed to upsert tag ${tag.name}:`, upsertError.message);
             failedInserts++;
           } else {
-            console.log(`✅ Successfully upserted tag ${tag.name}`);
+            // console.log(`✅ Successfully upserted tag ${tag.name}`);
             successfulInserts++;
           }
         } catch (tagError) {
-          console.error(`Exception during tag upsert for ${tag.name}:`, tagError.message);
+          // console.error(`Exception during tag upsert for ${tag.name}:`, tagError.message);
           failedInserts++;
         }
       }
       
-      console.log(`📊 Tag creation results: ${successfulInserts} successful, ${failedInserts} failed`);
+      // console.log(`📊 Tag creation results: ${successfulInserts} successful, ${failedInserts} failed`);
     }
     
     // Update usage counts and service mappings for existing tags
@@ -2643,7 +2643,7 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
         const needsServiceUpdate = JSON.stringify(tag.used_in_items || []) !== JSON.stringify(realServiceIds);
         
         if (needsUsageUpdate || needsServiceUpdate) {
-          console.log(`📝 Updating ${tag.name}: usage ${tag.usage_count || 0} → ${realUsageCount}, services: [${(tag.used_in_items || []).join(', ')}] → [${realServiceIds.join(', ')}]`);
+          // console.log(`📝 Updating ${tag.name}: usage ${tag.usage_count || 0} → ${realUsageCount}, services: [${(tag.used_in_items || []).join(', ')}] → [${realServiceIds.join(', ')}]`);
           
           const updatePromise = supabase
             .from('tags')
@@ -2666,19 +2666,19 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
       const successful = results.filter(r => r.status === 'fulfilled').length;
       const failed = results.filter(r => r.status === 'rejected').length;
       
-      console.log(`✅ Successfully updated ${successful}/${updatePromises.length} tags`);
+      // console.log(`✅ Successfully updated ${successful}/${updatePromises.length} tags`);
       
       if (failed > 0) {
-        console.warn(`⚠️ ${failed} tag updates failed`);
+        // console.warn(`⚠️ ${failed} tag updates failed`);
         // Log details of failed updates
         results.forEach((result, index) => {
           if (result.status === 'rejected') {
-            console.warn(`Failed update ${index}:`, result.reason);
+            // console.warn(`Failed update ${index}:`, result.reason);
           }
         });
       }
     } else {
-      console.log('✅ All tag usage counts and service mappings are already up to date');
+      // console.log('✅ All tag usage counts and service mappings are already up to date');
     }
     
     // Get final updated tags from database
@@ -2690,10 +2690,10 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
     );
     
     if (finalFetchError) {
-      console.warn('Could not fetch final tags, but sync completed:', finalFetchError.message);
+      // console.warn('Could not fetch final tags, but sync completed:', finalFetchError.message);
     }
     
-    console.log('🎯 Tag usage and service mapping sync complete');
+    // console.log('🎯 Tag usage and service mapping sync complete');
     
     return c.json({
       success: true,
@@ -2708,7 +2708,7 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
     });
     
   } catch (error) {
-    console.error('❌ Tag usage sync failed:', error);
+    // console.error('❌ Tag usage sync failed:', error);
     return c.json({
       success: false,
       error: 'Failed to sync tag usage counts and service mappings',
@@ -2724,7 +2724,7 @@ app.post('/make-server-228aa219/sync-tag-usage', async (c) => {
 // Sync tag usage using normalized service_tags table
 app.post('/make-server-228aa219/sync-tag-usage-normalized', async (c) => {
   try {
-    console.log('🔄 Server: Starting normalized tag usage sync...');
+    // console.log('🔄 Server: Starting normalized tag usage sync...');
     
     // Check if normalized tables exist
     const { data: tableCheck } = await supabase
@@ -2736,7 +2736,7 @@ app.post('/make-server-228aa219/sync-tag-usage-normalized', async (c) => {
     const hasNormalizedTables = tableCheck && tableCheck.length >= 2;
     
     if (!hasNormalizedTables) {
-      console.log('⚠️ Server: Normalized tables not found, falling back to legacy sync');
+      // console.log('⚠️ Server: Normalized tables not found, falling back to legacy sync');
       return c.json({
         success: false,
         error: 'Normalized tables not found. Please run schema migration first.',
@@ -2756,7 +2756,7 @@ app.post('/make-server-228aa219/sync-tag-usage-normalized', async (c) => {
       throw new Error(`Failed to fetch tag relationships: ${relationshipError.message}`);
     }
     
-    console.log(`📋 Found ${tagRelationships?.length || 0} service-tag relationships in normalized table`);
+    // console.log(`📋 Found ${tagRelationships?.length || 0} service-tag relationships in normalized table`);
     
     // Count tag usage from relationships
     const tagUsageMap = new Map();
@@ -2789,14 +2789,14 @@ app.post('/make-server-228aa219/sync-tag-usage-normalized', async (c) => {
         .eq('id', tagData.id);
       
       if (updateError) {
-        console.warn(`Failed to update tag ${tagName}:`, updateError.message);
+        // console.warn(`Failed to update tag ${tagName}:`, updateError.message);
       } else {
         tagsUpdated++;
-        console.log(`✅ Updated tag ${tagName}: ${tagData.count} usages in [${tagData.serviceIds.join(', ')}]`);
+        // console.log(`✅ Updated tag ${tagName}: ${tagData.count} usages in [${tagData.serviceIds.join(', ')}]`);
       }
     }
     
-    console.log('✅ Normalized tag sync completed');
+    // console.log('✅ Normalized tag sync completed');
     
     return c.json({
       success: true,
@@ -2807,7 +2807,7 @@ app.post('/make-server-228aa219/sync-tag-usage-normalized', async (c) => {
     });
     
   } catch (error) {
-    console.error('❌ Normalized tag sync failed:', error);
+    // console.error('❌ Normalized tag sync failed:', error);
     return c.json({
       success: false,
       error: 'Failed to sync using normalized schema',
@@ -2819,7 +2819,7 @@ app.post('/make-server-228aa219/sync-tag-usage-normalized', async (c) => {
 // Migrate existing JSONB data to normalized schema
 app.post('/make-server-228aa219/migrate-tag-schema', async (c) => {
   try {
-    console.log('🔄 Server: Starting schema migration to normalized tables...');
+    // console.log('🔄 Server: Starting schema migration to normalized tables...');
     
     // Check if migration functions exist
     const { error: functionCheck } = await supabase.rpc('migrate_auto_add_data');
@@ -2837,7 +2837,7 @@ app.post('/make-server-228aa219/migrate-tag-schema', async (c) => {
     const { data: tagRelationMigration } = await supabase.rpc('migrate_service_tags');
     const { data: usageUpdate } = await supabase.rpc('update_tag_usage_counts');
     
-    console.log('✅ Schema migration completed');
+    // console.log('✅ Schema migration completed');
     
     return c.json({
       success: true,
@@ -2848,7 +2848,7 @@ app.post('/make-server-228aa219/migrate-tag-schema', async (c) => {
     });
     
   } catch (error) {
-    console.error('❌ Schema migration failed:', error);
+    // console.error('❌ Schema migration failed:', error);
     return c.json({
       success: false,
       error: 'Failed to migrate to normalized schema',
@@ -2860,7 +2860,7 @@ app.post('/make-server-228aa219/migrate-tag-schema', async (c) => {
 // Cleanup orphaned data in normalized tables
 app.post('/make-server-228aa219/cleanup-normalized-data', async (c) => {
   try {
-    console.log('🔄 Server: Starting normalized data cleanup...');
+    // console.log('🔄 Server: Starting normalized data cleanup...');
     
     const { data: result, error } = await supabase.rpc('cleanup_orphaned_data');
     
@@ -2868,7 +2868,7 @@ app.post('/make-server-228aa219/cleanup-normalized-data', async (c) => {
       throw new Error(`Cleanup failed: ${error.message}`);
     }
     
-    console.log('✅ Normalized data cleanup completed');
+    // console.log('✅ Normalized data cleanup completed');
     
     return c.json({
       success: true,
@@ -2877,7 +2877,7 @@ app.post('/make-server-228aa219/cleanup-normalized-data', async (c) => {
     });
     
   } catch (error) {
-    console.error('❌ Normalized data cleanup failed:', error);
+    // console.error('❌ Normalized data cleanup failed:', error);
     return c.json({
       success: false,
       error: 'Failed to cleanup normalized data',
@@ -2971,7 +2971,7 @@ async function createAuditLog(userId: string | null, action: string, resourceTyp
       created_at: new Date().toISOString()
     });
   } catch (error) {
-    console.warn('Failed to create audit log:', error.message);
+    // console.warn('Failed to create audit log:', error.message);
     // Don't throw - audit logging failures shouldn't break operations
   }
 }
@@ -3012,7 +3012,7 @@ const requireAuth = async (c, next) => {
 
     // If no profile found, create one automatically
     if (profileError || !profile) {
-      console.warn('User profile not found, creating one automatically');
+      // console.warn('User profile not found, creating one automatically');
       
       // Create a new profile
       const newProfile = {
@@ -3047,7 +3047,7 @@ const requireAuth = async (c, next) => {
     }
 
     if (profileError || !profile) {
-      console.error('User profile not found or inactive:', profileError);
+      // console.error('User profile not found or inactive:', profileError);
       return c.json({ error: 'User profile not found or inactive' }, 403);
     }
 
@@ -3057,7 +3057,7 @@ const requireAuth = async (c, next) => {
     
     await next();
   } catch (error) {
-    console.error('Auth middleware error:', error);
+    // console.error('Auth middleware error:', error);
     return c.json({ error: 'Authentication failed', code: 401, message: 'Invalid JWT' }, 401);
   }
 };
@@ -3089,7 +3089,7 @@ app.post('/make-server-228aa219/auth/check-setup', async (c) => {
       message: setupRequired ? 'No admin users found - setup required' : 'Setup complete'
     });
   } catch (error) {
-    console.error('Setup check error:', error);
+    // console.error('Setup check error:', error);
     return c.json({
       setupRequired: false, // Don't block if check fails
       error: 'Failed to check setup status',
@@ -3101,7 +3101,7 @@ app.post('/make-server-228aa219/auth/check-setup', async (c) => {
 // Diagnostic endpoint for auth database issues
 app.post('/make-server-228aa219/auth/diagnose', async (c) => {
   try {
-    console.log('🔍 Running auth database diagnostics...');
+    // console.log('🔍 Running auth database diagnostics...');
     
     const diagnostics = {
       timestamp: new Date().toISOString(),
@@ -3148,7 +3148,7 @@ app.post('/make-server-228aa219/auth/diagnose', async (c) => {
     });
     
   } catch (error) {
-    console.error('Auth diagnostic error:', error);
+    // console.error('Auth diagnostic error:', error);
     return c.json({
       success: false,
       error: 'Failed to run auth diagnostics',
@@ -3161,14 +3161,14 @@ app.post('/make-server-228aa219/auth/diagnose', async (c) => {
 // Emergency admin creation endpoint (bypasses all normal methods)
 app.post('/make-server-228aa219/auth/emergency-admin', async (c) => {
   try {
-    console.log('🚨 EMERGENCY: Creating admin using fallback method...');
+    // console.log('🚨 EMERGENCY: Creating admin using fallback method...');
     
     // Try the emergency function first
     try {
       const { data: emergencyResult, error: emergencyError } = await supabase.rpc('emergency_admin_insert');
       
       if (!emergencyError && emergencyResult && emergencyResult.startsWith('EMERGENCY:')) {
-        console.log('✅ Emergency function succeeded:', emergencyResult);
+        // console.log('✅ Emergency function succeeded:', emergencyResult);
         return c.json({
           success: true,
           method: 'emergency_function',
@@ -3183,7 +3183,7 @@ app.post('/make-server-228aa219/auth/emergency-admin', async (c) => {
         });
       }
     } catch (funcError) {
-      console.warn('Emergency function failed:', funcError);
+      // console.warn('Emergency function failed:', funcError);
     }
 
     // If function fails, try direct table access
@@ -3206,7 +3206,7 @@ app.post('/make-server-228aa219/auth/emergency-admin', async (c) => {
         .single();
 
       if (!directError) {
-        console.log('✅ Direct emergency admin creation succeeded');
+        // console.log('✅ Direct emergency admin creation succeeded');
         return c.json({
           success: true,
           method: 'direct_emergency_insert',
@@ -3220,7 +3220,7 @@ app.post('/make-server-228aa219/auth/emergency-admin', async (c) => {
         });
       }
     } catch (directError) {
-      console.error('Direct emergency insert failed:', directError);
+      // console.error('Direct emergency insert failed:', directError);
     }
 
     // If everything fails
@@ -3232,7 +3232,7 @@ app.post('/make-server-228aa219/auth/emergency-admin', async (c) => {
     }, 500);
 
   } catch (error) {
-    console.error('Emergency admin creation error:', error);
+    // console.error('Emergency admin creation error:', error);
     return c.json({
       success: false,
       error: 'Emergency admin creation failed',
@@ -3254,7 +3254,7 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
       }, 400);
     }
 
-    console.log('🔧 Creating initial admin user with ultimate fallbacks:', { username, email });
+    // console.log('🔧 Creating initial admin user with ultimate fallbacks:', { username, email });
 
     let adminCreated = false;
     let userId = null;
@@ -3264,7 +3264,7 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
     // Method 1: Super simple admin function (profile only)
     let method1Error = '';
     try {
-      console.log('🎯 Trying super simple admin creation...');
+      // console.log('🎯 Trying super simple admin creation...');
       const { data: simpleResult, error: simpleError } = await supabase.rpc('create_admin_super_simple', {
         admin_username: username,
         admin_email: email
@@ -3272,7 +3272,7 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
 
       if (simpleError) {
         method1Error = `Function error: ${simpleError.message} (Code: ${simpleError.code})`;
-        console.warn('Super simple function failed:', simpleError);
+        // console.warn('Super simple function failed:', simpleError);
       } else if (simpleResult && typeof simpleResult === 'string') {
         if (simpleResult.startsWith('SUCCESS:')) {
           // Extract ID from result (now uses text IDs instead of UUIDs)
@@ -3281,24 +3281,24 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
           adminCreated = true;
           creationMethod = 'super_simple_function';
           creationResult = simpleResult;
-          console.log('✅ Super simple admin creation succeeded:', simpleResult);
+          // console.log('✅ Super simple admin creation succeeded:', simpleResult);
         } else {
           method1Error = `Function returned: ${simpleResult}`;
-          console.warn('Super simple function returned error:', simpleResult);
+          // console.warn('Super simple function returned error:', simpleResult);
         }
       } else {
         method1Error = `Unexpected result type: ${typeof simpleResult}`;
       }
     } catch (error) {
       method1Error = `Exception: ${error.message}`;
-      console.warn('Super simple function exception:', error);
+      // console.warn('Super simple function exception:', error);
     }
 
     // Method 2: Force create admin function (overwrites existing)
     let method2Error = '';
     if (!adminCreated) {
       try {
-        console.log('💪 Trying force create admin...');
+        // console.log('💪 Trying force create admin...');
         const { data: forceResult, error: forceError } = await supabase.rpc('force_create_admin', {
           admin_username: username,
           admin_email: email
@@ -3306,7 +3306,7 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
 
         if (forceError) {
           method2Error = `Function error: ${forceError.message} (Code: ${forceError.code})`;
-          console.warn('Force create function failed:', forceError);
+          // console.warn('Force create function failed:', forceError);
         } else if (forceResult && typeof forceResult === 'string') {
           if (forceResult.startsWith('FORCED:')) {
             const idMatch = forceResult.match(/forced-admin-\d+/);
@@ -3314,17 +3314,17 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
             adminCreated = true;
             creationMethod = 'force_create_function';
             creationResult = forceResult;
-            console.log('✅ Force create admin succeeded:', forceResult);
+            // console.log('✅ Force create admin succeeded:', forceResult);
           } else {
             method2Error = `Function returned: ${forceResult}`;
-            console.warn('Force create function returned error:', forceResult);
+            // console.warn('Force create function returned error:', forceResult);
           }
         } else {
           method2Error = `Unexpected result type: ${typeof forceResult}`;
         }
       } catch (error) {
         method2Error = `Exception: ${error.message}`;
-        console.warn('Force create function exception:', error);
+        // console.warn('Force create function exception:', error);
       }
     }
 
@@ -3332,7 +3332,7 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
     let method3Error = '';
     if (!adminCreated) {
       try {
-        console.log('⚡ Trying direct SQL insert...');
+        // console.log('⚡ Trying direct SQL insert...');
         
         // Use simple text ID instead of UUID to avoid any issues
         const directUserId = `direct-admin-${Date.now()}`;
@@ -3352,24 +3352,24 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
 
         if (directError) {
           method3Error = `Insert error: ${directError.message} (Code: ${directError.code || 'unknown'})`;
-          console.error('Direct SQL insert failed:', directError);
+          // console.error('Direct SQL insert failed:', directError);
         } else {
           userId = directUserId;
           adminCreated = true;
           creationMethod = 'direct_sql_insert';
           creationResult = 'Direct SQL insert successful';
-          console.log('✅ Direct SQL insert succeeded');
+          // console.log('✅ Direct SQL insert succeeded');
         }
       } catch (error) {
         method3Error = `Exception: ${error.message}`;
-        console.error('Direct SQL insert exception:', error);
+        // console.error('Direct SQL insert exception:', error);
       }
     }
 
     // Method 4: Ultimate fallback - try Supabase Auth API (even though it's been failing)
     if (!adminCreated) {
       try {
-        console.log('🔄 Trying Supabase Auth API as absolute last resort...');
+        // console.log('🔄 Trying Supabase Auth API as absolute last resort...');
         
         const { data: authData, error: authError } = await supabase.auth.admin.createUser({
           email: email,
@@ -3381,7 +3381,7 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
         });
 
         if (authError) {
-          console.error('Supabase Auth API failed (expected):', authError);
+          // console.error('Supabase Auth API failed (expected):', authError);
         } else if (authData.user) {
           // Try to create profile for auth user
           const { data: profileResult, error: profileError } = await supabase
@@ -3402,11 +3402,11 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
             adminCreated = true;
             creationMethod = 'supabase_auth_api';
             creationResult = 'Supabase Auth + profile creation successful';
-            console.log('✅ Supabase Auth API unexpectedly succeeded');
+            // console.log('✅ Supabase Auth API unexpectedly succeeded');
           }
         }
       } catch (error) {
-        console.error('Supabase Auth API method failed (expected):', error);
+        // console.error('Supabase Auth API method failed (expected):', error);
       }
     }
 
@@ -3445,7 +3445,7 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
       }, 500);
     }
 
-    console.log('✅ Admin user created successfully using:', creationMethod);
+    // console.log('✅ Admin user created successfully using:', creationMethod);
 
     // Create audit log (best effort)
     try {
@@ -3457,7 +3457,7 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
         { username, email, fullName, setup: true, method: creationMethod, result: creationResult }
       );
     } catch (auditError) {
-      console.warn('Audit log creation failed (non-critical):', auditError);
+      // console.warn('Audit log creation failed (non-critical):', auditError);
     }
 
     return c.json({
@@ -3477,7 +3477,7 @@ app.post('/make-server-228aa219/auth/create-initial-admin', async (c) => {
     });
 
   } catch (error) {
-    console.error('Ultimate admin creation error:', error);
+    // console.error('Ultimate admin creation error:', error);
 
     return c.json({
       success: false,
@@ -3503,7 +3503,7 @@ app.get('/make-server-228aa219/admin/users', requireAuth, requireAdmin, async (c
 
     return c.json({ users });
   } catch (error) {
-    console.error('Failed to load users:', error);
+    // console.error('Failed to load users:', error);
     return c.json({ 
       error: 'Failed to load users', 
       details: error.message 
@@ -3553,7 +3553,7 @@ app.post('/make-server-228aa219/admin/users', requireAuth, requireAdmin, async (
 
     return c.json({ success: true, user: profile });
   } catch (error) {
-    console.error('User creation error:', error);
+    // console.error('User creation error:', error);
     return c.json({ 
       error: 'Failed to create user', 
       details: error.message 
@@ -3585,7 +3585,7 @@ app.put('/make-server-228aa219/admin/users/:id', requireAuth, requireAdmin, asyn
 
     return c.json({ success: true, user: profile });
   } catch (error) {
-    console.error('User update error:', error);
+    // console.error('User update error:', error);
     return c.json({ 
       error: 'Failed to update user', 
       details: error.message 
@@ -3610,7 +3610,7 @@ app.post('/make-server-228aa219/admin/users/:id/reset-password', requireAuth, re
 
     return c.json({ success: true });
   } catch (error) {
-    console.error('Password reset error:', error);
+    // console.error('Password reset error:', error);
     return c.json({ 
       error: 'Failed to reset password', 
       details: error.message 
@@ -3643,7 +3643,7 @@ app.delete('/make-server-228aa219/admin/users/:id', requireAuth, requireAdmin, a
 
     return c.json({ success: true });
   } catch (error) {
-    console.error('User deletion error:', error);
+    // console.error('User deletion error:', error);
     return c.json({ 
       error: 'Failed to delete user', 
       details: error.message 
@@ -3663,7 +3663,7 @@ app.post('/make-server-228aa219/auth/login', async (c) => {
       }, 400);
     }
 
-    console.log('🔐 Login attempt for:', username);
+    // console.log('🔐 Login attempt for:', username);
 
     // Look up user by username or email
     let email = username;
@@ -3679,7 +3679,7 @@ app.post('/make-server-228aa219/auth/login', async (c) => {
         .single();
 
       if (profileError || !profile) {
-        console.log('🔐 Username not found:', username);
+        // console.log('🔐 Username not found:', username);
         return c.json({ 
           success: false, 
           error: 'Invalid username or password' 
@@ -3698,7 +3698,7 @@ app.post('/make-server-228aa219/auth/login', async (c) => {
         .single();
 
       if (profileError || !profile) {
-        console.log('🔐 Email not found:', email);
+        // console.log('🔐 Email not found:', email);
         return c.json({ 
           success: false, 
           error: 'Invalid username or password' 
@@ -3715,7 +3715,7 @@ app.post('/make-server-228aa219/auth/login', async (c) => {
     });
 
     if (authError || !authData.user || !authData.session) {
-      console.log('🔐 Authentication failed for:', email, authError?.message);
+      // console.log('🔐 Authentication failed for:', email, authError?.message);
       
       // Don't expose specific auth errors to prevent user enumeration
       return c.json({ 
@@ -3743,7 +3743,7 @@ app.post('/make-server-228aa219/auth/login', async (c) => {
       { username: userProfile.username, email: userProfile.email }
     );
 
-    console.log('✅ Login successful for:', userProfile.username);
+    // console.log('✅ Login successful for:', userProfile.username);
 
     // Return successful login response
     return c.json({
@@ -3760,7 +3760,7 @@ app.post('/make-server-228aa219/auth/login', async (c) => {
     });
 
   } catch (error) {
-    console.error('Login endpoint error:', error);
+    // console.error('Login endpoint error:', error);
     return c.json({ 
       success: false, 
       error: 'Login service temporarily unavailable' 
@@ -3793,7 +3793,7 @@ app.get('/make-server-228aa219/auth/users', requireAuth, requireAdmin, async (c)
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching users:', error);
+      // console.error('Error fetching users:', error);
       return c.json({ error: 'Failed to load users' }, 500);
     }
 
@@ -3816,7 +3816,7 @@ app.get('/make-server-228aa219/auth/users', requireAuth, requireAdmin, async (c)
 
     return c.json({ users: transformedUsers });
   } catch (error) {
-    console.error('Users endpoint error:', error);
+    // console.error('Users endpoint error:', error);
     return c.json({ error: 'Failed to load users' }, 500);
   }
 });
@@ -3859,7 +3859,7 @@ app.post('/make-server-228aa219/auth/users', requireAuth, requireAdmin, async (c
     });
 
     if (authError || !authData.user) {
-      console.error('Auth user creation error:', authError);
+      // console.error('Auth user creation error:', authError);
       return c.json({ error: authError?.message || 'Failed to create auth user' }, 500);
     }
 
@@ -3883,7 +3883,7 @@ app.post('/make-server-228aa219/auth/users', requireAuth, requireAdmin, async (c
     if (profileError) {
       // Clean up auth user if profile creation fails
       await supabase.auth.admin.deleteUser(authData.user.id);
-      console.error('Profile creation error:', profileError);
+      // console.error('Profile creation error:', profileError);
       return c.json({ error: profileError.message }, 500);
     }
 
@@ -3915,7 +3915,7 @@ app.post('/make-server-228aa219/auth/users', requireAuth, requireAdmin, async (c
 
     return c.json({ user: responseUser });
   } catch (error) {
-    console.error('User creation error:', error);
+    // console.error('User creation error:', error);
     return c.json({ error: 'Failed to create user' }, 500);
   }
 });
@@ -3997,7 +3997,7 @@ app.put('/make-server-228aa219/auth/users/:id', requireAuth, requireAdmin, async
       .single();
 
     if (updateError) {
-      console.error('Profile update error:', updateError);
+      // console.error('Profile update error:', updateError);
       return c.json({ error: updateError.message }, 500);
     }
 
@@ -4008,7 +4008,7 @@ app.put('/make-server-228aa219/auth/users/:id', requireAuth, requireAdmin, async
       });
 
       if (authUpdateError) {
-        console.warn('Auth email update failed:', authUpdateError.message);
+        // console.warn('Auth email update failed:', authUpdateError.message);
         // Don't fail the entire operation for this
       }
     }
@@ -4045,7 +4045,7 @@ app.put('/make-server-228aa219/auth/users/:id', requireAuth, requireAdmin, async
 
     return c.json({ user: responseUser });
   } catch (error) {
-    console.error('User update error:', error);
+    // console.error('User update error:', error);
     return c.json({ error: 'Failed to update user' }, 500);
   }
 });
@@ -4072,7 +4072,7 @@ app.delete('/make-server-228aa219/auth/users/:id', requireAuth, requireAdmin, as
     const { error: authError } = await supabase.auth.admin.deleteUser(userId);
 
     if (authError) {
-      console.error('Auth user deletion error:', authError);
+      // console.error('Auth user deletion error:', authError);
       return c.json({ error: authError.message }, 500);
     }
 
@@ -4083,7 +4083,7 @@ app.delete('/make-server-228aa219/auth/users/:id', requireAuth, requireAdmin, as
       .eq('id', userId);
 
     if (profileError) {
-      console.error('Profile deletion error:', profileError);
+      // console.error('Profile deletion error:', profileError);
       // Auth user is already deleted, but log the profile error
     }
 
@@ -4098,7 +4098,7 @@ app.delete('/make-server-228aa219/auth/users/:id', requireAuth, requireAdmin, as
 
     return c.json({ success: true });
   } catch (error) {
-    console.error('User deletion error:', error);
+    // console.error('User deletion error:', error);
     return c.json({ error: 'Failed to delete user' }, 500);
   }
 });
@@ -4120,7 +4120,7 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
       return c.json({ error: 'Invalid authentication token' }, 401);
     }
 
-    console.log('🔐 Enhanced: Ensuring profile exists for user:', user.id, user.email);
+    // console.log('🔐 Enhanced: Ensuring profile exists for user:', user.id, user.email);
 
     // Use the ULTIMATE RLS-safe function
     try {
@@ -4132,13 +4132,13 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
         });
 
       if (ensureError) {
-        console.error('ULTIMATE ensure profile function error:', ensureError);
+        // console.error('ULTIMATE ensure profile function error:', ensureError);
         throw ensureError;
       }
 
       if (profileResult && profileResult.length > 0) {
         const profileData = profileResult[0];
-        console.log('✅ ULTIMATE: Profile ensured for user:', user.id, 'Created:', profileData.created);
+        // console.log('✅ ULTIMATE: Profile ensured for user:', user.id, 'Created:', profileData.created);
         
         return c.json({ 
           profile: {
@@ -4153,7 +4153,7 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
         });
       }
     } catch (enhancedError) {
-      console.warn('ULTIMATE profile function failed, using fallback:', enhancedError);
+      // console.warn('ULTIMATE profile function failed, using fallback:', enhancedError);
     }
 
     // Fallback to ULTIMATE profile loading
@@ -4163,7 +4163,7 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
 
       if (!enhancedError && enhancedProfile && enhancedProfile.length > 0) {
         const profileData = enhancedProfile[0];
-        console.log('✅ ULTIMATE: Profile found using ULTIMATE function for user:', user.id);
+        // console.log('✅ ULTIMATE: Profile found using ULTIMATE function for user:', user.id);
         return c.json({ 
           profile: {
             id: profileData.id,
@@ -4177,7 +4177,7 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
         });
       }
     } catch (enhancedError) {
-      console.warn('ULTIMATE profile loading failed:', enhancedError);
+      // console.warn('ULTIMATE profile loading failed:', enhancedError);
     }
 
     // Last resort: try the old safe function
@@ -4187,7 +4187,7 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
 
       if (!safeError && safeProfile && safeProfile.length > 0) {
         const profileData = safeProfile[0];
-        console.log('✅ Profile found using old safe function for user:', user.id);
+        // console.log('✅ Profile found using old safe function for user:', user.id);
         return c.json({ 
           profile: {
             id: profileData.id,
@@ -4201,11 +4201,11 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
         });
       }
     } catch (safeError) {
-      console.warn('Old safe function also failed:', safeError);
+      // console.warn('Old safe function also failed:', safeError);
     }
 
     // Emergency fallback: create profile directly with admin privileges
-    console.warn('🚨 All profile functions failed, creating emergency profile for user:', user.id);
+    // console.warn('🚨 All profile functions failed, creating emergency profile for user:', user.id);
     
     const username = user.email?.split('@')[0] || 'user';
     const fullName = user.user_metadata?.full_name || username || 'User';
@@ -4229,11 +4229,11 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
       .single();
 
     if (createError) {
-      console.error('Emergency profile creation error:', createError);
+      // console.error('Emergency profile creation error:', createError);
       
       // Handle duplicate key error - profile already exists
       if (createError.code === '23505') {
-        console.log('Profile already exists (duplicate key), trying to fetch existing profile');
+        // console.log('Profile already exists (duplicate key), trying to fetch existing profile');
         
         // Try to fetch the existing profile using safe function
         try {
@@ -4256,7 +4256,7 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
             });
           }
         } catch (safeError) {
-          console.error('Safe function failed after duplicate key:', safeError);
+          // console.error('Safe function failed after duplicate key:', safeError);
         }
         
         return c.json({ 
@@ -4268,7 +4268,7 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
       return c.json({ error: 'Failed to create user profile', details: createError.message }, 500);
     }
 
-    console.log('✅ Created new profile for user:', user.id);
+    // console.log('✅ Created new profile for user:', user.id);
 
     return c.json({ 
       profile: {
@@ -4283,7 +4283,7 @@ app.post('/make-server-228aa219/auth/ensure-profile', async (c) => {
     });
 
   } catch (error) {
-    console.error('Ensure profile error:', error);
+    // console.error('Ensure profile error:', error);
     return c.json({ error: 'Failed to ensure user profile', details: error.message }, 500);
   }
 });
@@ -4305,7 +4305,7 @@ app.post('/make-server-228aa219/auth/users/:id/reset-password', requireAuth, req
     });
 
     if (authError) {
-      console.error('Password reset error:', authError);
+      // console.error('Password reset error:', authError);
       return c.json({ error: authError.message }, 500);
     }
 
@@ -4319,7 +4319,7 @@ app.post('/make-server-228aa219/auth/users/:id/reset-password', requireAuth, req
       .eq('id', userId);
 
     if (updateError) {
-      console.warn('Failed to set force_password_change flag:', updateError);
+      // console.warn('Failed to set force_password_change flag:', updateError);
     }
 
     // Log action
@@ -4332,7 +4332,7 @@ app.post('/make-server-228aa219/auth/users/:id/reset-password', requireAuth, req
 
     return c.json({ success: true });
   } catch (error) {
-    console.error('Password reset error:', error);
+    // console.error('Password reset error:', error);
     return c.json({ error: 'Failed to reset password' }, 500);
   }
 });
@@ -4342,7 +4342,7 @@ app.post('/make-server-228aa219/auth/users/:id/reset-password', requireAuth, req
 // Load scenarios
 app.get('/make-server-228aa219/scenarios', async (c) => {
   try {
-    console.log('🚀 Server: Loading scenarios from simulator_submissions table...');
+    // console.log('🚀 Server: Loading scenarios from simulator_submissions table...');
     
     const { data: scenarios, error } = await supabase
       .from('simulator_submissions')
@@ -4350,11 +4350,11 @@ app.get('/make-server-228aa219/scenarios', async (c) => {
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error('❌ Database error:', error);
+      // console.error('❌ Database error:', error);
       throw new Error(`Database error: ${error.message}`);
     }
     
-    console.log('✅ Server: Successfully loaded scenarios:', { scenariosCount: scenarios?.length || 0 });
+    // console.log('✅ Server: Successfully loaded scenarios:', { scenariosCount: scenarios?.length || 0 });
     
     return c.json({
       scenarios: (scenarios || []).map(scenario => ({
@@ -4381,7 +4381,7 @@ app.get('/make-server-228aa219/scenarios', async (c) => {
       }))
     });
   } catch (error) {
-    console.error('❌ Server: Failed to load scenarios:', error);
+    // console.error('❌ Server: Failed to load scenarios:', error);
     return c.json({
       scenarios: [],
       error: 'Failed to load scenarios',
@@ -4395,7 +4395,7 @@ app.post('/make-server-228aa219/scenarios', userRateLimiter, async (c) => {
   try {
     const ip = getRealIP(c);
     const userId = c.req.header('x-user-id') || 'unknown';
-    console.log(`🚀 Server: Saving scenario from user: ${userId}, IP: ${ip}`);
+    // console.log(`🚀 Server: Saving scenario from user: ${userId}, IP: ${ip}`);
     
     const scenarioData = await c.req.json();
     
@@ -4408,7 +4408,7 @@ app.post('/make-server-228aa219/scenarios', userRateLimiter, async (c) => {
     // Sanitize categories
     const sanitizedCategories = sanitizeObject(scenarioData.categories || []);
     
-    console.log('🧹 Input sanitization completed for authenticated scenario');
+    // console.log('🧹 Input sanitization completed for authenticated scenario');
     
     // Prepare submission data for the database
     const submissionData = {
@@ -4442,8 +4442,8 @@ app.post('/make-server-228aa219/scenarios', userRateLimiter, async (c) => {
       }
     };
     
-    console.log('💾 Inserting submission with user_id:', submissionData.user_id);
-    console.log('💾 Inserting submission:', {
+    // console.log('💾 Inserting submission with user_id:', submissionData.user_id);
+    // console.log('💾 Inserting submission:', {
       userId: submissionData.user_id,
       clientName: submissionData.client_name,
       projectName: submissionData.project_name,
@@ -4457,7 +4457,7 @@ app.post('/make-server-228aa219/scenarios', userRateLimiter, async (c) => {
       .single();
     
     if (error) {
-      console.error('❌ Database insert error:', {
+      // console.error('❌ Database insert error:', {
         message: error.message,
         details: error.details,
         hint: error.hint,
@@ -4467,7 +4467,7 @@ app.post('/make-server-228aa219/scenarios', userRateLimiter, async (c) => {
       throw new Error(`Database error: ${error.message}${error.details ? ` | Details: ${error.details}` : ''}${error.hint ? ` | Hint: ${error.hint}` : ''}`);
     }
     
-    console.log('✅ Server: Scenario saved successfully to simulator_submissions:', { 
+    // console.log('✅ Server: Scenario saved successfully to simulator_submissions:', { 
       id: data.id,
       clientName: data.client_name,
       projectName: data.project_name
@@ -4486,7 +4486,7 @@ app.post('/make-server-228aa219/scenarios', userRateLimiter, async (c) => {
       }
     });
   } catch (error) {
-    console.error('❌ Server: Failed to save scenario:', error);
+    // console.error('❌ Server: Failed to save scenario:', error);
     return c.json({
       success: false,
       error: 'Failed to save scenario',
@@ -4499,7 +4499,7 @@ app.post('/make-server-228aa219/scenarios', userRateLimiter, async (c) => {
 app.get('/make-server-228aa219/scenarios/:id', async (c) => {
   try {
     const scenarioId = c.req.param('id');
-    console.log(`🚀 Server: Loading scenario data for ID: ${scenarioId}`);
+    // console.log(`🚀 Server: Loading scenario data for ID: ${scenarioId}`);
     
     const { data: scenario, error } = await supabase
       .from('simulator_submissions')
@@ -4509,19 +4509,19 @@ app.get('/make-server-228aa219/scenarios/:id', async (c) => {
     
     if (error) {
       if (error.code === 'PGRST116') {
-        console.warn(`Scenario not found: ${scenarioId}`);
+        // console.warn(`Scenario not found: ${scenarioId}`);
         return c.json({ error: 'Scenario not found' }, 404);
       }
-      console.error('❌ Database error:', error);
+      // console.error('❌ Database error:', error);
       throw new Error(`Database error: ${error.message}`);
     }
     
     if (!scenario) {
-      console.warn(`Scenario not found: ${scenarioId}`);
+      // console.warn(`Scenario not found: ${scenarioId}`);
       return c.json({ error: 'Scenario not found' }, 404);
     }
     
-    console.log('✅ Server: Successfully loaded scenario:', { 
+    // console.log('✅ Server: Successfully loaded scenario:', { 
       id: scenario.id,
       clientName: scenario.client_name,
       projectName: scenario.project_name
@@ -4545,7 +4545,7 @@ app.get('/make-server-228aa219/scenarios/:id', async (c) => {
       }
     });
   } catch (error) {
-    console.error(`❌ Server: Failed to load scenario:`, error);
+    // console.error(`❌ Server: Failed to load scenario:`, error);
     return c.json({
       error: 'Failed to load scenario',
       details: error.message
@@ -4557,7 +4557,7 @@ app.get('/make-server-228aa219/scenarios/:id', async (c) => {
 app.post('/make-server-228aa219/guest-scenarios', guestRateLimiter, async (c) => {
   try {
     const ip = getRealIP(c);
-    console.log('🚀 Server: Saving guest scenario from IP:', ip);
+    // console.log('🚀 Server: Saving guest scenario from IP:', ip);
     
     const requestData = await c.req.json();
     
@@ -4585,7 +4585,7 @@ app.post('/make-server-228aa219/guest-scenarios', guestRateLimiter, async (c) =>
       : 'none';
     const summary = requestData.summary || {};
     
-    console.log('🧹 Input sanitization completed for guest scenario');
+    // console.log('🧹 Input sanitization completed for guest scenario');
     
     // Validate required fields
     if (!email || !phoneNumber || !firstName || !lastName || !companyName) {
@@ -4594,13 +4594,13 @@ app.post('/make-server-228aa219/guest-scenarios', guestRateLimiter, async (c) =>
     
     // Validate email format
     if (!isValidEmail(email)) {
-      console.warn('⚠️ Invalid email format attempted:', email);
+      // console.warn('⚠️ Invalid email format attempted:', email);
       return c.json({ error: 'Invalid email format' }, 400);
     }
     
     // Validate phone format
     if (!isValidPhone(phoneNumber)) {
-      console.warn('⚠️ Invalid phone number format attempted:', phoneNumber);
+      // console.warn('⚠️ Invalid phone number format attempted:', phoneNumber);
       return c.json({ error: 'Invalid phone number format' }, 400);
     }
     
@@ -4623,8 +4623,8 @@ app.post('/make-server-228aa219/guest-scenarios', guestRateLimiter, async (c) =>
     // Extract user agent from headers
     const userAgent = c.req.header('user-agent') || 'unknown';
     
-    console.log('💾 Inserting guest scenario with submission code:', submissionCode);
-    console.log('📊 Session tracking:', {
+    // console.log('💾 Inserting guest scenario with submission code:', submissionCode);
+    // console.log('📊 Session tracking:', {
       sessionId: sessionId || 'none',
       ip,
       userAgent: userAgent.substring(0, 50) + '...'
@@ -4652,11 +4652,11 @@ app.post('/make-server-228aa219/guest-scenarios', guestRateLimiter, async (c) =>
       .single();
     
     if (error) {
-      console.error('❌ Database error:', error);
+      // console.error('❌ Database error:', error);
       return c.json({ error: error.message }, 500);
     }
     
-    console.log('✅ Guest scenario saved:', {
+    // console.log('✅ Guest scenario saved:', {
       id: data.id,
       submissionCode: submissionCode,
       email: email,
@@ -4670,7 +4670,7 @@ app.post('/make-server-228aa219/guest-scenarios', guestRateLimiter, async (c) =>
     });
     
   } catch (error: any) {
-    console.error('❌ Server: Failed to save guest scenario:', error);
+    // console.error('❌ Server: Failed to save guest scenario:', error);
     return c.json({ error: error.message || 'Failed to save guest scenario' }, 500);
   }
 });
@@ -4678,7 +4678,7 @@ app.post('/make-server-228aa219/guest-scenarios', guestRateLimiter, async (c) =>
 // Get guest submissions
 app.get('/make-server-228aa219/guest-submissions', async (c) => {
   try {
-    console.log('📥 Server: Loading guest submissions...');
+    // console.log('📥 Server: Loading guest submissions...');
     
     const { data: submissions, error } = await supabase
       .from('guest_scenarios')
@@ -4686,7 +4686,7 @@ app.get('/make-server-228aa219/guest-submissions', async (c) => {
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error('❌ Database error:', error);
+      // console.error('❌ Database error:', error);
       throw error;
     }
     
@@ -4706,11 +4706,11 @@ app.get('/make-server-228aa219/guest-submissions', async (c) => {
       scenario_data: sub.scenario_data || {} // Include full scenario data for dialog display
     }));
     
-    console.log(`✅ Server: Loaded ${formattedSubmissions.length} guest submissions`);
+    // console.log(`✅ Server: Loaded ${formattedSubmissions.length} guest submissions`);
     
     return c.json({ submissions: formattedSubmissions });
   } catch (error: any) {
-    console.error('❌ Server: Failed to load guest submissions:', error);
+    // console.error('❌ Server: Failed to load guest submissions:', error);
     return c.json({ 
       error: 'Failed to load guest submissions',
       details: error.message 
@@ -4722,7 +4722,7 @@ app.get('/make-server-228aa219/guest-submissions', async (c) => {
 app.get('/make-server-228aa219/guest-submissions/:id', async (c) => {
   try {
     const submissionId = c.req.param('id');
-    console.log(`📥 Server: Loading guest submission data for ID: ${submissionId}`);
+    // console.log(`📥 Server: Loading guest submission data for ID: ${submissionId}`);
     
     const { data: submission, error } = await supabase
       .from('guest_scenarios')
@@ -4732,19 +4732,19 @@ app.get('/make-server-228aa219/guest-submissions/:id', async (c) => {
     
     if (error) {
       if (error.code === 'PGRST116') {
-        console.warn(`Guest submission not found: ${submissionId}`);
+        // console.warn(`Guest submission not found: ${submissionId}`);
         return c.json({ error: 'Guest submission not found' }, 404);
       }
-      console.error('❌ Database error:', error);
+      // console.error('❌ Database error:', error);
       throw new Error(`Database error: ${error.message}`);
     }
     
     if (!submission) {
-      console.warn(`Guest submission not found: ${submissionId}`);
+      // console.warn(`Guest submission not found: ${submissionId}`);
       return c.json({ error: 'Guest submission not found' }, 404);
     }
     
-    console.log('✅ Server: Successfully loaded guest submission:', { 
+    // console.log('✅ Server: Successfully loaded guest submission:', { 
       id: submission.id,
       email: submission.email,
       company: submission.company_name
@@ -4780,7 +4780,7 @@ app.get('/make-server-228aa219/guest-submissions/:id', async (c) => {
       }
     });
   } catch (error: any) {
-    console.error(`❌ Server: Failed to load guest submission:`, error);
+    // console.error(`❌ Server: Failed to load guest submission:`, error);
     return c.json({
       error: 'Failed to load guest submission',
       details: error.message
@@ -4792,7 +4792,7 @@ app.get('/make-server-228aa219/guest-submissions/:id', async (c) => {
 app.get('/make-server-228aa219/scenarios/:id', async (c) => {
   try {
     const scenarioId = c.req.param('id');
-    console.log('🚀 Server: Loading scenario data for ID:', scenarioId);
+    // console.log('🚀 Server: Loading scenario data for ID:', scenarioId);
     
     const scenarioData = await kv.get(scenarioId);
     
@@ -4803,11 +4803,11 @@ app.get('/make-server-228aa219/scenarios/:id', async (c) => {
       }, 404);
     }
     
-    console.log('✅ Server: Successfully loaded scenario data:', { scenarioId });
+    // console.log('✅ Server: Successfully loaded scenario data:', { scenarioId });
     
     return c.json(scenarioData);
   } catch (error) {
-    console.error('❌ Server: Failed to load scenario data:', error);
+    // console.error('❌ Server: Failed to load scenario data:', error);
     return c.json({
       error: 'Failed to load scenario data',
       details: error.message
@@ -4818,11 +4818,11 @@ app.get('/make-server-228aa219/scenarios/:id', async (c) => {
 // Get scenario history (alternative endpoint for getAllScenarios)
 app.get('/make-server-228aa219/scenario/history', async (c) => {
   try {
-    console.log('🚀 Server: Loading scenario history...');
+    // console.log('🚀 Server: Loading scenario history...');
     
     const scenarios = await kv.getByPrefix('scenario_');
     
-    console.log('✅ Server: Successfully loaded scenario history:', { scenariosCount: scenarios.length });
+    // console.log('✅ Server: Successfully loaded scenario history:', { scenariosCount: scenarios.length });
     
     return c.json({
       scenarios: scenarios.map(scenario => {
@@ -4843,7 +4843,7 @@ app.get('/make-server-228aa219/scenario/history', async (c) => {
       }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     });
   } catch (error) {
-    console.error('❌ Server: Failed to load scenario history:', error);
+    // console.error('❌ Server: Failed to load scenario history:', error);
     return c.json({
       scenarios: [],
       error: 'Failed to load scenario history',
@@ -4866,7 +4866,7 @@ app.post('/make-server-228aa219/auth/create-user-with-password', async (c) => {
       return c.json({ error: 'Password must be at least 6 characters' }, 400);
     }
 
-    console.log('Creating user with credentials:', email, role);
+    // console.log('Creating user with credentials:', email, role);
 
     // Create user in Supabase Auth (using service role key from server)
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
@@ -4880,7 +4880,7 @@ app.post('/make-server-228aa219/auth/create-user-with-password', async (c) => {
     });
 
     if (authError) {
-      console.error('Auth user creation failed:', authError);
+      // console.error('Auth user creation failed:', authError);
       return c.json({ 
         error: 'Failed to create auth user', 
         details: authError.message 
@@ -4907,7 +4907,7 @@ app.post('/make-server-228aa219/auth/create-user-with-password', async (c) => {
       .single();
 
     if (profileError) {
-      console.error('Profile creation failed:', profileError);
+      // console.error('Profile creation failed:', profileError);
       
       // Try to clean up auth user
       await supabase.auth.admin.deleteUser(authData.user.id);
@@ -4918,7 +4918,7 @@ app.post('/make-server-228aa219/auth/create-user-with-password', async (c) => {
       }, 500);
     }
 
-    console.log('User created successfully:', authData.user.id);
+    // console.log('User created successfully:', authData.user.id);
 
     return c.json({
       success: true,
@@ -4932,7 +4932,7 @@ app.post('/make-server-228aa219/auth/create-user-with-password', async (c) => {
     });
 
   } catch (error) {
-    console.error('Create user endpoint error:', error);
+    // console.error('Create user endpoint error:', error);
     return c.json({ 
       error: 'Failed to create user', 
       details: error.message 
@@ -4941,10 +4941,10 @@ app.post('/make-server-228aa219/auth/create-user-with-password', async (c) => {
 });
 
 // Start the server
-console.log('🚀 Server starting...');
-console.log('✅ Rate limiting configured');
-console.log('✅ CORS configured');
-console.log('✅ Guest session tracking configured');
-console.log('🌐 Server ready to accept requests');
+// console.log('🚀 Server starting...');
+// console.log('✅ Rate limiting configured');
+// console.log('✅ CORS configured');
+// console.log('✅ Guest session tracking configured');
+// console.log('🌐 Server ready to accept requests');
 
 Deno.serve(app.fetch);

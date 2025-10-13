@@ -3,12 +3,12 @@
 
 export function saveAdminSelection(key: string, value: any): void {
   // Placeholder - stores nothing for now
-  console.log('saveAdminSelection called:', key, value);
+  // // console.log('saveAdminSelection called:', key, value);
 }
 
 export function removeAdminSelection(key: string): void {
   // Placeholder - removes nothing for now
-  console.log('removeAdminSelection called:', key);
+  // // console.log('removeAdminSelection called:', key);
 }
 
 export function getAdminSelection(key: string): any {

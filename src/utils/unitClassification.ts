@@ -5,29 +5,24 @@
 
 // Units that are calculated once (one-time charges)
 export const ONE_TIME_UNITS = [
-  'one-time',
-  'per change'
+  'Per Project',
+  'Per Setup'
 ] as const;
 
 // Units that are calculated monthly (recurring charges)
 export const MONTHLY_RECURRING_UNITS = [
-  'per month',
-  'per card/month',
-  'per user/month'
+  'Per User'
 ] as const;
 
 // Units that are calculated per transaction or token
 export const TRANSACTION_BASED_UNITS = [
-  'per transaction',
-  'per token'
+  'Per Transaction'
 ] as const;
 
 // Units that are calculated per event or activity
 export const EVENT_ACTIVITY_BASED_UNITS = [
-  'per card',
-  'per delivery',
-  'per file',
-  'per case'
+  'Per Card',
+  'Per Item'
 ] as const;
 
 // All available units

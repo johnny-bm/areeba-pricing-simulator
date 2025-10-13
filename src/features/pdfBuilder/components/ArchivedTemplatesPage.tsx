@@ -38,12 +38,12 @@ export function ArchivedTemplatesPage() {
 
   // Debug logging
   useEffect(() => {
-    console.log('ArchivedTemplatesPage: PDFs data:', { pdfs, loading, error, total });
+    // // console.log('ArchivedTemplatesPage: PDFs data:', { pdfs, loading, error, total });
     if (pdfs.length === 0 && !loading) {
-      console.log('ArchivedTemplatesPage: No PDFs found. This could mean:');
-      console.log('1. No PDFs have been generated yet');
-      console.log('2. The generated_pdfs table might not exist');
-      console.log('3. There might be a database connection issue');
+      // // console.log('ArchivedTemplatesPage: No PDFs found. This could mean:');
+      // // console.log('1. No PDFs have been generated yet');
+      // // console.log('2. The generated_pdfs table might not exist');
+      // // console.log('3. There might be a database connection issue');
     }
   }, [pdfs, loading, error, total]);
 
@@ -98,10 +98,10 @@ export function ArchivedTemplatesPage() {
 
   const getSimulatorTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      'issuing': 'bg-blue-100 text-blue-800',
-      'acquiring': 'bg-green-100 text-green-800',
-      'digital-banking': 'bg-purple-100 text-purple-800',
-      'default': 'bg-gray-100 text-gray-800'
+      'issuing': 'bg-blue-100 text-blue-800 hover:bg-blue-100',
+      'acquiring': 'bg-green-100 text-green-800 hover:bg-green-100',
+      'digital-banking': 'bg-purple-100 text-purple-800 hover:bg-purple-100',
+      'default': 'bg-gray-100 text-gray-800 hover:bg-gray-100'
     };
     return colors[type] || colors.default;
   };
@@ -143,7 +143,10 @@ export function ArchivedTemplatesPage() {
               </div>
             </TableCell>
             <TableCell>
-              <Badge className={getSimulatorTypeColor(pdf.simulator_type)}>
+              <Badge 
+                variant="default"
+                className={getSimulatorTypeColor(pdf.simulator_type)}
+              >
                 {pdf.simulator_type.replace('-', ' ').toUpperCase()}
               </Badge>
             </TableCell>
@@ -152,8 +155,8 @@ export function ArchivedTemplatesPage() {
                 {formatDate(pdf.generated_at)}
               </div>
             </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
+            <TableCell className="text-right">
+              <div className="flex items-center justify-end gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -174,7 +177,6 @@ export function ArchivedTemplatesPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleDeletePdf(pdf)}
-                  className="text-destructive hover:text-destructive"
                   title="Delete PDF"
                 >
                   <Trash2 className="h-4 w-4" />

@@ -75,4 +75,4 @@ export class PricingItemFactory {
 
 // Example usage:
 // const item = PricingItemFactory.create('Web Hosting', 50, 1);
-// console.log(item.total.amount); // 50
+// // console.log(item.total.amount); // 50

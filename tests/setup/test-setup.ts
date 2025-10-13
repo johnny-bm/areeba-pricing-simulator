@@ -17,11 +17,11 @@ beforeAll(() => {
 });
 
 // Mock console methods in tests
-const originalError = console.error;
-const originalWarn = console.warn;
+const originalError = // console.error;
+const originalWarn = // console.warn;
 
 beforeAll(() => {
-  console.error = (...args: any[]) => {
+  // console.error = (...args: any[]) => {
     if (
       typeof args[0] === 'string' &&
       args[0].includes('Warning: ReactDOM.render is no longer supported')
@@ -31,7 +31,7 @@ beforeAll(() => {
     originalError.call(console, ...args);
   };
 
-  console.warn = (...args: any[]) => {
+  // console.warn = (...args: any[]) => {
     if (
       typeof args[0] === 'string' &&
       args[0].includes('Warning: ReactDOM.render is no longer supported')
@@ -43,6 +43,6 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  console.error = originalError;
-  console.warn = originalWarn;
+  // console.error = originalError;
+  // console.warn = originalWarn;
 });

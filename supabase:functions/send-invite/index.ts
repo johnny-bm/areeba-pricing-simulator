@@ -110,7 +110,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Send invite error:', error)
+    // console.error('Send invite error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 

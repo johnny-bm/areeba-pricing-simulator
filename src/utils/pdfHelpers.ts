@@ -281,7 +281,7 @@ function generateDetailedPricingSection(data: PDFData): string {
 
 // Helper function to generate HTML from custom template content
 function generateCustomHTMLReport(customContent: any, data: PDFData, systemVersion: string): string {
-  console.log('pdfHelpers: Generating custom HTML report from template content');
+  // // console.log('pdfHelpers: Generating custom HTML report from template content');
   
   // Extract template metadata
   const templateName = customContent.template || 'Custom Template';
@@ -784,22 +784,22 @@ async function ensureLegacyTemplate(simulatorType: string): Promise<string> {
     );
     
     if (legacyTemplate) {
-      console.log('pdfHelpers: Found existing legacy template:', legacyTemplate.id);
+      // // console.log('pdfHelpers: Found existing legacy template:', legacyTemplate.id);
       return legacyTemplate.id;
     }
     
     // Create a new legacy template
-    console.log('pdfHelpers: Creating new legacy template for simulator:', simulatorType);
+    // // console.log('pdfHelpers: Creating new legacy template for simulator:', simulatorType);
     const newTemplate = await PdfBuilderService.createTemplate({
       template_name: 'Legacy Template',
       simulator_type: simulatorType,
       section_ids: []
     });
     
-    console.log('pdfHelpers: Created legacy template:', newTemplate.id);
+    // // console.log('pdfHelpers: Created legacy template:', newTemplate.id);
     return newTemplate.id;
   } catch (error) {
-    console.error('pdfHelpers: Failed to ensure legacy template:', error);
+    // // console.error('pdfHelpers: Failed to ensure legacy template:', error);
     // Fallback to a hardcoded UUID that should exist
     return '00000000-0000-0000-0000-000000000000';
   }
@@ -831,14 +831,14 @@ interface PDFData {
 }
 
 export async function downloadPDF(data: PDFData) {
-  console.log('pdfHelpers: Starting PDF generation...', data);
+  // // console.log('pdfHelpers: Starting PDF generation...', data);
   
   // Get current system version
   let systemVersion = 'v2.2.0'; // fallback
   try {
     systemVersion = await VersionService.getCurrentVersion();
   } catch (error) {
-    console.warn('Could not fetch system version, using fallback:', error);
+    // // console.warn('Could not fetch system version, using fallback:', error);
   }
   
   // Validate input data and provide fallbacks
@@ -866,17 +866,17 @@ export async function downloadPDF(data: PDFData) {
   
   if (safeData.customContent) {
     // Use custom template content from PDF builder
-    console.log('pdfHelpers: Using custom template content', safeData.customContent);
+    // // console.log('pdfHelpers: Using custom template content', safeData.customContent);
     htmlContent = generateCustomHTMLReport(safeData.customContent, safeData, systemVersion);
   } else {
     // Use legacy HTML generation
-    console.log('pdfHelpers: Using legacy HTML generation - no custom content provided');
+    // // console.log('pdfHelpers: Using legacy HTML generation - no custom content provided');
     htmlContent = generateHTMLReport(safeData, systemVersion);
   }
   
   // Save to database if we have the required data
   if (safeData.config?.clientName && safeData.config?.projectName && safeData.simulator?.id) {
-    console.log('pdfHelpers: Attempting to save PDF to database...');
+    // // console.log('pdfHelpers: Attempting to save PDF to database...');
     try {
       // Import PdfBuilderService dynamically to avoid circular dependencies
       const { PdfBuilderService } = await import('../features/pdfBuilder/api/pdfBuilderService');
@@ -885,12 +885,12 @@ export async function downloadPDF(data: PDFData) {
       
       if (safeData.customContent) {
         // Use the active template ID from the custom content
-        console.log('pdfHelpers: Using active template for custom content');
+        // // console.log('pdfHelpers: Using active template for custom content');
         const activeTemplate = await PdfBuilderService.getActiveTemplate(safeData.simulator.id);
         templateId = activeTemplate?.id || await ensureLegacyTemplate(safeData.simulator.id);
       } else {
         // Use legacy template for backward compatibility
-        console.log('pdfHelpers: Using legacy template');
+        // // console.log('pdfHelpers: Using legacy template');
         templateId = await ensureLegacyTemplate(safeData.simulator.id);
       }
       
@@ -909,27 +909,27 @@ export async function downloadPDF(data: PDFData) {
           config: safeData.config
         }
       });
-      console.log('pdfHelpers: Successfully saved PDF to database');
+      // // console.log('pdfHelpers: Successfully saved PDF to database');
     } catch (error) {
-      console.error('pdfHelpers: Failed to save PDF to database:', error);
+      // // console.error('pdfHelpers: Failed to save PDF to database:', error);
       // Don't throw - we still want the PDF to be generated
     }
   } else {
-    console.log('pdfHelpers: Skipping database save - missing required data:', {
-      clientName: safeData.config?.clientName,
-      projectName: safeData.config?.projectName,
-      simulatorId: safeData.simulator?.id
-    });
+    // // console.log('pdfHelpers: Skipping database save - missing required data:', {
+    //   clientName: safeData.config?.clientName,
+    //   projectName: safeData.config?.projectName,
+    //   simulatorId: safeData.simulator?.id
+    // });
   }
   
   // Generate HTML preview instead of PDF
   try {
-    console.log('pdfHelpers: Generating HTML preview with custom template structure');
+    // // console.log('pdfHelpers: Generating HTML preview with custom template structure');
     
     // Check if we have custom template content
     if (safeData.customContent && safeData.customContent.sections) {
-      console.log('pdfHelpers: Using custom template with sections:', safeData.customContent.sections.length);
-      console.log('pdfHelpers: Custom content structure:', JSON.stringify(safeData.customContent, null, 2));
+      // // console.log('pdfHelpers: Using custom template with sections:', safeData.customContent.sections.length);
+      // // console.log('pdfHelpers: Custom content structure:', JSON.stringify(safeData.customContent, null, 2));
       
       // Generate HTML content
       const htmlContent = generateHTMLPreview(safeData, systemVersion);
@@ -941,18 +941,18 @@ export async function downloadPDF(data: PDFData) {
       // Save the HTML preview to Supabase
       try {
         await savePreviewToSupabase(previewId, htmlContent, safeData);
-        console.log('pdfHelpers: HTML preview saved to Supabase');
+        // // console.log('pdfHelpers: HTML preview saved to Supabase');
       } catch (error) {
-        console.error('pdfHelpers: Failed to save preview to Supabase:', error);
+        // // console.error('pdfHelpers: Failed to save preview to Supabase:', error);
         // Fallback to localStorage
         localStorage.setItem(`preview-${previewId}`, htmlContent);
-        console.log('pdfHelpers: Fallback to localStorage');
+        // // console.log('pdfHelpers: Fallback to localStorage');
       }
       
       // Open the dedicated URL in new tab
       const newWindow = window.open(previewUrl, '_blank');
       if (newWindow) {
-        console.log('pdfHelpers: HTML preview opened at:', previewUrl);
+        // // console.log('pdfHelpers: HTML preview opened at:', previewUrl);
         
         // Show success message with the URL
         if (typeof window !== 'undefined' && window.alert) {
@@ -966,12 +966,12 @@ export async function downloadPDF(data: PDFData) {
       
     } else {
       // No custom template content found - show error
-      console.error('pdfHelpers: No custom template content found');
+      // // console.error('pdfHelpers: No custom template content found');
       throw new Error('No PDF template configured. Please create a template in the PDF Builder.');
     }
     
   } catch (error) {
-    console.error('pdfHelpers: Failed to generate HTML preview:', error);
+    // // console.error('pdfHelpers: Failed to generate HTML preview:', error);
     throw error;
   }
 }
@@ -1008,7 +1008,7 @@ async function savePreviewToSupabase(previewId: string, htmlContent: string, dat
     throw new Error(`Failed to save preview to Supabase: ${error.message}`);
   }
   
-  console.log('pdfHelpers: Preview saved to Supabase with ID:', dbId, 'Preview ID:', previewId);
+  // // console.log('pdfHelpers: Preview saved to Supabase with ID:', dbId, 'Preview ID:', previewId);
 }
 
 // Load HTML preview from Supabase
@@ -1023,7 +1023,7 @@ export async function loadPreviewFromSupabase(previewId: string): Promise<string
     .single();
 
   if (error) {
-    console.error('pdfHelpers: Failed to load preview from Supabase:', error);
+    // // console.error('pdfHelpers: Failed to load preview from Supabase:', error);
     return null;
   }
 
@@ -1036,7 +1036,7 @@ export async function loadPreviewFromSupabase(previewId: string): Promise<string
 
 // Generate HTML preview with custom template sections
 function generateHTMLPreview(data: PDFData, systemVersion: string = '1.0.0'): string {
-  console.log('pdfHelpers: Generating HTML preview with sections:', data.customContent?.sections?.length || 0);
+  // // console.log('pdfHelpers: Generating HTML preview with sections:', data.customContent?.sections?.length || 0);
   
   const safeData = {
     config: data.config || {
@@ -1326,7 +1326,7 @@ function generateDynamicSections(data: PDFData, systemVersion: string): string {
   // Process custom template sections
   if (data.customContent && data.customContent.sections) {
     for (const section of data.customContent.sections) {
-      console.log('pdfHelpers: Processing section:', section.section_title, 'Type:', section.section_type);
+      // // console.log('pdfHelpers: Processing section:', section.section_title, 'Type:', section.section_type);
       
       switch (section.section_type) {
         case 'description':

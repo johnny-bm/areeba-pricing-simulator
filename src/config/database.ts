@@ -59,8 +59,20 @@ export const SUBMISSION_STATUS = {
  * Pricing Types
  */
 export const PRICING_TYPES = {
-  SIMPLE: 'simple',
+  ONE_TIME: 'one_time',
+  RECURRING: 'recurring',
+  PER_UNIT: 'per_unit',
   TIERED: 'tiered'
+} as const;
+
+/**
+ * Billing Cycles
+ */
+export const BILLING_CYCLES = {
+  ONE_TIME: 'one_time',
+  MONTHLY: 'monthly',
+  QUARTERLY: 'quarterly',
+  YEARLY: 'yearly'
 } as const;
 
 /**
@@ -147,6 +159,7 @@ export const COLUMNS = {
     DEFAULT_PRICE: 'default_price',
     PRICING_TYPE: 'pricing_type',
     TIERED_PRICING: 'tiered_pricing',
+    BILLING_CYCLE: 'billing_cycle',
     IS_ACTIVE: 'is_active',
     CREATED_AT: 'created_at',
     UPDATED_AT: 'updated_at'

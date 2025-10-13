@@ -41,6 +41,10 @@ const REQUIRED_TABLES: TableCheck[] = [
   {
     table: 'configurations',
     requiredColumns: ['id', 'simulator_id', 'name', 'fields', 'is_active', 'display_order', 'sort_order']
+  },
+  {
+    table: 'kv_store',
+    requiredColumns: ['key', 'value']
   }
 ];
 
@@ -82,16 +86,16 @@ export async function verifyDatabaseSchema(): Promise<{
 // Run verification in development only
 export async function verifyDatabaseSchemaInDev() {
   if (import.meta.env.DEV) {
-    console.log('🔍 Verifying database schema...');
+    // Verifying database schema...
     const result = await verifyDatabaseSchema();
     
     if (!result.success) {
-      console.error('❌ Database schema verification failed:');
-      result.errors.forEach(err => console.error(err));
-      console.error('\n💡 Run: npm run db:types to regenerate types from database');
-      console.error('💡 Check: DATABASE_SYNC.md for troubleshooting');
+      // // // console.error('❌ Database schema verification failed:');
+      // result.errors.forEach(err => // // // console.error(err));
+      // // // console.error('\n💡 Run: npm run db:types to regenerate types from database');
+      // // // console.error('💡 Check: DATABASE_SYNC.md for troubleshooting');
     } else {
-      console.log('✅ Database schema verified - all tables accessible');
+      // // console.log('✅ Database schema verified - all tables accessible');
     }
   }
 }

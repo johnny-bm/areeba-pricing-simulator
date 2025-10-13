@@ -35,10 +35,8 @@ export const api = {
         }
         throw new Error(error.message);
       } catch (error: any) {
-        console.warn(`Health check attempt ${i + 1}/${retries + 1} failed:`, error.message);
         
         if (i === retries) {
-          console.error('Health check failed after all retries:', error);
           return false;
         }
         
@@ -59,7 +57,6 @@ export const api = {
       
       return !error;
     } catch (error: any) {
-      console.error('Ping check failed:', error.message || error);
       return false;
     }
   },
@@ -67,6 +64,8 @@ export const api = {
   // Load services - now uses direct Supabase queries with RLS
   async loadPricingItems(simulatorId?: string): Promise<PricingItem[]> {
     try {
+      console.log('🔍 loadPricingItems called with simulatorId:', simulatorId);
+      
       let query = supabase
         .from(TABLES.SERVICES)
         .select(`
@@ -82,17 +81,37 @@ export const api = {
       // Filter by simulator if provided
       if (simulatorId) {
         query = query.eq('simulator_id', simulatorId);
+        console.log('🔍 Filtering services by simulator_id:', simulatorId);
+      } else {
+        console.log('🔍 Loading all services (no simulator filter)');
       }
 
       const { data: services, error } = await query;
+      
+      console.log('🔍 Services query result:', { data: services, error });
       
       if (error) {
         throw new Error(`Failed to load services: ${error.message}`);
       }
       
-      return services || [];
+      // Transform the data to match frontend expectations
+      const transformedServices = (services || []).map(service => {
+        const transformed = {
+          ...service,
+          // Map database fields to frontend fields
+          categoryId: service.category?.id || null,
+          defaultPrice: service.default_price || 0,
+          pricingType: service.pricing_type === 'simple' ? 'one_time' : service.pricing_type,
+          billingCycle: service.billing_cycle,
+          // Transform tags from service_tags relationship
+          tags: service.service_tags?.map((st: any) => st.tag?.name).filter(Boolean) || []
+        };
+        
+        return transformed;
+      });
+      
+      return transformedServices;
     } catch (error) {
-      console.error('❌ Failed to load services:', error);
       throw error;
     }
   },
@@ -110,18 +129,6 @@ export const api = {
   // Save services - now uses direct Supabase operations with audit fields
   async savePricingItems(items: PricingItem[], simulatorId?: string): Promise<void> {
     try {
-      console.log('🔍 DEBUG: savePricingItems called with:', {
-        itemsCount: items.length,
-        simulatorId,
-        sampleItem: items[0] ? {
-          id: items[0].id,
-          name: items[0].name,
-          categoryId: items[0].categoryId,
-          defaultPrice: items[0].defaultPrice,
-          pricingType: items[0].pricingType
-        } : null
-      });
-
       const user = await getCurrentUser();
       const timestamp = getCurrentTimestamp();
       
@@ -134,7 +141,8 @@ export const api = {
           category: item.categoryId, // Map categoryId to category
           unit: item.unit,
           default_price: item.defaultPrice, // Map defaultPrice to default_price
-          pricing_type: item.pricingType, // Map pricingType to pricing_type
+          pricing_type: item.pricingType === 'one_time' ? 'simple' : item.pricingType, // Map 'one_time' to 'simple' for database
+          billing_cycle: item.billingCycle,
           is_active: item.is_active !== undefined ? item.is_active : true,
           tiered_pricing: item.tiers ? { type: 'tiered', tiers: item.tiers } : null,
           simulator_id: simulatorId,
@@ -144,46 +152,180 @@ export const api = {
           updated_at: timestamp
         };
 
-        console.log('🔍 DEBUG: Mapped item for database:', {
-          original: {
-            categoryId: item.categoryId,
-            defaultPrice: item.defaultPrice,
-            pricingType: item.pricingType
-          },
-          mapped: {
-            category: mappedItem.category,
-            default_price: mappedItem.default_price,
-            pricing_type: mappedItem.pricing_type
-          }
-        });
-
         return mappedItem;
       });
 
-      console.log('🔍 DEBUG: About to upsert to services table:', {
-        tableName: TABLES.SERVICES,
-        itemsCount: itemsWithAudit.length,
-        sampleMappedItem: itemsWithAudit[0]
+      // Filter out services without valid categories first
+      const validItems = itemsWithAudit.filter(item => {
+        const hasValidCategory = item.category && item.category !== 'undefined' && item.category !== 'null';
+        return hasValidCategory;
       });
+
+      if (validItems.length === 0 && itemsWithAudit.length > 0) {
+        throw new Error('No services with valid categories found. Please assign categories to your services.');
+      }
+
+      if (validItems.length !== itemsWithAudit.length) {
+      }
+
+      // Handle empty array case (all services deleted)
+      if (validItems.length === 0) {
+        // Soft-delete all services for this simulator
+        const { error: deleteError } = await supabase
+          .from(TABLES.SERVICES)
+          .update({
+            deleted_at: timestamp,
+            deleted_by: user?.id,
+            updated_by: user?.id,
+            updated_at: timestamp
+          })
+          .eq('simulator_id', simulatorId)
+          .is('deleted_at', null);
+        
+        if (deleteError) {
+          throw new Error(`Failed to delete services: ${deleteError.message}`);
+        }
+        
+        return;
+      }
+
+      // Validate that all categories exist before saving services
+      const categoryIds = [...new Set(validItems.map(item => item.category))];
+      
+      const { data: existingCategories, error: categoryCheckError } = await supabase
+        .from(TABLES.CATEGORIES)
+        .select('id, name')
+        .in('id', categoryIds)
+        .is('deleted_at', null);
+      
+      if (categoryCheckError) {
+        throw new Error(`Failed to validate categories: ${categoryCheckError.message}`);
+      }
+      
+      const existingCategoryIds = existingCategories?.map(cat => cat.id) || [];
+      const missingCategories = categoryIds.filter(id => !existingCategoryIds.includes(id));
+      
+      if (missingCategories.length > 0) {
+        throw new Error(`Categories not found: ${missingCategories.join(', ')}. Please create these categories first.`);
+      }
 
       const { data, error } = await supabase
         .from(TABLES.SERVICES)
-        .upsert(itemsWithAudit, { 
+        .upsert(validItems, { 
           onConflict: 'id',
           ignoreDuplicates: false 
         })
         .select();
       
-      console.log('🔍 DEBUG: Supabase upsert response:', { data, error });
-      
       if (error) {
-        console.error('❌ Supabase error details:', error);
         throw new Error(`Failed to save services: ${error.message}`);
       }
 
-      console.log('✅ Services saved successfully:', data);
+      // Soft-delete services that are no longer in the array
+      const savedServiceIds = validItems.map(item => item.id);
+      
+      const { data: servicesToDelete, error: queryError } = await supabase
+        .from(TABLES.SERVICES)
+        .select('id, name')
+        .eq('simulator_id', simulatorId)
+        .not('id', 'in', `(${savedServiceIds.join(',')})`)
+        .is('deleted_at', null);
+      
+      if (queryError) {
+      } else if (servicesToDelete && servicesToDelete.length > 0) {
+        const { error: softDeleteError } = await supabase
+          .from(TABLES.SERVICES)
+          .update({
+            deleted_at: timestamp,
+            deleted_by: user?.id,
+            updated_by: user?.id,
+            updated_at: timestamp
+          })
+          .eq('simulator_id', simulatorId)
+          .not('id', 'in', `(${savedServiceIds.join(',')})`)
+          .is('deleted_at', null);
+        
+        if (softDeleteError) {
+        }
+      }
+
+      // Save service-tag associations
+      for (const item of items) {
+        if (item.tags && item.tags.length > 0) {
+          // First, ensure all tags exist in the tags table
+          for (const tagName of item.tags) {
+            // Check if tag exists
+            const { data: existingTag } = await supabase
+              .from(TABLES.TAGS)
+              .select('id')
+              .eq('name', tagName)
+              .maybeSingle();
+            
+            if (!existingTag) {
+              // Create tag if it doesn't exist
+              const { error: tagCreateError } = await supabase
+                .from(TABLES.TAGS)
+                .insert({
+                  id: `tag-${tagName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+                  name: tagName,
+                  is_active: true,
+                  simulator_id: simulatorId,
+                  created_by: user?.id,
+                  updated_by: user?.id,
+                  created_at: timestamp,
+                  updated_at: timestamp
+                });
+              
+              if (tagCreateError) {
+              }
+            }
+          }
+          
+          // Delete existing service-tag associations
+          const { error: deleteError } = await supabase
+            .from(TABLES.SERVICE_TAGS)
+            .delete()
+            .eq('service_id', item.id);
+          
+          if (deleteError) {
+          }
+          
+          // Get tag IDs for all tags
+          const { data: tagData } = await supabase
+            .from(TABLES.TAGS)
+            .select('id, name')
+            .in('name', item.tags);
+          
+          if (tagData && tagData.length > 0) {
+            // Create new service-tag associations
+            const serviceTags = tagData.map(tag => ({
+              service_id: item.id,
+              tag_id: tag.id,
+              created_by: user?.id,
+              updated_by: user?.id,
+              created_at: timestamp,
+              updated_at: timestamp
+            }));
+            
+            const { error: tagError } = await supabase
+              .from(TABLES.SERVICE_TAGS)
+              .insert(serviceTags);
+            
+            if (tagError) {
+            }
+          }
+        } else {
+          // Delete service-tag associations if no tags specified
+          const { error: deleteError } = await supabase
+            .from(TABLES.SERVICE_TAGS)
+            .delete()
+            .eq('service_id', item.id);
+          
+          if (deleteError) {
+          }
+        }
+      }
     } catch (error) {
-      console.error('❌ Failed to save services:', error);
       throw error;
     }
   },
@@ -191,6 +333,8 @@ export const api = {
   // Load categories - now uses direct Supabase queries with RLS
   async loadCategories(simulatorId?: string): Promise<Category[]> {
     try {
+      console.log('🔍 loadCategories called with simulatorId:', simulatorId);
+      
       let query = supabase
         .from(TABLES.CATEGORIES)
         .select('*')
@@ -200,9 +344,14 @@ export const api = {
       // Filter by simulator if provided
       if (simulatorId) {
         query = query.eq('simulator_id', simulatorId);
+        console.log('🔍 Filtering categories by simulator_id:', simulatorId);
+      } else {
+        console.log('🔍 Loading all categories (no simulator filter)');
       }
 
       const { data: categories, error } = await query;
+      
+      console.log('🔍 Categories query result:', { data: categories, error });
       
       if (error) {
         throw new Error(`Failed to load categories: ${error.message}`);
@@ -210,7 +359,6 @@ export const api = {
       
       return categories || [];
     } catch (error) {
-      console.error('❌ Failed to load categories:', error);
       throw error;
     }
   },
@@ -221,28 +369,39 @@ export const api = {
       const user = await getCurrentUser();
       const timestamp = getCurrentTimestamp();
       
-      // Prepare categories with audit fields
-      const categoriesWithAudit = categories.map(category => ({
-        ...category,
-        simulator_id: simulatorId,
-        created_by: user?.id,
-        updated_by: user?.id,
-        created_at: timestamp,
-        updated_at: timestamp
-      }));
+      // Prepare categories with audit fields and correct field mapping
+      const categoriesWithAudit = categories.map(category => {
+        const mappedCategory = {
+          id: category.id,
+          name: category.name,
+          description: category.description || '', // Required field - provide default
+          color: category.color || '#6B7280', // Default color
+          order_index: category.order_index || 1, // Default order
+          display_order: category.display_order || 0, // Default display order
+          is_active: category.is_active !== undefined ? category.is_active : true,
+          simulator_id: simulatorId,
+          created_by: user?.id,
+          updated_by: user?.id,
+          created_at: timestamp,
+          updated_at: timestamp
+        };
 
-      const { error } = await supabase
+        return mappedCategory;
+      });
+
+      const { data, error } = await supabase
         .from(TABLES.CATEGORIES)
         .upsert(categoriesWithAudit, { 
           onConflict: 'id',
           ignoreDuplicates: false 
-        });
+        })
+        .select();
       
       if (error) {
         throw new Error(`Failed to save categories: ${error.message}`);
       }
     } catch (error) {
-      console.error('❌ Failed to save categories:', error);
+      // // // console.error('❌ Failed to save categories:', error);
       throw error;
     }
   },
@@ -269,7 +428,7 @@ export const api = {
       
       return tags || [];
     } catch (error) {
-      console.error('❌ Failed to load tags:', error);
+      // // // console.error('❌ Failed to load tags:', error);
       throw error;
     }
   },
@@ -301,7 +460,7 @@ export const api = {
         throw new Error(`Failed to save tags: ${error.message}`);
       }
     } catch (error) {
-      console.error('❌ Failed to save tags:', error);
+      // // // console.error('❌ Failed to save tags:', error);
       throw error;
     }
   },
@@ -328,7 +487,7 @@ export const api = {
       
       return configurations || [];
     } catch (error) {
-      console.error('❌ Failed to load configurations:', error);
+      // // // console.error('❌ Failed to load configurations:', error);
       throw error;
     }
   },
@@ -360,7 +519,7 @@ export const api = {
         throw new Error(`Failed to save configurations: ${error.message}`);
       }
     } catch (error) {
-      console.error('❌ Failed to save configurations:', error);
+      // // // console.error('❌ Failed to save configurations:', error);
       throw error;
     }
   },
@@ -407,7 +566,7 @@ export const api = {
         throw new Error(`Failed to save scenario: ${error.message}`);
       }
     } catch (error) {
-      console.error('❌ Failed to save scenario:', error);
+      // // // console.error('❌ Failed to save scenario:', error);
       throw error;
     }
   },
@@ -472,7 +631,7 @@ async saveGuestScenario(data: {
         scenarioId: result?.id || ''
       };
   } catch (error) {
-    console.error('❌ Failed to save guest scenario:', error);
+    // // // console.error('❌ Failed to save guest scenario:', error);
     throw error;
   }
 },
@@ -527,7 +686,7 @@ async saveGuestScenario(data: {
         updatedAt: scenario.updated_at
       })) as ScenarioData[];
     } catch (error) {
-      console.error('❌ Failed to load scenarios:', error);
+      // // // console.error('❌ Failed to load scenarios:', error);
       throw error;
     }
   },
@@ -551,7 +710,7 @@ async saveGuestScenario(data: {
       
       return scenario;
     } catch (error) {
-      console.error(`❌ Failed to load scenario ${scenarioId}:`, error);
+      // // // console.error(`❌ Failed to load scenario ${scenarioId}:`, error);
       throw error;
     }
   },
@@ -586,7 +745,7 @@ async saveGuestScenario(data: {
         scenario_data: sub.scenario_data || {}
       }));
     } catch (error) {
-      console.error('❌ Failed to load guest submissions:', error);
+      // // // console.error('❌ Failed to load guest submissions:', error);
       throw error;
     }
   },
@@ -610,7 +769,7 @@ async saveGuestScenario(data: {
       
       return submission;
     } catch (error) {
-      console.error(`❌ Failed to load guest scenario ${submissionId}:`, error);
+      // // // console.error(`❌ Failed to load guest scenario ${submissionId}:`, error);
       throw error;
     }
   },
@@ -639,7 +798,7 @@ async saveGuestScenario(data: {
         throw new Error(`Failed to delete scenario: ${error.message}`);
       }
     } catch (error) {
-      console.error('❌ Failed to delete scenario:', error);
+      // // // console.error('❌ Failed to delete scenario:', error);
       throw error;
     }
   },
@@ -660,7 +819,7 @@ async saveGuestScenario(data: {
         throw new Error(`Failed to save session data: ${error.message}`);
       }
     } catch (error) {
-      console.error(`❌ Failed to save session data for ${key}:`, error);
+      // // // console.error(`❌ Failed to save session data for ${key}:`, error);
       throw error;
     }
   },
@@ -681,7 +840,7 @@ async saveGuestScenario(data: {
       
       return data.value !== null && data.value !== undefined ? data.value : fallback;
     } catch (error) {
-      console.warn(`Failed to load session data for ${key}:`, error);
+      // // // console.warn(`Failed to load session data for ${key}:`, error);
       return fallback;
     }
   },
@@ -699,7 +858,7 @@ async saveGuestScenario(data: {
         throw new Error(`Failed to delete session data: ${error.message}`);
       }
     } catch (error) {
-      console.error(`❌ Failed to delete session data for ${key}:`, error);
+      // // // console.error(`❌ Failed to delete session data for ${key}:`, error);
       throw error;
     }
   },
@@ -715,7 +874,7 @@ async saveGuestScenario(data: {
         throw new Error(`Failed to clear session data: ${error.message}`);
       }
     } catch (error) {
-      console.error('Failed to clear session data:', error);
+      // // // console.error('Failed to clear session data:', error);
       throw error;
     }
   },
@@ -746,7 +905,7 @@ async saveGuestScenario(data: {
         throw new Error(`Failed to save configuration: ${error.message}`);
       }
     } catch (error) {
-      console.error('Failed to save configuration:', error);
+      // // // console.error('Failed to save configuration:', error);
       throw error;
     }
   },
@@ -775,7 +934,7 @@ async saveGuestScenario(data: {
         throw new Error(`Failed to delete configuration: ${error.message}`);
       }
     } catch (error) {
-      console.error('Failed to delete configuration:', error);
+      // // // console.error('Failed to delete configuration:', error);
       throw error;
     }
   },
@@ -821,7 +980,7 @@ async saveGuestScenario(data: {
       
       return data;
     } catch (error) {
-      console.error('❌ Failed to create pricing item:', error);
+      // // // console.error('❌ Failed to create pricing item:', error);
       throw error;
     }
   },
@@ -855,7 +1014,7 @@ async saveGuestScenario(data: {
       
       return data;
     } catch (error) {
-      console.error('❌ Failed to update pricing item:', error);
+      // // // console.error('❌ Failed to update pricing item:', error);
       throw error;
     }
   },
@@ -884,7 +1043,7 @@ async saveGuestScenario(data: {
         throw new Error(`Failed to delete pricing item: ${error.message}`);
       }
     } catch (error) {
-      console.error('❌ Failed to delete pricing item:', error);
+      // // // console.error('❌ Failed to delete pricing item:', error);
       throw error;
     }
   },
@@ -920,7 +1079,7 @@ async saveGuestScenario(data: {
       
       return data;
     } catch (error) {
-      console.error('❌ Failed to create category:', error);
+      // // // console.error('❌ Failed to create category:', error);
       throw error;
     }
   },
@@ -954,7 +1113,7 @@ async saveGuestScenario(data: {
       
       return data;
     } catch (error) {
-      console.error('❌ Failed to update category:', error);
+      // // // console.error('❌ Failed to update category:', error);
       throw error;
     }
   },
@@ -983,7 +1142,7 @@ async saveGuestScenario(data: {
         throw new Error(`Failed to delete category: ${error.message}`);
       }
     } catch (error) {
-      console.error('❌ Failed to delete category:', error);
+      // // // console.error('❌ Failed to delete category:', error);
       throw error;
     }
   },
@@ -1024,7 +1183,7 @@ async saveGuestScenario(data: {
       
       return data;
     } catch (error) {
-      console.error('❌ Failed to create tag:', error);
+      // // // console.error('❌ Failed to create tag:', error);
       throw error;
     }
   },
@@ -1058,7 +1217,7 @@ async saveGuestScenario(data: {
       
       return data;
     } catch (error) {
-      console.error('❌ Failed to update tag:', error);
+      // // // console.error('❌ Failed to update tag:', error);
       throw error;
     }
   },
@@ -1087,7 +1246,7 @@ async saveGuestScenario(data: {
         throw new Error(`Failed to delete tag: ${error.message}`);
       }
     } catch (error) {
-      console.error('❌ Failed to delete tag:', error);
+      // // // console.error('❌ Failed to delete tag:', error);
       throw error;
     }
   },
@@ -1305,5 +1464,421 @@ async saveGuestScenario(data: {
     } catch (error: any) {
       throw new Error(`Failed to fetch admin stats: ${error.message}`);
     }
+  },
+
+  // ============================================
+  // Config Pricing Units API
+  // ============================================
+
+  async loadPricingUnits(simulatorId: string) {
+    // // // console.log('🔍 Loading pricing units (global config)');
+    
+    const { data, error } = await supabase
+      .from('config_pricing_units')
+      .select('*')
+      .is('deleted_at', null)
+      .order('display_order');
+    
+    if (error) {
+      // // // console.error('❌ Error loading pricing units:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Loaded pricing units:', data?.length);
+    return data || [];
+  },
+
+  async savePricingUnit(unit: any, simulatorId: string) {
+    // // // console.log('🔍 Saving pricing unit:', unit);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    const payload = {
+      id: unit.id,
+      name: unit.name,
+      value: unit.value,
+      description: unit.description || '',
+      category: unit.category || '',
+      display_order: unit.displayOrder || unit.display_order || 0,
+      is_active: unit.isActive ?? unit.is_active ?? true,
+      created_by: user?.id,
+      updated_by: user?.id,
+      created_at: unit.id ? undefined : now,
+      updated_at: now
+    };
+    
+    const { data, error } = await supabase
+      .from('config_pricing_units')
+      .upsert(payload)
+      .select()
+      .single();
+    
+    if (error) {
+      // // // console.error('❌ Error saving pricing unit:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing unit saved:', data);
+    return data;
+  },
+
+  async deletePricingUnit(unitId: string) {
+    // // // console.log('🔍 Deleting pricing unit:', unitId);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    // Soft delete
+    const { error } = await supabase
+      .from('config_pricing_units')
+      .update({ 
+        deleted_at: now,
+        deleted_by: user?.id,
+        updated_at: now
+      })
+      .eq('id', unitId);
+    
+    if (error) {
+      // // // console.error('❌ Error deleting pricing unit:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing unit deleted');
+  },
+
+  async togglePricingUnitActive(unitId: string, isActive: boolean) {
+    // // // console.log('🔍 Toggling pricing unit active:', unitId, isActive);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    const { error } = await supabase
+      .from('config_pricing_units')
+      .update({ 
+        is_active: isActive,
+        updated_by: user?.id,
+        updated_at: now
+      })
+      .eq('id', unitId);
+    
+    if (error) {
+      // // // console.error('❌ Error toggling pricing unit:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing unit active status toggled');
+  },
+
+  // ============================================
+  // Config Pricing Types API
+  // ============================================
+
+  async loadPricingTypes() {
+    // // // console.log('🔍 Loading pricing types (global config)');
+    
+    const { data, error } = await supabase
+      .from('config_pricing_types')
+      .select('*')
+      .is('deleted_at', null)
+      .order('display_order');
+    
+    if (error) {
+      // // // console.error('❌ Error loading pricing types:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Loaded pricing types:', data?.length);
+    return data || [];
+  },
+
+  async savePricingType(type: any) {
+    // // // console.log('🔍 Saving pricing type:', type);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    const payload = {
+      id: type.id,
+      name: type.name,
+      value: type.value,
+      description: type.description || '',
+      supports_recurring: type.supportsRecurring ?? false,
+      supports_tiered: type.supportsTiered ?? false,
+      display_order: type.displayOrder || type.display_order || 0,
+      is_active: type.isActive ?? type.is_active ?? true,
+      created_by: user?.id,
+      updated_by: user?.id,
+      created_at: type.id ? undefined : now,
+      updated_at: now
+    };
+    
+    const { data, error } = await supabase
+      .from('config_pricing_types')
+      .upsert(payload)
+      .select()
+      .single();
+    
+    if (error) {
+      // // // console.error('❌ Error saving pricing type:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing type saved:', data);
+    return data;
+  },
+
+  async deletePricingType(typeId: string) {
+    // // // console.log('🔍 Deleting pricing type:', typeId);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    // Soft delete
+    const { error } = await supabase
+      .from('config_pricing_types')
+      .update({ 
+        deleted_at: now,
+        deleted_by: user?.id,
+        updated_at: now
+      })
+      .eq('id', typeId);
+    
+    if (error) {
+      // // // console.error('❌ Error deleting pricing type:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing type deleted');
+  },
+
+  async togglePricingTypeActive(typeId: string, isActive: boolean) {
+    // // // console.log('🔍 Toggling pricing type active:', typeId, isActive);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    const { error } = await supabase
+      .from('config_pricing_types')
+      .update({ 
+        is_active: isActive,
+        updated_by: user?.id,
+        updated_at: now
+      })
+      .eq('id', typeId);
+    
+    if (error) {
+      // // // console.error('❌ Error toggling pricing type:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing type active status toggled');
+  },
+
+  // ============================================
+  // Config Pricing Cycles API
+  // ============================================
+
+  async loadPricingCycles() {
+    // // // console.log('🔍 Loading pricing cycles (global config)');
+    
+    const { data, error } = await supabase
+      .from('config_pricing_cycles')
+      .select('*')
+      .is('deleted_at', null)
+      .order('display_order');
+    
+    if (error) {
+      // // // console.error('❌ Error loading pricing cycles:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Loaded pricing cycles:', data?.length);
+    return data || [];
+  },
+
+  async savePricingCycle(cycle: any) {
+    // // // console.log('🔍 Saving pricing cycle:', cycle);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    const payload = {
+      id: cycle.id,
+      name: cycle.name,
+      value: cycle.value,
+      description: cycle.description || '',
+      months: cycle.months || null,
+      display_order: cycle.displayOrder || cycle.display_order || 0,
+      is_active: cycle.isActive ?? cycle.is_active ?? true,
+      created_by: user?.id,
+      updated_by: user?.id,
+      created_at: cycle.id ? undefined : now,
+      updated_at: now
+    };
+    
+    const { data, error } = await supabase
+      .from('config_pricing_cycles')
+      .upsert(payload)
+      .select()
+      .single();
+    
+    if (error) {
+      // // // console.error('❌ Error saving pricing cycle:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing cycle saved:', data);
+    return data;
+  },
+
+  async deletePricingCycle(cycleId: string) {
+    // // // console.log('🔍 Deleting pricing cycle:', cycleId);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    // Soft delete
+    const { error } = await supabase
+      .from('config_pricing_cycles')
+      .update({ 
+        deleted_at: now,
+        deleted_by: user?.id,
+        updated_at: now
+      })
+      .eq('id', cycleId);
+    
+    if (error) {
+      // // // console.error('❌ Error deleting pricing cycle:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing cycle deleted');
+  },
+
+  async togglePricingCycleActive(cycleId: string, isActive: boolean) {
+    // // // console.log('🔍 Toggling pricing cycle active:', cycleId, isActive);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    const { error } = await supabase
+      .from('config_pricing_cycles')
+      .update({ 
+        is_active: isActive,
+        updated_by: user?.id,
+        updated_at: now
+      })
+      .eq('id', cycleId);
+    
+    if (error) {
+      // // // console.error('❌ Error toggling pricing cycle:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing cycle active status toggled');
+  },
+
+  // ============================================
+  // Config Pricing Templates API
+  // ============================================
+
+  async loadPricingTemplates() {
+    // // // console.log('🔍 Loading pricing templates (global config)');
+    
+    const { data, error } = await supabase
+      .from('config_pricing_templates')
+      .select('*')
+      .is('deleted_at', null)
+      .order('display_order');
+    
+    if (error) {
+      // // // console.error('❌ Error loading pricing templates:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Loaded pricing templates:', data?.length);
+    return data || [];
+  },
+
+  async savePricingTemplate(template: any) {
+    // // // console.log('🔍 Saving pricing template:', template);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    const payload = {
+      id: template.id,
+      name: template.name,
+      description: template.description || '',
+      tiers: template.tiers || [],
+      display_order: template.displayOrder || template.display_order || 0,
+      is_active: template.isActive ?? template.is_active ?? true,
+      created_by: user?.id,
+      updated_by: user?.id,
+      created_at: template.id ? undefined : now,
+      updated_at: now
+    };
+    
+    const { data, error } = await supabase
+      .from('config_pricing_templates')
+      .upsert(payload)
+      .select()
+      .single();
+    
+    if (error) {
+      // // // console.error('❌ Error saving pricing template:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing template saved:', data);
+    return data;
+  },
+
+  async deletePricingTemplate(templateId: string) {
+    // // // console.log('🔍 Deleting pricing template:', templateId);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    // Soft delete
+    const { error } = await supabase
+      .from('config_pricing_templates')
+      .update({ 
+        deleted_at: now,
+        deleted_by: user?.id,
+        updated_at: now
+      })
+      .eq('id', templateId);
+    
+    if (error) {
+      // // // console.error('❌ Error deleting pricing template:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing template deleted');
+  },
+
+  async togglePricingTemplateActive(templateId: string, isActive: boolean) {
+    // // // console.log('🔍 Toggling pricing template active:', templateId, isActive);
+    
+    const user = await getCurrentUser();
+    const now = getCurrentTimestamp();
+    
+    const { error } = await supabase
+      .from('config_pricing_templates')
+      .update({ 
+        is_active: isActive,
+        updated_by: user?.id,
+        updated_at: now
+      })
+      .eq('id', templateId);
+    
+    if (error) {
+      // // // console.error('❌ Error toggling pricing template:', error);
+      throw error;
+    }
+    
+    // // // console.log('✅ Pricing template active status toggled');
   }
 };

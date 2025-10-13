@@ -71,14 +71,14 @@ export function PdfGenerator({
 
   useEffect(() => {
     if (template) {
-      console.log('PdfGenerator: Template loaded:', template);
+      // // console.log('PdfGenerator: Template loaded:', template);
       setActiveTemplate(template);
     }
   }, [template]);
 
   useEffect(() => {
     if (sections) {
-      console.log('PdfGenerator: Template sections loaded:', sections);
+      // // console.log('PdfGenerator: Template sections loaded:', sections);
       setTemplateSections(sections);
     }
   }, [sections]);
@@ -86,11 +86,11 @@ export function PdfGenerator({
   const handleGeneratePdf = async () => {
     try {
       setIsGenerating(true);
-      console.log('PdfGenerator: Starting PDF generation...');
+      // // console.log('PdfGenerator: Starting PDF generation...');
 
       if (activeTemplate) {
-        console.log('PdfGenerator: Using active template:', activeTemplate.template_name);
-        console.log('PdfGenerator: Template sections count:', templateSections.length);
+        // // console.log('PdfGenerator: Using active template:', activeTemplate.template_name);
+        // // console.log('PdfGenerator: Template sections count:', templateSections.length);
         
         // Create the PDF content from template
         const pdfContent = await generatePdfFromTemplate({
@@ -104,7 +104,7 @@ export function PdfGenerator({
           options: generationOptions
         });
 
-        console.log('PdfGenerator: Generated PDF content:', pdfContent);
+        // // console.log('PdfGenerator: Generated PDF content:', pdfContent);
 
       // Use existing PDF download functionality
       await downloadPDF({
@@ -136,7 +136,7 @@ export function PdfGenerator({
       });
 
       // Record the generated PDF in the database
-      console.log('PdfGenerator: Attempting to save generated PDF to database...');
+      // // console.log('PdfGenerator: Attempting to save generated PDF to database...');
       try {
         const savedPdf = await PdfBuilderService.createGeneratedPdf({
           template_id: activeTemplate.id,
@@ -145,9 +145,9 @@ export function PdfGenerator({
           simulator_type: simulatorType,
           pricing_data: pricingData
         });
-        console.log('PdfGenerator: Successfully saved generated PDF:', savedPdf);
+        // // console.log('PdfGenerator: Successfully saved generated PDF:', savedPdf);
       } catch (error) {
-        console.error('PdfGenerator: Failed to save generated PDF to database:', error);
+        // // console.error('PdfGenerator: Failed to save generated PDF to database:', error);
         // Don't throw here - we still want the PDF to be generated even if saving fails
         toast.error('PDF generated but failed to save to history');
       }
@@ -162,7 +162,7 @@ export function PdfGenerator({
       onPdfGenerated?.(window.location.href);
 
     } catch (error) {
-      console.error('PDF generation failed:', error);
+      // // console.error('PDF generation failed:', error);
       toast.error('Failed to generate PDF');
     } finally {
       setIsGenerating(false);
@@ -188,7 +188,7 @@ export function PdfGenerator({
     includePreliminary: boolean;
     options: PdfGenerationOptions;
   }) => {
-    console.log('PdfGenerator: generatePdfFromTemplate called with:', {
+    // // console.log('PdfGenerator: generatePdfFromTemplate called with:', {
       template: template.template_name,
       sectionsCount: sections.length,
       clientName,
@@ -219,7 +219,7 @@ export function PdfGenerator({
       }
     };
     
-    console.log('PdfGenerator: Generated PDF content:', result);
+    // // console.log('PdfGenerator: Generated PDF content:', result);
     return result;
   };
 
@@ -257,7 +257,7 @@ export function PdfGenerator({
   }
 
   // Debug: Log template status
-  console.log('PdfGenerator: Template status:', {
+  // // console.log('PdfGenerator: Template status:', {
     template: template ? { id: template.id, name: template.template_name, active: template.is_active } : null,
     templateLoading,
     templateError,
@@ -268,7 +268,7 @@ export function PdfGenerator({
   });
 
   if (!activeTemplate) {
-    console.log('PdfGenerator: No active template found');
+    // // console.log('PdfGenerator: No active template found');
     return (
       <div className="text-center py-4">
         <p className="text-sm text-muted-foreground">

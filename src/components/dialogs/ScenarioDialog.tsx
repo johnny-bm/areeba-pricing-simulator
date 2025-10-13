@@ -28,7 +28,7 @@ export function ScenarioDialog({ isOpen, onClose, scenario }: ScenarioDialogProp
           setScenarioData(data);
         })
         .catch(error => {
-          console.error('Failed to load scenario data:', error);
+          // // console.error('Failed to load scenario data:', error);
         })
         .finally(() => {
           setIsLoadingData(false);
@@ -60,7 +60,7 @@ export function ScenarioDialog({ isOpen, onClose, scenario }: ScenarioDialogProp
   const handleDownloadPDF = async () => {
     try {
       setIsDownloading(true);
-      console.log('Downloading PDF for scenario:', scenario.scenarioId);
+      // // console.log('Downloading PDF for scenario:', scenario.scenarioId);
       
       // Get the full scenario data from the database
       const fullScenarioData = scenarioData || await api.getScenarioData(scenario.scenarioId);
@@ -89,9 +89,9 @@ export function ScenarioDialog({ isOpen, onClose, scenario }: ScenarioDialogProp
       // Generate and download the PDF
       downloadPDF(pdfData);
       
-      console.log('✅ PDF downloaded successfully for scenario:', scenario.scenarioId);
+      // // console.log('✅ PDF downloaded successfully for scenario:', scenario.scenarioId);
     } catch (error) {
-      console.error('❌ Failed to download PDF for scenario:', scenario.scenarioId, error);
+      // // console.error('❌ Failed to download PDF for scenario:', scenario.scenarioId, error);
       alert('Failed to download PDF. Please try again.');
     } finally {
       setIsDownloading(false);

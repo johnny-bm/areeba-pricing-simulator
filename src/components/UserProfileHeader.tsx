@@ -48,7 +48,7 @@ export function UserProfileHeader({ onLogout }: UserProfileHeaderProps) {
       // Navigate to login
       navigate('/login');
     } catch (error) {
-      console.error('Logout error:', error);
+      // // console.error('Logout error:', error);
       // Still logout locally even if API call fails
       localStorage.removeItem('user');
       onLogout();

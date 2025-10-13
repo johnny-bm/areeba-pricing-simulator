@@ -30,7 +30,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { ArrowLeft, LogOut, Settings, Package, Tags, History, CreditCard, Calculator, Zap, Users, Plus, ChevronLeft, ChevronRight, Edit, Copy, RefreshCw, Download, UserCheck, ChevronDown, ChevronRight as ChevronRightIcon, BarChart3, FileText, Building, Image } from 'lucide-react';
+import { ArrowLeft, LogOut, Settings, Package, Tags, History, CreditCard, Calculator, Zap, Users, Plus, ChevronLeft, ChevronRight, Pencil, Copy, RefreshCw, Download, UserCheck, ChevronDown, ChevronRight as ChevronRightIcon, BarChart3, FileText, Building, Image, Edit } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Separator } from './ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
@@ -46,7 +46,14 @@ import type { BreadcrumbItem } from './layout/Header';
 import { DataTable } from './DataTable';
 import { CategoryManager } from './CategoryManager';
 import { TagManager } from './TagManager';
-const UserManagement = lazy(() => import('./UserManagement').then(m => ({ default: m.UserManagement })));
+import { ClientFieldsManager } from './ClientFieldsManager';
+import { UserManagement as UserManagementComponent } from './UserManagement';
+
+// Wrapper component to fix TypeScript issues
+const UserManagementWrapper = (props: { currentUserId: string; currentUserRole: string }) => {
+  const Component = UserManagementComponent as any;
+  return <Component {...props} />;
+};
 import { SimulatorManager } from './SimulatorManager';
 import { SimulatorInfoPage } from './SimulatorInfoPage';
 import { SimulatorDashboard } from './SimulatorDashboard';
@@ -64,6 +71,11 @@ import { ROUTES } from '../config/routes';
 import { SimulatorApi } from '../utils/simulatorApi';
 import { Simulator } from '../types/simulator';
 import WordMarkRed from '../imports/WordMarkRed';
+// Import pricing configuration components
+import { UnitsConfiguration } from '../features/configuration/components/pricing/UnitsConfiguration';
+import { PricingTypesConfiguration } from '../features/configuration/components/pricing/PricingTypesConfiguration';
+import { BillingCyclesConfiguration } from '../features/configuration/components/pricing/BillingCyclesConfiguration';
+import { TieredTemplatesConfiguration } from '../features/configuration/components/pricing/TieredTemplatesConfiguration';
 
 interface AdminInterfaceProps {
   onClose: () => void;
@@ -102,6 +114,20 @@ export function AdminInterface({
   const getCurrentSimulatorAndTab = () => {
     const path = location.pathname;
     
+    // Check pricing configuration routes FIRST (before generic simulator routes)
+    if (path === '/admin/configuration/pricing/units') {
+      return { simulator: null, section: 'pricing-units' };
+    }
+    if (path === '/admin/configuration/pricing/types') {
+      return { simulator: null, section: 'pricing-types' };
+    }
+    if (path === '/admin/configuration/pricing/billing-cycles') {
+      return { simulator: null, section: 'pricing-billing-cycles' };
+    }
+    if (path === '/admin/configuration/pricing/tiered-templates') {
+      return { simulator: null, section: 'pricing-tiered-templates' };
+    }
+    
     // Check if we're in a PDF builder route
     if (path.startsWith('/admin/pdf-builder')) {
       if (path === '/admin/pdf-builder') {
@@ -117,6 +143,12 @@ export function AdminInterface({
     const simulatorMatch = path.match(/^\/admin\/([^\/]+)\/(.+)$/);
     if (simulatorMatch) {
       const [, simulator, section] = simulatorMatch;
+      
+      // Handle configuration routes
+      if (section.startsWith('configuration/')) {
+        return { simulator, section: 'configuration' };
+      }
+      
       return { simulator, section };
     }
     
@@ -173,7 +205,7 @@ export function AdminInterface({
         setConfigurations(loadedConfigs);
         setSimulators(loadedSimulators);
       } catch (error) {
-        console.error('Failed to load data:', error);
+        // // // console.error('Failed to load data:', error);
       }
     };
     
@@ -186,7 +218,7 @@ export function AdminInterface({
       const loadedScenarios = await api.loadScenarios();
       setScenarios(loadedScenarios);
     } catch (error) {
-      console.error('Failed to load scenarios:', error);
+      // // // console.error('Failed to load scenarios:', error);
       setScenarios([]);
     } finally {
       setScenariosLoading(false);
@@ -199,7 +231,7 @@ export function AdminInterface({
       const loadedSubmissions = await api.loadGuestSubmissions();
       setGuestSubmissions(loadedSubmissions);
     } catch (error) {
-      console.error('Failed to load guest submissions:', error);
+      // // // console.error('Failed to load guest submissions:', error);
       setGuestSubmissions([]);
     } finally {
       setGuestSubmissionsLoading(false);
@@ -280,7 +312,7 @@ export function AdminInterface({
         onForceRefresh();
       }
     } catch (error) {
-      console.error('Failed to save configuration:', error);
+      // // // console.error('Failed to save configuration:', error);
       throw error;
     }
   };
@@ -293,7 +325,7 @@ export function AdminInterface({
       setShowConfigDialog(false);
       setEditingConfig(null);
     } catch (error) {
-      console.error('Failed to delete configuration:', error);
+      // // // console.error('Failed to delete configuration:', error);
       throw error;
     }
   };
@@ -310,7 +342,7 @@ export function AdminInterface({
       const updatedConfigs = await api.loadConfigurations();
       setConfigurations(updatedConfigs);
     } catch (error) {
-      console.error('Failed to duplicate configuration:', error);
+      // // // console.error('Failed to duplicate configuration:', error);
       throw error;
     }
   };
@@ -352,7 +384,7 @@ export function AdminInterface({
       
       alert('Scenario duplicated successfully!');
     } catch (error) {
-      console.error('Failed to duplicate scenario:', error);
+      // // // console.error('Failed to duplicate scenario:', error);
       alert('Failed to duplicate scenario. Please try again.');
     }
   };
@@ -445,7 +477,7 @@ export function AdminInterface({
           {/* Back to Simulators - at the top under logo */}
           <button
             onClick={handleClose}
-            className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded-md transition-colors text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-3"
+            className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded-md transition-colors text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mb-1"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to Simulators
@@ -454,7 +486,7 @@ export function AdminInterface({
 
         <SidebarContent className="p-3">
           {/* Simulators Section */}
-          <div className="space-y-1">
+          <div className="space-y-1 mt-6">
             <h3 className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider">
               Simulators
             </h3>
@@ -556,6 +588,7 @@ export function AdminInterface({
                                 <span>Tags</span>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
+                            
                           </SidebarMenuSub>
                         )}
                       </SidebarMenuItem>
@@ -575,7 +608,7 @@ export function AdminInterface({
             </div>
           </div>
             
-            <SidebarSeparator className="my-3 -mx-3" />
+            <SidebarSeparator className="mt-6 mb-3 -mx-3" />
             
             {/* Submissions Section */}
             <div className="space-y-1">
@@ -678,6 +711,74 @@ export function AdminInterface({
                   </SidebarMenuItem>
                 </SidebarMenu>
             
+                {/* Pricing Dropdown */}
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => toggleSimulatorDropdown('pricing')}
+                      isActive={currentSection === 'pricing'}
+                      size="sm"
+                    >
+                      <Settings className="h-3.5 w-3.5" />
+                      <span>Pricing</span>
+                      {expandedSimulators.has('pricing') ? (
+                        <ChevronDown className="h-3.5 w-3.5 ml-auto" />
+                      ) : (
+                        <ChevronRightIcon className="h-3.5 w-3.5 ml-auto" />
+                      )}
+                    </SidebarMenuButton>
+                    
+                    {/* Pricing Sub-items */}
+                    {expandedSimulators.has('pricing') && (
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            onClick={() => navigate('/admin/configuration/pricing/units')}
+                            isActive={currentSection === 'pricing-units'}
+                            size="sm"
+                          >
+                            <Package className="h-3.5 w-3.5" />
+                            <span>Available Units</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            onClick={() => navigate('/admin/configuration/pricing/types')}
+                            isActive={currentSection === 'pricing-types'}
+                            size="sm"
+                          >
+                            <Settings className="h-3.5 w-3.5" />
+                            <span>Pricing Types</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            onClick={() => navigate('/admin/configuration/pricing/billing-cycles')}
+                            isActive={currentSection === 'pricing-billing-cycles'}
+                            size="sm"
+                          >
+                            <CreditCard className="h-3.5 w-3.5" />
+                            <span>Billing Cycles</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            onClick={() => navigate('/admin/configuration/pricing/tiered-templates')}
+                            isActive={currentSection === 'pricing-tiered-templates'}
+                            size="sm"
+                          >
+                            <Calculator className="h-3.5 w-3.5" />
+                            <span>Tiered Pricing Templates</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                </SidebarMenu>
+            
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton
@@ -693,10 +794,19 @@ export function AdminInterface({
               </div>
             </div>
         </SidebarContent>
+        
+        <SidebarFooter className="p-3 border-t border-sidebar-border">
+          <div className="text-xs text-sidebar-foreground/60 text-center">
+            v{import.meta.env.VITE_VERCEL_GIT_COMMIT_SHA ? 
+              `1.${import.meta.env.VITE_VERCEL_GIT_COMMIT_SHA.slice(0, 7)}` :
+              import.meta.env.VITE_BUILD_HASH || 
+              `1.${Math.floor(Date.now() / 1000000)}.0`}
+          </div>
+        </SidebarFooter>
       </Sidebar>
 
       {/* Main Content */}
-      <SidebarInset className="md:ml-[var(--sidebar-width)]">
+      <SidebarInset className="md:ml-[calc(var(--sidebar-width)+0.5rem)]">
         <Header
           breadcrumbs={getBreadcrumbs()}
           showUserMenu={true}
@@ -704,6 +814,7 @@ export function AdminInterface({
           showThemeToggle={true}
           theme={theme}
           setTheme={handleThemeChange}
+          className="pl-6"
         />
         <div className="flex flex-1 flex-col gap-4 p-4">
 
@@ -719,80 +830,14 @@ export function AdminInterface({
             )}
             
             {currentSimulator && currentSection === 'client-fields' && (
-              <AdminPageLayout
-                title="Client Fields"
-                description="Manage client field configurations for this simulator"
-                actions={AdminPageActions.addNew(() => {
-                  setEditingConfig(null);
-                  setShowConfigDialog(true);
-                }, 'Add Configuration')}
-                onRefresh={onForceRefresh}
-              >
-                <DataTable
-                  title="Client Fields"
-                  headers={['Name', 'Status', 'Description', 'Fields', 'Actions']}
-                  items={configurations}
-                  getItemKey={(config) => config.id}
-                  renderRow={(config: any) => (
-                    <>
-                      <TableCell className="font-medium">{config.name}</TableCell>
-                      <TableCell>
-                        <Badge variant={config.is_active ? 'default' : 'secondary'}>
-                          {config.is_active ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">{config.description}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {config.fields ? config.fields.length : 0} fields
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setEditingConfig(config);
-                              setShowConfigDialog(true);
-                            }}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDuplicateConfiguration(config)}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </>
-                  )}
-                  actionButton={
-                    <Button onClick={() => setShowConfigDialog(true)}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Create Client Fields
-                    </Button>
-                  }
-                  onReorder={handleReorderConfigurations}
-                />
-                
-                {showConfigDialog && (
-                  <ConfigurationDialog
-                    isOpen={showConfigDialog}
-                    onClose={() => {
-                      setShowConfigDialog(false);
-                      setEditingConfig(null);
-                    }}
-                    onSave={handleSaveConfiguration}
-                    onDelete={handleDeleteConfiguration}
-                    configuration={editingConfig}
-                    configurations={configurations}
-                    isCreating={!editingConfig}
-                    simulator_id={currentSimulator || ''}
-                  />
-                )}
-              </AdminPageLayout>
+              <ClientFieldsManager
+                configurations={configurations}
+                onUpdateConfigurations={async (updatedConfigurations) => {
+                  setConfigurations(updatedConfigurations);
+                  // Optionally save to backend here
+                }}
+                simulatorId={currentSimulator}
+              />
             )}
             
             {currentSimulator && currentSection === 'categories' && (
@@ -818,6 +863,31 @@ export function AdminInterface({
                 services={items}
                 onUpdateServices={onUpdateItems}
               />
+            )}
+            
+            {/* Pricing Configuration Pages */}
+            {!currentSimulator && currentSection === 'pricing-units' && (
+              <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <UnitsConfiguration />
+              </Suspense>
+            )}
+            
+            {!currentSimulator && currentSection === 'pricing-types' && (
+              <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <PricingTypesConfiguration />
+              </Suspense>
+            )}
+            
+            {!currentSimulator && currentSection === 'pricing-billing-cycles' && (
+              <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <BillingCyclesConfiguration />
+              </Suspense>
+            )}
+            
+            {!currentSimulator && currentSection === 'pricing-tiered-templates' && (
+              <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <TieredTemplatesConfiguration />
+              </Suspense>
             )}
             
             {/* PDF Builder sections */}
@@ -850,7 +920,7 @@ export function AdminInterface({
             
             {!currentSimulatorSlug && currentSection === 'users' && (
               <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-                <UserManagement
+                <UserManagementWrapper
                   currentUserId={currentUserId}
                   currentUserRole={currentUserRole}
                 />
@@ -895,7 +965,7 @@ export function AdminInterface({
                               setShowScenarioDialog(true);
                             }}
                           >
-                            <Edit className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -953,7 +1023,10 @@ export function AdminInterface({
                       <TableCell className="font-medium">{formatPrice(submission.totalPrice)}</TableCell>
                       <TableCell>{submission.services?.length || 0}</TableCell>
                       <TableCell>
-                        <Badge variant={submission.status === 'submitted' ? 'default' : 'secondary'}>
+                        <Badge 
+                          variant={submission.status === 'submitted' ? 'default' : 'secondary'}
+                          className={submission.status === 'submitted' ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-gray-100 text-gray-600 hover:bg-gray-100"}
+                        >
                           {submission.status}
                         </Badge>
                       </TableCell>
@@ -1049,7 +1122,10 @@ export function AdminInterface({
                         <div className="font-medium">{config.name}</div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={config.is_active ? "default" : "secondary"}>
+                        <Badge 
+                          variant={config.is_active ? "default" : "secondary"}
+                          className={config.is_active ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-gray-100 text-gray-600 hover:bg-gray-100"}
+                        >
                           {config.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>

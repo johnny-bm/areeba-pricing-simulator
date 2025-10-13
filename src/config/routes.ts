@@ -15,6 +15,16 @@ export const ROUTES = {
   ADMIN_SIMULATOR_SERVICES: (simulator: string) => `/admin/${simulator}/services`,
   ADMIN_SIMULATOR_TAGS: (simulator: string) => `/admin/${simulator}/tags`,
   
+  // Configuration routes
+  ADMIN_SIMULATOR_CONFIGURATION_PRICING_UNITS: (simulator: string) => `/admin/${simulator}/configuration/pricing/units`,
+  ADMIN_SIMULATOR_CONFIGURATION_PRICING_TYPES: (simulator: string) => `/admin/${simulator}/configuration/pricing/types`,
+  ADMIN_SIMULATOR_CONFIGURATION_PRICING_BILLING_CYCLES: (simulator: string) => `/admin/${simulator}/configuration/pricing/billing-cycles`,
+  ADMIN_SIMULATOR_CONFIGURATION_PRICING_TIERED_TEMPLATES: (simulator: string) => `/admin/${simulator}/configuration/pricing/tiered-templates`,
+  ADMIN_SIMULATOR_CONFIGURATION_USERS: (simulator: string) => `/admin/${simulator}/configuration/users`,
+  ADMIN_SIMULATOR_CONFIGURATION_PDF_BUILDER_SECTIONS: (simulator: string) => `/admin/${simulator}/configuration/pdf-builder/sections`,
+  ADMIN_SIMULATOR_CONFIGURATION_PDF_BUILDER_TEMPLATES: (simulator: string) => `/admin/${simulator}/configuration/pdf-builder/templates`,
+  ADMIN_SIMULATOR_CONFIGURATION_PDF_BUILDER_ARCHIVED: (simulator: string) => `/admin/${simulator}/configuration/pdf-builder/archived`,
+  
   // Global admin routes
   ADMIN_SIMULATORS: '/admin/simulators',
   ADMIN_HISTORY: '/admin/history',

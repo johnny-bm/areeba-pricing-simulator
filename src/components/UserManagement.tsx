@@ -44,7 +44,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
 
   // Load users
   const loadUsers = async () => {
-    console.log('🔄 Loading users and invites...');
+    // // console.log('🔄 Loading users and invites...');
     setIsLoading(true);
     try {
       // Load existing users
@@ -86,10 +86,10 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
       // Combine users and pending invites
       const allUsers = [...(usersData || []), ...pendingInvites];
 
-      console.log('✅ Loaded:', usersData?.length || 0, 'users,', pendingInvites.length, 'pending invites');
+      // // console.log('✅ Loaded:', usersData?.length || 0, 'users,', pendingInvites.length, 'pending invites');
       setUsers(allUsers);
     } catch (error: any) {
-      console.error('❌ Failed to load users:', error);
+      // // console.error('❌ Failed to load users:', error);
       toast.error('Failed to load users', {
         description: error.message || 'Please try again',
         duration: 5000
@@ -126,7 +126,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
       if (inviteError) throw inviteError;
 
       // Step 2: Send email invitation
-      console.log('📧 Attempting to send email invitation...', {
+      // // console.log('📧 Attempting to send email invitation...', {
         email: userData.email,
         firstName: userData.first_name || '',
         lastName: userData.last_name || '',
@@ -146,10 +146,10 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
         }
       });
 
-      console.log('📧 Email result:', { emailResult, emailError });
+      // // console.log('📧 Email result:', { emailResult, emailError });
 
       if (emailError) {
-        console.error('Email send failed:', emailError);
+        // // console.error('Email send failed:', emailError);
         // Still show success for invite creation, but mention email issue
         toast.success('Invite created!', {
           description: 'Invite was created but email delivery failed. You can manually share the invite code.',
@@ -203,7 +203,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
       setShowUserDialog(false);
       setEditingUser(null);
     } catch (error: any) {
-      console.error('Failed to update user:', error);
+      // // console.error('Failed to update user:', error);
       toast.error('Failed to update user', {
         description: error.message || 'Please try again',
         duration: 5000
@@ -221,7 +221,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
 
       if (!confirmed) return;
 
-      console.log('🗑️ Deleting invite:', user.email);
+      // // console.log('🗑️ Deleting invite:', user.email);
 
       try {
         const { error } = await supabase
@@ -232,10 +232,10 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
         if (error) throw error;
 
         toast.success('Invite deleted successfully', { duration: 3000 });
-        console.log('✅ Invite deleted, reloading list...');
+        // // console.log('✅ Invite deleted, reloading list...');
         await loadUsers();
       } catch (error: any) {
-        console.error('❌ Delete failed:', error);
+        // // console.error('❌ Delete failed:', error);
         toast.error('Failed to delete invite', {
           description: error.message || 'Please try again',
           duration: 5000
@@ -263,7 +263,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
 
     if (!confirmed) return;
 
-    console.log('🗑️ Deleting user:', user.email);
+    // // console.log('🗑️ Deleting user:', user.email);
 
     try {
       // Call the function instead of direct delete
@@ -275,10 +275,10 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
 
       toast.success('User deleted successfully', { duration: 3000 });
 
-      console.log('✅ User deleted, reloading list...');
+      // // console.log('✅ User deleted, reloading list...');
       await loadUsers();
     } catch (error: any) {
-      console.error('❌ Delete failed:', error);
+      // // console.error('❌ Delete failed:', error);
       toast.error('Failed to delete user', {
         description: error.message || 'Please try again',
         duration: 5000
@@ -314,7 +314,7 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
       });
 
       if (emailError) {
-        console.error('Email send failed:', emailError);
+        // // console.error('Email send failed:', emailError);
         toast.error('Failed to resend invite email', {
           description: emailError.message,
           duration: 5000

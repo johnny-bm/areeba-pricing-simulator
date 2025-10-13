@@ -208,7 +208,7 @@ export function ScenarioSummaryDialog({
                     config: clientConfig
                   }}
                   onPdfGenerated={(url) => {
-                    console.log('PDF generated successfully:', url);
+                    // // console.log('PDF generated successfully:', url);
                     onOpenChange(false);
                   }}
                   className="w-full"

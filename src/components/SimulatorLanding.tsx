@@ -35,17 +35,17 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
   useEffect(() => {
     const loadSimulators = async () => {
       try {
-        console.log('Loading simulators...');
+        // // console.log('Loading simulators...');
         setIsLoading(true);
         const data = await SimulatorApi.loadSimulators();
-        console.log('Simulators loaded:', data);
+        // // console.log('Simulators loaded:', data);
         setSimulators(data);
       } catch (error) {
-        console.error('Failed to load simulators:', error);
+        // // console.error('Failed to load simulators:', error);
         // Fallback to empty array on error
         setSimulators([]);
       } finally {
-        console.log('Loading complete');
+        // // console.log('Loading complete');
         setIsLoading(false);
       }
     };
@@ -123,12 +123,12 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
                   } ${navigatingTo === simulator.urlSlug ? 'opacity-75' : ''}`}
                   onClick={() => {
                     if (simulator.isAvailable) {
-                      console.log('Navigating to simulator:', simulator.urlSlug);
+                      // // console.log('Navigating to simulator:', simulator.urlSlug);
                       setNavigatingTo(simulator.urlSlug);
                       
                       // Add a small delay to show the loading state
                       setTimeout(() => {
-                        console.log('Actually navigating now...');
+                        // // console.log('Actually navigating now...');
                         if (onSelectSimulator) {
                           onSelectSimulator(simulator.urlSlug);
                         } else {

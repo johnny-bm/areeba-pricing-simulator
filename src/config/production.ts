@@ -203,26 +203,26 @@ export const validateConfig = (): boolean => {
     const requiredFeatures = ['rateLimiting', 'inputValidation', 'securityHeaders'];
     for (const feature of requiredFeatures) {
       if (!config.features[feature as keyof typeof config.features]) {
-        console.error(`Required feature ${feature} is disabled`);
+        // // console.error(`Required feature ${feature} is disabled`);
         return false;
       }
     }
     
     // Validate security settings
     if (config.security.passwordMinLength < 8) {
-      console.error('Password minimum length must be at least 8 characters');
+      // // console.error('Password minimum length must be at least 8 characters');
       return false;
     }
     
     // Validate performance settings
     if (config.performance.maxConcurrentRequests < 1) {
-      console.error('Maximum concurrent requests must be at least 1');
+      // // console.error('Maximum concurrent requests must be at least 1');
       return false;
     }
     
     return true;
   } catch (error) {
-    console.error('Configuration validation failed:', error);
+    // // console.error('Configuration validation failed:', error);
     return false;
   }
 };
@@ -231,6 +231,6 @@ export const validateConfig = (): boolean => {
 if (typeof window !== 'undefined') {
   const isValid = validateConfig();
   if (!isValid) {
-    console.error('Invalid configuration detected. Please check your environment settings.');
+    // // console.error('Invalid configuration detected. Please check your environment settings.');
   }
 }

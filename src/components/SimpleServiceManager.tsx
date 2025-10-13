@@ -1,19 +1,14 @@
-/**
- * SimpleServiceManager - DataTable Edition
- * Version: 5.1.0
- * Last Updated: 2025-09-30
- * Layout: Unified DataTable layout (matches TagManager implementation)
- */
-import { useState, useMemo, useEffect } from 'react';
+"use client"
+
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { TableCell } from './ui/table';
-import { Plus, Edit, Trash2, Copy, Package, Save, Loader2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Plus, Package } from 'lucide-react';
 import { toast } from "sonner";
 import { PricingItem, Category } from '../types/domain';
 import { SimpleServiceEditor } from './SimpleServiceEditor';
-import { DataTable } from './DataTable';
-import { formatPrice } from '../utils/formatters';
+import { DataTable } from '../shared/components/ui/data-table';
+import { createServiceColumns } from './services-columns';
 
 interface SimpleServiceManagerProps {
   services: PricingItem[];
@@ -36,15 +31,10 @@ export function SimpleServiceManager({
 
   // Component version logging
   useEffect(() => {
-    const componentVersion = '5.1.0-DATATABLE';
-    console.log(`%c✅ SimpleServiceManager v${componentVersion} loaded (DataTable Edition)`, 'color: #22c55e; font-weight: bold');
-    console.log('%c   ➜ Layout: Unified DataTable (no more separate cards)', 'color: #22c55e');
+    const componentVersion = '6.0.0-TANSTACK';
+    // // console.log(`%c✅ SimpleServiceManager v${componentVersion} loaded (TanStack Table Edition)`, 'color: #22c55e; font-weight: bold');
+    // // console.log('%c   ➜ Layout: TanStack Table with sorting, filtering, pagination', 'color: #22c55e');
   }, []);
-
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find(cat => cat.id === categoryId);
-    return category?.name || categoryId;
-  };
 
   const handleCreateService = () => {
     setEditingService(null);
@@ -92,7 +82,7 @@ export function SimpleServiceManager({
       }, 500);
       
     } catch (error: any) {
-      console.error('Error saving service:', error);
+      // // console.error('Error saving service:', error);
       setSaveProgress('');
       setIsSaving(false);
       
@@ -110,8 +100,19 @@ export function SimpleServiceManager({
       const updatedServices = services.filter(s => s.id !== service.id);
       await onUpdateServices(updatedServices);
     } catch (error) {
-      console.error('Error deleting service:', error);
+      // // console.error('Error deleting service:', error);
       throw error; // Re-throw to let the editor handle the error display
+    }
+  };
+
+  const handleToggleActive = async (serviceId: string) => {
+    try {
+      const updatedServices = services.map(s => 
+        s.id === serviceId ? { ...s, is_active: !s.is_active } : s
+      );
+      await onUpdateServices(updatedServices);
+    } catch (error) {
+      // // console.error('Error toggling service status:', error);
     }
   };
 
@@ -140,127 +141,43 @@ export function SimpleServiceManager({
       const updatedServices = [...services, duplicatedService];
       await onUpdateServices(updatedServices);
     } catch (error: any) {
-      console.error('Error duplicating service:', error);
+      // // console.error('Error duplicating service:', error);
       alert(`Failed to duplicate service: ${error.message || 'Unknown error'}`);
     }
   };
 
-  // Prepare filter options for categories
-  const categoryFilterOptions = useMemo(() => {
-    return categories.map(cat => ({
-      value: cat.id,
-      label: cat.name,
-      count: services.filter(s => s.categoryId === cat.id).length
-    }));
-  }, [categories, services]);
+  const columns = createServiceColumns(
+    categories,
+    handleEditService,
+    handleQuickDelete,
+    handleDuplicateService,
+    handleToggleActive
+  );
 
   return (
-    <div>
-      <DataTable
-        title="Services"
-        description="Manage your pricing services"
-        headers={['Name', 'Category', 'Price', 'Unit', 'Type', 'Tags', 'Actions']}
-        items={services}
-        getItemKey={(service) => service.id}
-        onRowClick={handleEditService}
-        searchFields={['name', 'description', 'tags']}
-        searchPlaceholder="Search services by name, description, or tags..."
-        filterOptions={[
-          {
-            key: 'categoryId',
-            label: 'Categories',
-            options: categoryFilterOptions
-          }
-        ]}
-        actionButton={
-          <Button onClick={handleCreateService} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Service
-          </Button>
-        }
-        emptyStateTitle="No services created yet"
-        emptyStateDescription="Create your first service to get started with pricing configurations."
-        emptyStateIcon={<Package className="h-12 w-12 text-muted-foreground" />}
-        emptyStateAction={
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Service Management</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Manage your pricing services with advanced table features
+            </p>
+          </div>
           <Button onClick={handleCreateService}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create First Service
+            <Plus className="mr-2 h-4 w-4" />
+            Create New
           </Button>
-        }
-        renderRow={(service) => (
-          <>
-            <TableCell>
-              <div>
-                <div>{service.name}</div>
-                <div className="text-sm text-muted-foreground truncate max-w-xs">
-                  {service.description}
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge variant="secondary">
-                {getCategoryName(service.categoryId)}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              {formatPrice(service.defaultPrice)}
-            </TableCell>
-            <TableCell>
-              <span className="text-sm text-muted-foreground">
-                {service.unit}
-              </span>
-            </TableCell>
-            <TableCell>
-              <Badge variant={service.pricingType === 'tiered' ? 'default' : 'secondary'}>
-                {service.pricingType === 'tiered' ? 'Tiered' : 'Simple'}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <div className="flex flex-wrap gap-1 max-w-xs">
-                {service.tags?.slice(0, 2).map(tag => (
-                  <Badge key={tag} variant="secondary" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-                {service.tags && service.tags.length > 2 && (
-                  <Badge variant="secondary" className="text-xs">
-                    +{service.tags.length - 2} more
-                  </Badge>
-                )}
-              </div>
-            </TableCell>
-            <TableCell onClick={(e) => e.stopPropagation()}>
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleEditService(service)}
-                  title="Edit service"
-                >
-                  <Edit className="h-3 w-3" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleDuplicateService(service)}
-                  title="Duplicate service"
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleQuickDelete(service)}
-                  className="text-destructive hover:text-destructive/80"
-                  title="Delete service"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
-            </TableCell>
-          </>
-        )}
-      />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <DataTable 
+          columns={columns} 
+          data={services}
+          searchKey="name"
+          searchPlaceholder="Search services by name, description, or tags..."
+        />
+      </CardContent>
 
       {/* Service Editor Dialog */}
       <SimpleServiceEditor
@@ -274,6 +191,6 @@ export function SimpleServiceManager({
         isSaving={isSaving}
         saveProgress={saveProgress}
       />
-    </div>
+    </Card>
   );
 }

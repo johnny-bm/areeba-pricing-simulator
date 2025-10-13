@@ -236,12 +236,12 @@ class ErrorTrackingService {
     if (import.meta.env.PROD) {
       try {
         // TODO: Send to your error tracking service (e.g., Sentry, LogRocket, etc.)
-        console.log('Error sent to tracking service:', errorReport);
+        // // console.log('Error sent to tracking service:', errorReport);
       } catch (error) {
-        console.error('Failed to send error to tracking service:', error);
+        // // console.error('Failed to send error to tracking service:', error);
       }
     } else {
-      console.error('Error Report:', errorReport);
+      // // console.error('Error Report:', errorReport);
     }
   }
 

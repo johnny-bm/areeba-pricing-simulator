@@ -39,7 +39,7 @@ export function GuestSubmissionDetailDialog({
   const handleDownloadPDF = async () => {
     try {
       setIsDownloading(true);
-      console.log('Downloading PDF for guest submission:', submission.id);
+      // // console.log('Downloading PDF for guest submission:', submission.id);
       
       // Get the full guest scenario data from the database
       const scenarioData = await api.getGuestScenarioData(submission.id);
@@ -68,9 +68,9 @@ export function GuestSubmissionDetailDialog({
       // Generate and download the PDF
       downloadPDF(pdfData);
       
-      console.log('✅ PDF downloaded successfully for guest submission:', submission.id);
+      // // console.log('✅ PDF downloaded successfully for guest submission:', submission.id);
     } catch (error) {
-      console.error('❌ Failed to download PDF for guest submission:', submission.id, error);
+      // // console.error('❌ Failed to download PDF for guest submission:', submission.id, error);
       alert('Failed to download PDF. Please try again.');
     } finally {
       setIsDownloading(false);

@@ -43,7 +43,7 @@ export function ForgotPasswordPage() {
       });
 
       if (error) {
-        console.error('Password reset error:', error);
+        // // console.error('Password reset error:', error);
         setError(error.message);
         setIsLoading(false);
         return;
@@ -52,7 +52,7 @@ export function ForgotPasswordPage() {
       setSuccess(true);
       setIsLoading(false);
     } catch (err) {
-      console.error('Unexpected error:', err);
+      // // console.error('Unexpected error:', err);
       setError('An unexpected error occurred. Please try again.');
       setIsLoading(false);
     }

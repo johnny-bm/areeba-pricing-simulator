@@ -43,13 +43,15 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   // Get simulator type from URL parameters
   const { simulatorType } = useParams<{ simulatorType?: string }>();
   
-  console.log('🎯 PricingSimulator loaded with simulatorType:', simulatorType);
-  
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
+  
+  // Simulator state
+  const [simulatorId, setSimulatorId] = useState<string | null>(null);
+  const [simulatorLoading, setSimulatorLoading] = useState<boolean>(true);
   
   // UI state
   const [showAdminInterface, setShowAdminInterface] = useState<boolean>(false);
@@ -117,7 +119,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
           setUserRole(userData.role);
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
+        // // // console.error('Auth check failed:', error);
       } finally {
         setAuthLoading(false);
       }
@@ -127,6 +129,35 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   }, []);
 
 
+  // Load simulator ID from simulator type
+  useEffect(() => {
+    const loadSimulatorId = async () => {
+      if (!simulatorType) {
+        setSimulatorLoading(false);
+        return;
+      }
+      
+      try {
+        setSimulatorLoading(true);
+        // // // console.log('🔍 Loading simulator ID for type:', simulatorType);
+        
+        const simulator = await SimulatorApi.loadSimulatorBySlug(simulatorType);
+        if (simulator) {
+          // // // console.log('🔍 Found simulator:', simulator.id, simulator.name);
+          setSimulatorId(simulator.id);
+        } else {
+          // // // console.warn('⚠️ Simulator not found for type:', simulatorType);
+        }
+      } catch (error) {
+        // // // console.error('❌ Failed to load simulator:', error);
+      } finally {
+        setSimulatorLoading(false);
+      }
+    };
+    
+    loadSimulatorId();
+  }, [simulatorType]);
+
   // Load initial data
   useEffect(() => {
     const loadInitialData = async () => {
@@ -135,18 +166,20 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         
         // Load pricing services
         try {
-          const servicesResponse = await api.loadPricingItems();
+          const servicesResponse = await api.loadPricingItems(simulatorId);
           setPricingServices(servicesResponse || []);
         } catch (error) {
-          console.error('Failed to load services:', error);
+          // // // console.error('Failed to load services:', error);
         }
         
         // Load categories
         try {
-          const categoriesResponse = await api.loadCategories();
+          // // // console.log('🔍 Loading categories with simulator ID:', simulatorId);
+          const categoriesResponse = await api.loadCategories(simulatorId);
+          // // // console.log('🔍 Categories loaded:', categoriesResponse?.length, 'categories');
           setCategories(deduplicateCategories(categoriesResponse || []));
         } catch (error) {
-          console.error('Failed to load categories:', error);
+          // // // console.error('Failed to load categories:', error);
         }
         
         // Load configurations
@@ -157,7 +190,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         await loadPersistedData();
         
       } catch (error) {
-        console.error('Failed to load initial data:', error);
+        // // // console.error('Failed to load initial data:', error);
         setBackendConnectionError(true);
       } finally {
         setIsLoading(false);
@@ -165,7 +198,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
     };
 
     loadInitialData();
-  }, []);
+  }, [simulatorId]);
 
   // Load persisted data from database
   const loadPersistedData = async () => {
@@ -195,7 +228,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         setGlobalDiscountType(type);
         setGlobalDiscountApplication(application);
       } catch (error) {
-        console.error('Failed to load global discount:', error);
+        // // // console.error('Failed to load global discount:', error);
       }
 
       // Load simulator selection
@@ -204,23 +237,19 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         setSelectedSimulator(simulatorData);
       } else if (simulatorType) {
         // If no persisted simulator but URL has simulator type, try to load by slug
-        console.log('🔍 Loading simulator by slug:', simulatorType);
         try {
           const simulator = await SimulatorApi.loadSimulatorBySlug(simulatorType);
-          console.log('📋 Simulator found:', simulator);
           if (simulator) {
             setSelectedSimulator(simulator);
-            console.log('✅ Set simulator ID:', simulator.id);
             // Save it to persistence
             simulatorSelectionPersistence.save(simulator.id);
           } else {
-            console.log('❌ Simulator not found, using slug as fallback');
             // Fallback to using the slug directly if simulator not found
             setSelectedSimulator(simulatorType);
             simulatorSelectionPersistence.save(simulatorType);
           }
         } catch (error) {
-          console.error('❌ Failed to load simulator by slug:', error);
+          // // // console.error('❌ Failed to load simulator by slug:', error);
           // Fallback to using the slug directly
           setSelectedSimulator(simulatorType);
           simulatorSelectionPersistence.save(simulatorType);
@@ -240,7 +269,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       }
 
     } catch (error) {
-      console.error('Failed to load persisted data:', error);
+      // // // console.error('Failed to load persisted data:', error);
     }
   };
 
@@ -262,7 +291,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         globalDiscountPersistence.saveDiscountType(globalDiscountType);
         globalDiscountPersistence.saveDiscountApplication(globalDiscountApplication);
       } catch (error) {
-        console.error('Failed to save global discount:', error);
+        // // // console.error('Failed to save global discount:', error);
       }
 
       // Save simulator selection
@@ -277,7 +306,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       await autoAddConfigPersistence.save(autoAddConfig);
 
     } catch (error) {
-      console.error('Failed to save data:', error);
+      // // // console.error('Failed to save data:', error);
     }
   }, [clientConfig, selectedItems, globalDiscount, globalDiscountType, globalDiscountApplication, selectedSimulator, serviceMappings, autoAddConfig]);
 
@@ -314,7 +343,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         setSelectedItems(updatedItems);
       }
     } catch (error) {
-      console.error('Auto-add logic failed:', error);
+      // // // console.error('Auto-add logic failed:', error);
     }
   }, [clientConfig, pricingServices, autoAddConfig, serviceMappings]);
 
@@ -328,7 +357,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       setUserRole(null);
       toast.success('Logged out successfully');
     } catch (error) {
-      console.error('Logout failed:', error);
+      // // // console.error('Logout failed:', error);
       toast.error('Logout failed');
     }
   };
@@ -359,7 +388,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       setGuestContactSubmitted(true);
       toast.success('Quote submitted successfully!');
     } catch (error) {
-      console.error('Guest submission failed:', error);
+      // // // console.error('Guest submission failed:', error);
       toast.error('Failed to submit quote. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -425,8 +454,24 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         categories={categories}
         selectedItems={selectedItems}
         clientConfig={clientConfig as any}
-        onUpdateItems={async (items) => setPricingServices(items)}
-        onUpdateCategories={async (categories) => setCategories(categories)}
+        onUpdateItems={async (items) => {
+          try {
+            await api.savePricingItems(items, selectedSimulator?.id);
+            setPricingServices(items);
+          } catch (error) {
+            // // // console.error('❌ PricingSimulator: Failed to save items:', error);
+            throw error;
+          }
+        }}
+        onUpdateCategories={async (categories) => {
+          try {
+            await api.saveCategories(categories, selectedSimulator?.id);
+            setCategories(categories);
+          } catch (error) {
+            // // // console.error('❌ PricingSimulator: Failed to save categories:', error);
+            throw error;
+          }
+        }}
         onLogout={handleLogout}
         currentUserId={userId || ''}
         currentUserRole={userRole || ''}
@@ -444,10 +489,13 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   }
 
   // Show loading state
-  if (isLoading) {
+  if (isLoading || simulatorLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p className="text-gray-600 mt-2">
+          {simulatorLoading ? 'Loading simulator...' : 'Loading data...'}
+        </p>
       </div>
     );
   }

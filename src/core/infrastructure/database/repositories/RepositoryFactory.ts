@@ -49,7 +49,7 @@ export class RepositoryFactory {
       await pricingRepo.count();
       results.pricing = true;
     } catch (error) {
-      console.error('Pricing repository health check failed:', error);
+      // // console.error('Pricing repository health check failed:', error);
     }
 
     try {
@@ -61,7 +61,7 @@ export class RepositoryFactory {
       
       results.database = !error;
     } catch (error) {
-      console.error('Database health check failed:', error);
+      // // console.error('Database health check failed:', error);
     }
 
     return results;

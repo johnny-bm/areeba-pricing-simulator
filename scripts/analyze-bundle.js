@@ -25,11 +25,11 @@ class BundleAnalyzer {
    * Analyze the production bundle
    */
   async analyze() {
-    console.log('🔍 Analyzing production bundle...');
+    // console.log('🔍 Analyzing production bundle...');
     
     try {
       // Build the project
-      console.log('📦 Building project...');
+      // console.log('📦 Building project...');
       execSync('npm run build:prod', { stdio: 'inherit' });
       
       // Analyze bundle size
@@ -47,10 +47,10 @@ class BundleAnalyzer {
       // Generate report
       this.generateReport();
       
-      console.log('✅ Bundle analysis complete!');
+      // console.log('✅ Bundle analysis complete!');
       
     } catch (error) {
-      console.error('❌ Bundle analysis failed:', error.message);
+      // console.error('❌ Bundle analysis failed:', error.message);
       process.exit(1);
     }
   }
@@ -194,23 +194,23 @@ class BundleAnalyzer {
     writeFileSync('bundle-analysis.json', JSON.stringify(report, null, 2));
     
     // Print summary
-    console.log('\n📊 Bundle Analysis Summary:');
-    console.log(`Total Size: ${report.summary.totalSize}`);
-    console.log(`Total Chunks: ${report.summary.totalChunks}`);
-    console.log(`Average Chunk Size: ${report.summary.averageChunkSize}`);
-    console.log(`Recommendations: ${report.summary.recommendations}`);
+    // console.log('\n📊 Bundle Analysis Summary:');
+    // console.log(`Total Size: ${report.summary.totalSize}`);
+    // console.log(`Total Chunks: ${report.summary.totalChunks}`);
+    // console.log(`Average Chunk Size: ${report.summary.averageChunkSize}`);
+    // console.log(`Recommendations: ${report.summary.recommendations}`);
     
     // Print top chunks
-    console.log('\n📦 Top 10 Largest Chunks:');
+    // console.log('\n📦 Top 10 Largest Chunks:');
     this.analysis.chunks.slice(0, 10).forEach((chunk, index) => {
-      console.log(`${index + 1}. ${chunk.name}: ${this.formatBytes(chunk.size)} (${chunk.percentage.toFixed(1)}%)`);
+      // console.log(`${index + 1}. ${chunk.name}: ${this.formatBytes(chunk.size)} (${chunk.percentage.toFixed(1)}%)`);
     });
     
     // Print recommendations
     if (this.analysis.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
+      // console.log('\n💡 Recommendations:');
       this.analysis.recommendations.forEach((rec, index) => {
-        console.log(`${index + 1}. [${rec.type.toUpperCase()}] ${rec.message}`);
+        // console.log(`${index + 1}. [${rec.type.toUpperCase()}] ${rec.message}`);
       });
     }
   }
@@ -318,4 +318,4 @@ class BundleAnalyzer {
 
 // Run analysis
 const analyzer = new BundleAnalyzer();
-analyzer.analyze().catch(console.error);
+analyzer.analyze().catch(// console.error);

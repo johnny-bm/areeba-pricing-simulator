@@ -95,22 +95,22 @@ export function SignupPage() {
     setIsLoading(true);
 
     try {
-      console.log('Step 1: Creating auth user...');
+      // // console.log('Step 1: Creating auth user...');
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: invite.email,
         password: password,
       });
 
       if (authError) {
-        console.error('Auth error:', authError);
+        // // console.error('Auth error:', authError);
         throw authError;
       }
       if (!authData.user) {
         throw new Error('Signup failed - no user returned');
       }
 
-      console.log('Step 2: Auth user created:', authData.user.id);
-      console.log('Step 3: Creating profile with data:', {
+      // // console.log('Step 2: Auth user created:', authData.user.id);
+      // // console.log('Step 3: Creating profile with data:', {
         id: authData.user.id,
         email: invite.email,
         first_name: firstName || null,
@@ -131,23 +131,23 @@ export function SignupPage() {
         })
         .select();
 
-      console.log('Profile insert result:', { profileData, profileError });
+      // // console.log('Profile insert result:', { profileData, profileError });
 
       if (profileError) {
-        console.error('Profile creation error:', profileError);
+        // // console.error('Profile creation error:', profileError);
         throw profileError;
       }
 
-      console.log('Step 4: Marking invite as used...');
+      // // console.log('Step 4: Marking invite as used...');
       await supabase
         .from('user_invites')
         .update({ used_at: new Date().toISOString() })
         .eq('id', invite.id);
 
-      console.log('Step 5: Success! Navigating to simulators...');
+      // // console.log('Step 5: Success! Navigating to simulators...');
       navigate('/simulators');
     } catch (err: any) {
-      console.error('Full signup error:', err);
+      // // console.error('Full signup error:', err);
       setError(err.message || 'Signup failed. Please try again.');
       setIsLoading(false);
     }

@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../shared/components/ui/table';
+import { TableCell } from '../../../shared/components/ui/table';
 import { Button } from '../../../shared/components/ui/button';
 import { Badge } from '../../../shared/components/ui/badge';
-import { Input } from '../../../shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/components/ui/select';
+import { DataTable } from '../../../components/DataTable';
 import { useAdminUsers } from '../hooks/useAdminUsers';
 import { AdminUser, AdminFilters } from '../types';
 import { ADMIN_ROLES, ADMIN_STATUS } from '../constants';
 import { formatPrice } from '../../../utils/formatters';
-import { Edit, Trash2, UserCheck, UserX, Search, Filter } from 'lucide-react';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
 
 interface AdminUsersTableProps {
   onEditUser?: (user: AdminUser) => void;
@@ -42,7 +42,7 @@ export function AdminUsersTable({
     try {
       await updateUser(userId, { role: newRole as any });
     } catch (error) {
-      console.error('Failed to update user role:', error);
+      // // console.error('Failed to update user role:', error);
     }
   };
 
@@ -50,7 +50,7 @@ export function AdminUsersTable({
     try {
       await updateUser(userId, { is_active: isActive });
     } catch (error) {
-      console.error('Failed to update user status:', error);
+      // // console.error('Failed to update user status:', error);
     }
   };
 
@@ -61,20 +61,23 @@ export function AdminUsersTable({
       try {
         await deleteUser(user.id);
       } catch (error) {
-        console.error('Failed to delete user:', error);
+        // // console.error('Failed to delete user:', error);
       }
     }
   };
 
   const getRoleBadge = (role: string) => {
     const roleColors: Record<string, string> = {
-      owner: 'bg-red-100 text-red-800',
-      admin: 'bg-blue-100 text-blue-800',
-      member: 'bg-green-100 text-green-800',
+      owner: 'bg-red-100 text-red-800 hover:bg-red-100',
+      admin: 'bg-blue-100 text-blue-800 hover:bg-blue-100',
+      member: 'bg-green-100 text-green-800 hover:bg-green-100',
     };
 
     return (
-      <Badge className={roleColors[role] || 'bg-gray-100 text-gray-800'}>
+      <Badge 
+        variant="default"
+        className={roleColors[role] || 'bg-gray-100 text-gray-800 hover:bg-gray-100'}
+      >
         {role}
       </Badge>
     );
@@ -82,7 +85,10 @@ export function AdminUsersTable({
 
   const getStatusBadge = (isActive: boolean) => {
     return (
-      <Badge variant={isActive ? 'default' : 'secondary'}>
+      <Badge 
+        variant={isActive ? 'default' : 'secondary'}
+        className={isActive ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-gray-100 text-gray-600 hover:bg-gray-100"}
+      >
         {isActive ? 'Active' : 'Inactive'}
       </Badge>
     );
@@ -125,134 +131,111 @@ export function AdminUsersTable({
   }
 
   return (
-    <div className="space-y-4">
-      {/* Filters */}
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search users..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Select value={filters.userRole || 'all'} onValueChange={(value) => 
-          setFilters(prev => ({ ...prev, userRole: value === 'all' ? undefined : value }))
-        }>
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Role" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Roles</SelectItem>
-            <SelectItem value="owner">Owner</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-            <SelectItem value="member">Member</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Table */}
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>
-                  <div>
-                    <div className="font-medium">
-                      {user.full_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'No name'}
-                    </div>
-                    <div className="text-sm text-muted-foreground">{user.email}</div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {canEditUser(user) ? (
-                    <Select 
-                      value={user.role} 
-                      onValueChange={(value) => handleRoleChange(user.id, value)}
-                    >
-                      <SelectTrigger className="w-24">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="member">Member</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        {currentUserRole === 'owner' && (
-                          <SelectItem value="owner">Owner</SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    getRoleBadge(user.role)
+    <DataTable
+      title="Admin Users"
+      description="Manage user accounts and permissions"
+      headers={['User', 'Role', 'Status', 'Created', 'Actions']}
+      items={filteredUsers}
+      getItemKey={(user) => user.id}
+      searchFields={['email', 'full_name', 'first_name', 'last_name']}
+      searchPlaceholder="Search users by name or email..."
+      filterOptions={[
+        {
+          key: 'role',
+          label: 'Role',
+          options: [
+            { value: 'owner', label: 'Owner' },
+            { value: 'admin', label: 'Admin' },
+            { value: 'member', label: 'Member' }
+          ]
+        }
+      ]}
+      actionButton={
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Create New
+        </Button>
+      }
+      emptyStateTitle="No users found"
+      emptyStateDescription="No users match your current filters"
+      renderRow={(user) => (
+        <>
+          <TableCell>
+            <div>
+              <div className="font-medium">
+                {user.full_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'No name'}
+              </div>
+              <div className="text-sm text-muted-foreground">{user.email}</div>
+            </div>
+          </TableCell>
+          <TableCell>
+            {canEditUser(user) ? (
+              <Select 
+                value={user.role} 
+                onValueChange={(value) => handleRoleChange(user.id, value)}
+              >
+                <SelectTrigger className="w-24">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="member">Member</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  {currentUserRole === 'owner' && (
+                    <SelectItem value="owner">Owner</SelectItem>
                   )}
-                </TableCell>
-                <TableCell>
-                  {canEditUser(user) ? (
-                    <Select 
-                      value={user.is_active ? 'active' : 'inactive'} 
-                      onValueChange={(value) => handleStatusChange(user.id, value === 'active')}
-                    >
-                      <SelectTrigger className="w-24">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    getStatusBadge(user.is_active)
-                  )}
-                </TableCell>
-                <TableCell>
-                  <div className="text-sm">
-                    {new Date(user.created_at).toLocaleDateString()}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {canEditUser(user) && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onEditUser?.(user)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    )}
-                    {canDeleteUser(user) && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteUser(user)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {filteredUsers.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">No users found</p>
-        </div>
+                </SelectContent>
+              </Select>
+            ) : (
+              getRoleBadge(user.role)
+            )}
+          </TableCell>
+          <TableCell>
+            {canEditUser(user) ? (
+              <Select 
+                value={user.is_active ? 'active' : 'inactive'} 
+                onValueChange={(value) => handleStatusChange(user.id, value === 'active')}
+              >
+                <SelectTrigger className="w-24">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            ) : (
+              getStatusBadge(user.is_active)
+            )}
+          </TableCell>
+          <TableCell>
+            <div className="text-sm">
+              {new Date(user.created_at).toLocaleDateString()}
+            </div>
+          </TableCell>
+          <TableCell className="text-right">
+            <div className="flex items-center justify-end gap-2">
+              {canEditUser(user) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onEditUser?.(user)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              )}
+              {canDeleteUser(user) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDeleteUser(user)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </TableCell>
+        </>
       )}
-    </div>
+    />
   );
 }

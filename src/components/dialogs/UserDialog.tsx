@@ -100,7 +100,7 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
       }
       onClose();
     } catch (error) {
-      console.error('Failed to save user:', error);
+      // // console.error('Failed to save user:', error);
     } finally {
       setIsSaving(false);
     }
@@ -124,7 +124,7 @@ export function UserDialog({ isOpen, onClose, onSave, onDelete, user, currentUse
       await onDelete(user);
       onClose();
     } catch (error) {
-      console.error('Failed to delete user:', error);
+      // // console.error('Failed to delete user:', error);
     } finally {
       setIsSaving(false);
     }

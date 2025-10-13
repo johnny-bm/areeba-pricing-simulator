@@ -67,7 +67,7 @@ export function AutoAddConfigPanel({
     const autoAddRules: Record<string, string[]> = {};
     const quantityRules: Record<string, { field: string; multiplier?: number }> = {};
 
-    console.log('🔄 AutoAdd: Converting mappings to auto-add config:', {
+    // // console.log('🔄 AutoAdd: Converting mappings to auto-add config:', {
       mappingsKeys: Object.keys(mappings),
       mappingsCount: Object.keys(mappings).length,
       sampleMapping: Object.entries(mappings)[0]
@@ -94,7 +94,7 @@ export function AutoAddConfigPanel({
     });
 
     const result = { autoAddRules, quantityRules };
-    console.log('🔄 AutoAdd: Conversion result:', {
+    // // console.log('🔄 AutoAdd: Conversion result:', {
       autoAddRulesCount: Object.keys(autoAddRules).length,
       quantityRulesCount: Object.keys(quantityRules).length,
       autoAddRules,
@@ -105,31 +105,31 @@ export function AutoAddConfigPanel({
   };
 
   const handleServiceMappingUpdate = (serviceId: string, mapping: any) => {
-    console.log('🔧 AutoAdd: Updating service mapping:', { serviceId, mapping });
+    // // console.log('🔧 AutoAdd: Updating service mapping:', { serviceId, mapping });
     
     const updatedMappings = updateServiceMappings(serviceMappings, serviceId, mapping);
-    console.log('🔧 AutoAdd: Updated mappings:', updatedMappings);
+    // // console.log('🔧 AutoAdd: Updated mappings:', updatedMappings);
     
     onUpdateServiceMappings(updatedMappings);
     
     // Also update the auto-add configuration to match
     const newAutoAddConfig = convertMappingsToAutoAddConfig(updatedMappings);
-    console.log('🔧 AutoAdd: Updating auto-add config:', newAutoAddConfig);
+    // // console.log('🔧 AutoAdd: Updating auto-add config:', newAutoAddConfig);
     
     onUpdateAutoAddConfig(newAutoAddConfig);
   };
 
   const handleClearMapping = (serviceId: string) => {
-    console.log('🗑️ AutoAdd: Clearing mapping for service:', serviceId);
+    // // console.log('🗑️ AutoAdd: Clearing mapping for service:', serviceId);
     
     const updatedMappings = updateServiceMappings(serviceMappings, serviceId, {});
-    console.log('🗑️ AutoAdd: Mappings after clearing:', updatedMappings);
+    // // console.log('🗑️ AutoAdd: Mappings after clearing:', updatedMappings);
     
     onUpdateServiceMappings(updatedMappings);
     
     // Also update the auto-add configuration to match
     const newAutoAddConfig = convertMappingsToAutoAddConfig(updatedMappings);
-    console.log('🗑️ AutoAdd: Auto-add config after clearing:', newAutoAddConfig);
+    // // console.log('🗑️ AutoAdd: Auto-add config after clearing:', newAutoAddConfig);
     
     onUpdateAutoAddConfig(newAutoAddConfig);
   };

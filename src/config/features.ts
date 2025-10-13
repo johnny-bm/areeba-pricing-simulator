@@ -81,5 +81,5 @@ export const getFeatureFlags = () => {
  * Log feature flags in development
  */
 if (import.meta.env.DEV && FEATURES.ENABLE_DEBUG_LOGGING) {
-  console.log('🚩 Feature Flags:', getFeatureFlags());
+  // // console.log('🚩 Feature Flags:', getFeatureFlags());
 }

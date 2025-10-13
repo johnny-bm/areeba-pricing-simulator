@@ -51,4 +51,4 @@ export class Money {
 // const price1 = new Money(100, 'USD');
 // const price2 = new Money(50, 'USD');
 // const total = price1.add(price2);
-// console.log(total.amount); // 150
+// // console.log(total.amount); // 150

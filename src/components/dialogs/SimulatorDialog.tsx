@@ -124,7 +124,7 @@ export function SimulatorDialog({
       setIsSaving(true);
       await onSave(formData);
     } catch (error) {
-      console.error('Error saving simulator:', error);
+      // // console.error('Error saving simulator:', error);
     } finally {
       setIsSaving(false);
     }
