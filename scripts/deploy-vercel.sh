@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Vercel Deployment Script for Areeba Pricing Simulator
+# Vercel Deployment Script for areeba Pricing Simulator
 # This script ensures proper deployment to Vercel
 
 set -e

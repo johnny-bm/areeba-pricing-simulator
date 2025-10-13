@@ -1,4 +1,4 @@
-# Areeba Pricing Simulator - Documentation
+# areeba Pricing Simulator - Documentation
 
 ## Quick Links
 

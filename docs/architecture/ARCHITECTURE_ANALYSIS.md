@@ -1,8 +1,8 @@
-# Areeba Pricing Simulator - Architecture Analysis
+# areeba Pricing Simulator - Architecture Analysis
 
 ## Executive Summary
 
-This document provides a comprehensive analysis of the Areeba Pricing Simulator codebase architecture, identifying current patterns, dependencies, and opportunities for restructuring. The application is a React-based pricing simulator with a feature-based architecture, but shows signs of architectural debt that could benefit from restructuring.
+This document provides a comprehensive analysis of the areeba Pricing Simulator codebase architecture, identifying current patterns, dependencies, and opportunities for restructuring. The application is a React-based pricing simulator with a feature-based architecture, but shows signs of architectural debt that could benefit from restructuring.
 
 ## Current Architecture Overview
 

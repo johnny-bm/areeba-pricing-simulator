@@ -39,7 +39,7 @@ export const useAppStore = create<StoreState>()(
       }
     ),
     {
-      name: 'Areeba Pricing Store',
+      name: 'areeba Pricing Store',
     }
   )
 );

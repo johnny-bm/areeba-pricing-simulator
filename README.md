@@ -1,4 +1,4 @@
-# Areeba Pricing Simulator
+# areeba Pricing Simulator
 
 Enterprise pricing calculator built with Clean Architecture and Domain-Driven Design.
 

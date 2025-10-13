@@ -347,7 +347,7 @@ test('auth slice initial state', () => {
 
 ### **Redux DevTools**
 - Install Redux DevTools browser extension
-- Store appears as "Areeba Pricing Store"
+- Store appears as "areeba Pricing Store"
 - View state changes and time travel
 
 ### **Persistence**

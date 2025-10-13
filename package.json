@@ -1,7 +1,7 @@
 {
     "name": "areeba-pricing-simulator",
     "version": "2.2.0",
-    "description": "Areeba Pricing Simulator - IT Services Quote and Proposal Generator",
+    "description": "areeba Pricing Simulator - IT Services Quote and Proposal Generator",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -149,7 +149,7 @@
         "supabase",
         "vite"
     ],
-    "author": "Areeba",
+    "author": "areeba",
     "license": "UNLICENSED",
     "repository": {
         "type": "git",

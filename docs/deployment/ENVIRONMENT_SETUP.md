@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers setting up development, staging, and production environments for the Areeba Pricing Simulator.
+This guide covers setting up development, staging, and production environments for the areeba Pricing Simulator.
 
 ## Development Environment
 

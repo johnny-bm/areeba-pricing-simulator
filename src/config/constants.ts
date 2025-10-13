@@ -1,6 +1,6 @@
 // Application-wide constants
 export const APP_CONFIG = {
-  name: 'Areeba Pricing Simulator',
+  name: 'areeba Pricing Simulator',
   version: '2.0.0',
   api: {
     timeout: 30000,

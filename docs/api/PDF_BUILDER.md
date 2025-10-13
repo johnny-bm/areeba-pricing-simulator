@@ -2,7 +2,7 @@
 
 ## Overview
 
-The PDF Builder System is a comprehensive solution for creating dynamic PDF templates and generating customized PDF documents for the Areeba Pricing Simulator. It provides a complete admin interface for managing content sections, building templates, and generating versioned proposals.
+The PDF Builder System is a comprehensive solution for creating dynamic PDF templates and generating customized PDF documents for the areeba Pricing Simulator. It provides a complete admin interface for managing content sections, building templates, and generating versioned proposals.
 
 ## Features
 
@@ -366,4 +366,4 @@ DEBUG_PDF_BUILDER=true
 
 ## License
 
-This PDF Builder system is part of the Areeba Pricing Simulator and follows the same licensing terms.
+This PDF Builder system is part of the areeba Pricing Simulator and follows the same licensing terms.

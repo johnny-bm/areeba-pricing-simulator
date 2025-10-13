@@ -2,7 +2,7 @@
 
 ## 🏗️ **Architecture Overview**
 
-This document provides comprehensive guidelines for implementing Clean Architecture in the Areeba Pricing Simulator.
+This document provides comprehensive guidelines for implementing Clean Architecture in the areeba Pricing Simulator.
 
 ## 📚 **Layer Responsibilities**
 

@@ -1,4 +1,4 @@
-# Areeba Design System
+# areeba Design System
 
 **Version**: 1.0.0  
 **Based on**: shadcn/ui + Tailwind CSS  

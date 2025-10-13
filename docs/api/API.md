@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the API services and their usage in the Areeba Pricing Simulator application.
+This document describes the API services and their usage in the areeba Pricing Simulator application.
 
 ## Authentication API
 

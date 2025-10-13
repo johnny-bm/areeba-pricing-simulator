@@ -110,29 +110,78 @@ export const api = {
   // Save services - now uses direct Supabase operations with audit fields
   async savePricingItems(items: PricingItem[], simulatorId?: string): Promise<void> {
     try {
+      console.log('🔍 DEBUG: savePricingItems called with:', {
+        itemsCount: items.length,
+        simulatorId,
+        sampleItem: items[0] ? {
+          id: items[0].id,
+          name: items[0].name,
+          categoryId: items[0].categoryId,
+          defaultPrice: items[0].defaultPrice,
+          pricingType: items[0].pricingType
+        } : null
+      });
+
       const user = await getCurrentUser();
       const timestamp = getCurrentTimestamp();
       
-      // Prepare items with audit fields
-      const itemsWithAudit = items.map(item => ({
-        ...item,
-        simulator_id: simulatorId,
-        created_by: user?.id,
-        updated_by: user?.id,
-        created_at: timestamp,
-        updated_at: timestamp
-      }));
+      // Prepare items with audit fields and correct column mapping
+      const itemsWithAudit = items.map(item => {
+        const mappedItem = {
+          id: item.id,
+          name: item.name,
+          description: item.description || '',
+          category: item.categoryId, // Map categoryId to category
+          unit: item.unit,
+          default_price: item.defaultPrice, // Map defaultPrice to default_price
+          pricing_type: item.pricingType, // Map pricingType to pricing_type
+          is_active: item.is_active !== undefined ? item.is_active : true,
+          tiered_pricing: item.tiers ? { type: 'tiered', tiers: item.tiers } : null,
+          simulator_id: simulatorId,
+          created_by: user?.id,
+          updated_by: user?.id,
+          created_at: timestamp,
+          updated_at: timestamp
+        };
 
-      const { error } = await supabase
+        console.log('🔍 DEBUG: Mapped item for database:', {
+          original: {
+            categoryId: item.categoryId,
+            defaultPrice: item.defaultPrice,
+            pricingType: item.pricingType
+          },
+          mapped: {
+            category: mappedItem.category,
+            default_price: mappedItem.default_price,
+            pricing_type: mappedItem.pricing_type
+          }
+        });
+
+        return mappedItem;
+      });
+
+      console.log('🔍 DEBUG: About to upsert to services table:', {
+        tableName: TABLES.SERVICES,
+        itemsCount: itemsWithAudit.length,
+        sampleMappedItem: itemsWithAudit[0]
+      });
+
+      const { data, error } = await supabase
         .from(TABLES.SERVICES)
         .upsert(itemsWithAudit, { 
           onConflict: 'id',
           ignoreDuplicates: false 
-        });
+        })
+        .select();
+      
+      console.log('🔍 DEBUG: Supabase upsert response:', { data, error });
       
       if (error) {
+        console.error('❌ Supabase error details:', error);
         throw new Error(`Failed to save services: ${error.message}`);
       }
+
+      console.log('✅ Services saved successfully:', data);
     } catch (error) {
       console.error('❌ Failed to save services:', error);
       throw error;

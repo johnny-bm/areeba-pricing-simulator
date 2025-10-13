@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers deploying the Areeba Pricing Simulator to production environments.
+This guide covers deploying the areeba Pricing Simulator to production environments.
 
 ## Prerequisites
 

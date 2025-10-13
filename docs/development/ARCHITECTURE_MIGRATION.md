@@ -2,7 +2,7 @@
 
 ## 🎉 **Migration Status: COMPLETE**
 
-The Areeba Pricing Simulator has been successfully migrated from a monolithic architecture to a Clean Architecture implementation.
+The areeba Pricing Simulator has been successfully migrated from a monolithic architecture to a Clean Architecture implementation.
 
 ## 📊 **What Changed**
 
