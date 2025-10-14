@@ -6,7 +6,7 @@ import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
 import { Input } from '../../../components/ui/input';
 import { TableCell } from '../../../components/ui/table';
-import { DataTable } from '../../../components/DataTable';
+import { DataTable } from '../../../shared/components/ui/data-table';
 import { AdminPageLayout, AdminPageActions } from '../../../components/AdminPageLayout';
 import { 
   Dialog,
@@ -107,7 +107,8 @@ export function SectionsPage({ permissions }: SectionsPageProps) {
       isLoading={loading}
     >
       <DataTable
-        title="Content Sections"
+        title="Sections"
+        description="PDF content sections and templates"
         headers={['Section', 'Type', 'Created', 'Actions']}
         items={sections}
         getItemKey={(section) => section.id}

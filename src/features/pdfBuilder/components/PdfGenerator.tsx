@@ -188,12 +188,12 @@ export function PdfGenerator({
     includePreliminary: boolean;
     options: PdfGenerationOptions;
   }) => {
-    // // console.log('PdfGenerator: generatePdfFromTemplate called with:', {
-      template: template.template_name,
-      sectionsCount: sections.length,
-      clientName,
-      projectName
-    });
+    // console.log('PdfGenerator: generatePdfFromTemplate called with:', {
+    //   template: template.template_name,
+    //   sectionsCount: sections.length,
+    //   clientName,
+    //   projectName
+    // });
     
     const processedSections = sections.map(section => {
       return {
@@ -257,18 +257,18 @@ export function PdfGenerator({
   }
 
   // Debug: Log template status
-  // // console.log('PdfGenerator: Template status:', {
-    template: template ? { id: template.id, name: template.template_name, active: template.is_active } : null,
-    templateLoading,
-    templateError,
-    sections: sections ? sections.length : 0,
-    sectionsLoading,
-    activeTemplate: activeTemplate ? { id: activeTemplate.id, name: activeTemplate.template_name } : null,
-    templateSections: templateSections ? templateSections.length : 0
-  });
+  // console.log('PdfGenerator: Template status:', {
+  //   template: template ? { id: template.id, name: template.template_name, active: template.is_active } : null,
+  //   templateLoading,
+  //   templateError,
+  //   sections: sections ? sections.length : 0,
+  //   sectionsLoading,
+  //   activeTemplate: activeTemplate ? { id: activeTemplate.id, name: activeTemplate.template_name } : null,
+  //   templateSections: templateSections ? templateSections.length : 0
+  // });
 
   if (!activeTemplate) {
-    // // console.log('PdfGenerator: No active template found');
+    // console.log('PdfGenerator: No active template found');
     return (
       <div className="text-center py-4">
         <p className="text-sm text-muted-foreground">

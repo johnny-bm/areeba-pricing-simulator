@@ -8,7 +8,7 @@ import { ROUTES } from '../config/routes';
 import { Simulator } from '../types/simulator';
 import { SimulatorApi } from '../utils/simulatorApi';
 import { SIMULATOR_ICON_MAP } from '../utils/icons';
-import { Header, Footer } from './layout';
+import { UnifiedHeader, PageHeader, Footer } from './layout';
 
 interface SimulatorOption {
   id: string;
@@ -62,14 +62,18 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="flex-1 p-4">
-        <div className="max-w-4xl mx-auto">
-          <Header
+      <UnifiedHeader
+        pageType="landing"
+        showAdminButton={!!onOpenAdmin}
+        onAdminClick={onOpenAdmin}
+        onLogout={onLogout}
+      />
+      
+      <main className="flex-1">
+        <div className="container mx-auto px-6 py-8">
+          <PageHeader
             title="Pricing Simulators"
-            subtitle="Select a pricing simulator to configure and calculate costs for your payment solutions"
-            showAdminButton={!!onOpenAdmin}
-            onAdminClick={onOpenAdmin}
-            onLogout={onLogout}
+            description="Select a pricing simulator to configure and calculate costs for your payment solutions"
           />
 
           {/* Simulator Cards */}
@@ -93,16 +97,6 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
                   </Card>
                 ))}
                 
-                {/* Loading text */}
-                <div className="col-span-full text-center py-8">
-                  <div className="flex items-center justify-center gap-3">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
-                    <div className="text-sm">
-                      <div style={{ color: 'red', fontWeight: 'bold', fontSize: '16px' }}>Loading simulators...</div>
-                      <div style={{ color: 'blue', fontSize: '14px' }}>Fetching services and pricing data</div>
-                    </div>
-                  </div>
-                </div>
               </>
             ) : simulators.length === 0 ? (
               <div className="col-span-full text-center py-12">
@@ -126,17 +120,14 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
                       // // console.log('Navigating to simulator:', simulator.urlSlug);
                       setNavigatingTo(simulator.urlSlug);
                       
-                      // Add a small delay to show the loading state
-                      setTimeout(() => {
-                        // // console.log('Actually navigating now...');
-                        if (onSelectSimulator) {
-                          onSelectSimulator(simulator.urlSlug);
-                        } else {
-                          navigate(`/admin/${simulator.urlSlug}/dashboard`);
-                        }
-                        // Reset navigating state after navigation
-                        setTimeout(() => setNavigatingTo(null), 1000);
-                      }, 500);
+                      // Navigate immediately without artificial delay
+                      if (onSelectSimulator) {
+                        onSelectSimulator(simulator.urlSlug);
+                      } else {
+                        navigate(`/admin/${simulator.urlSlug}/dashboard`);
+                      }
+                      // Reset navigating state after navigation
+                      setTimeout(() => setNavigatingTo(null), 1000);
                     }
                   }}
                 >
@@ -195,7 +186,7 @@ export function SimulatorLanding({ onSelectSimulator, onOpenAdmin, onLogout }: S
             )}
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

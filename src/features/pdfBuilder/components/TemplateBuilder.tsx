@@ -6,7 +6,7 @@ import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
 import { TableCell } from '../../../components/ui/table';
 import { Input } from '../../../components/ui/input';
-import { DataTable } from '../../../components/DataTable';
+import { DataTable } from '../../../shared/components/ui/data-table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 import { 
   Dialog,
@@ -425,8 +425,12 @@ export function TemplateBuilder({ permissions }: TemplateBuilderProps) {
               order: ts.position
             })) || []}
             numbering={templateNumbering as {[level: number]: 'roman' | 'letters' | 'numbers' | 'decimal' | 'none'}}
-            onEdit={(sectionId) => // // console.log('Edit section:', sectionId)}
-            onDelete={(sectionId) => // // console.log('Delete section:', sectionId)}
+            onEdit={(sectionId) => {
+              // console.log('Edit section:', sectionId);
+            }}
+            onDelete={(sectionId) => {
+              // console.log('Delete section:', sectionId);
+            }}
           />
         </TabsContent>
       </Tabs>

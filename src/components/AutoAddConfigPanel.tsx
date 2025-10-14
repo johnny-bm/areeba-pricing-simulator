@@ -67,11 +67,11 @@ export function AutoAddConfigPanel({
     const autoAddRules: Record<string, string[]> = {};
     const quantityRules: Record<string, { field: string; multiplier?: number }> = {};
 
-    // // console.log('🔄 AutoAdd: Converting mappings to auto-add config:', {
-      mappingsKeys: Object.keys(mappings),
-      mappingsCount: Object.keys(mappings).length,
-      sampleMapping: Object.entries(mappings)[0]
-    });
+    // console.log('🔄 AutoAdd: Converting mappings to auto-add config:', {
+    //   mappingsKeys: Object.keys(mappings),
+    //   mappingsCount: Object.keys(mappings).length,
+    //   sampleMapping: Object.entries(mappings)[0]
+    // });
 
     Object.entries(mappings).forEach(([serviceId, mapping]) => {
       if (mapping.autoAdd && mapping.configField) {
@@ -94,12 +94,12 @@ export function AutoAddConfigPanel({
     });
 
     const result = { autoAddRules, quantityRules };
-    // // console.log('🔄 AutoAdd: Conversion result:', {
-      autoAddRulesCount: Object.keys(autoAddRules).length,
-      quantityRulesCount: Object.keys(quantityRules).length,
-      autoAddRules,
-      quantityRules
-    });
+    // console.log('🔄 AutoAdd: Conversion result:', {
+    //   autoAddRulesCount: Object.keys(autoAddRules).length,
+    //   quantityRulesCount: Object.keys(quantityRules).length,
+    //   autoAddRules,
+    //   quantityRules
+    // });
 
     return result;
   };

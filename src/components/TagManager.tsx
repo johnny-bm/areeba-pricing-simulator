@@ -45,9 +45,12 @@ export function TagManager({
       }
     });
 
-    return Array.from(tagMap.entries())
+    // Include tags with zero items (empty tags should still be shown)
+    const allTags = Array.from(tagMap.entries())
       .map(([name, info]) => ({ name, ...info }))
       .sort((a, b) => a.name.localeCompare(b.name));
+
+    return allTags;
   }, [services]);
 
   const handleCreateTag = () => {
@@ -81,6 +84,57 @@ export function TagManager({
     }));
     
     await onUpdateServices(updatedServices);
+  };
+
+  const handleRemoveTagFromService = async (tagName: string, serviceId: string) => {
+    // Remove the tag from a specific service
+    const updatedServices = services.map(service => {
+      if (service.id === serviceId) {
+        return {
+          ...service,
+          tags: service.tags ? service.tags.filter(tag => tag !== tagName) : []
+        };
+      }
+      return service;
+    });
+    
+    await onUpdateServices(updatedServices);
+    
+    // Force update the selected tag data by recalculating it
+    if (selectedTag && selectedTag.name === tagName) {
+      // Recalculate the tag data for this specific tag
+      const remainingServices = updatedServices.filter(service => 
+        service.tags && service.tags.includes(tagName)
+      );
+      
+      const updatedTagData = {
+        name: tagName,
+        count: remainingServices.length,
+        items: remainingServices
+      };
+      
+      setSelectedTag(updatedTagData);
+    }
+  };
+
+  const handleUpdateTagName = async (oldName: string, newName: string) => {
+    // Update the tag name in all services that have it
+    const updatedServices = services.map(service => ({
+      ...service,
+      tags: service.tags ? service.tags.map(tag => tag === oldName ? newName : tag) : []
+    }));
+    
+    await onUpdateServices(updatedServices);
+    
+    // Update the selected tag data
+    if (selectedTag && selectedTag.name === oldName) {
+      const updatedTagData = {
+        name: newName,
+        count: selectedTag.count,
+        items: selectedTag.items
+      };
+      setSelectedTag(updatedTagData);
+    }
   };
 
   const handleQuickDelete = async (tagName: string) => {
@@ -135,15 +189,18 @@ export function TagManager({
       </CardHeader>
       <CardContent>
         <DataTable 
+          key={`tags-${services.length}-${JSON.stringify(services.map(s => s.tags).flat())}`}
           columns={columns} 
           data={tagData}
           searchKey="name"
           searchPlaceholder="Search tags..."
+          onRowClick={(tag) => handleViewTag(tag)}
         />
       </CardContent>
 
       {/* Tag Dialog */}
       <TagDialog
+        key={selectedTag ? `${selectedTag.name}-${selectedTag.count}` : 'new-tag'}
         isOpen={isTagDialogOpen}
         onClose={() => {
           setIsTagDialogOpen(false);
@@ -154,6 +211,8 @@ export function TagManager({
         onDeleteTag={handleDeleteTag}
         onCreateTag={handleSaveNewTag}
         isCreating={isCreatingTag}
+        onRemoveTagFromService={handleRemoveTagFromService}
+        onUpdateTagName={handleUpdateTagName}
       />
     </Card>
   );

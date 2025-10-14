@@ -5,6 +5,8 @@ import { ROUTES } from '../config/routes';
 import { api } from '../utils/api';
 import { SimulatorApi } from '../utils/simulatorApi';
 import { PricingItem, Category } from '../types/domain';
+import { ConfigurationLoader } from './ConfigurationLoader';
+import { Skeleton } from '../components/ui/skeleton';
 
 // Lazy load heavy components
 const SimulatorLanding = lazy(() => import('../components/SimulatorLanding').then(m => ({ default: m.SimulatorLanding })));
@@ -16,10 +18,66 @@ const PricingSimulator = lazy(() => import('../components/PricingSimulator').the
 const AdminInterface = lazy(() => import('../components/AdminInterface').then(m => ({ default: m.AdminInterface })));
 const PdfBuilderAdmin = lazy(() => import('../features/pdfBuilder').then(m => ({ default: m.PdfBuilderAdmin })));
 
+// Content-only skeleton loading component
+function AdminContentSkeleton() {
+  return (
+    <div className="flex-1 p-6">
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+
+        {/* Content Cards */}
+        <div className="grid gap-6">
+          <div className="rounded-lg border bg-card p-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-9 w-24" />
+              </div>
+              <div className="space-y-3">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border bg-card p-6">
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-40" />
+              <div className="space-y-3">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border bg-card p-6">
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-36" />
+              <div className="grid grid-cols-3 gap-4">
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Component to load data for admin panel
 function AdminDataLoader() {
   const [items, setItems] = useState<PricingItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [configurations, setConfigurations] = useState<any[]>([]);
+  const [tags, setTags] = useState<any[]>([]);
   const [simulators, setSimulators] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,6 +85,7 @@ function AdminDataLoader() {
   // Use refs to prevent multiple data loads
   const isDataLoadingRef = useRef(false);
   const hasDataLoadedRef = useRef(false);
+  const loadedSimulatorRef = useRef<string | null>(null);
   
   // Move useAuthContext to the top to fix hooks order
   const { logout, user } = useAuthContext();
@@ -34,10 +93,7 @@ function AdminDataLoader() {
   // Get simulator from URL parameters
   const { simulator } = useParams<{ simulator: string }>();
   
-  // Check if this is a global configuration route (no simulator parameter)
-  const isGlobalConfigRoute = !simulator && window.location.pathname.includes('/admin/configuration/');
-  
-  // Find the actual simulator ID from the slug (only for simulator-specific routes)
+  // Find the actual simulator ID from the slug
   // This will be calculated after simulators are loaded
 
   // Debounce save operations to prevent multiple rapid calls
@@ -51,11 +107,6 @@ function AdminDataLoader() {
     
     // Set new timeout
     saveTimeoutRef.current = setTimeout(async () => {
-      if (isGlobalConfigRoute) {
-        // For global configuration routes, we don't save simulator-specific data
-        return;
-      }
-      
       // Calculate simulator ID from current simulators
       const currentSimulatorId = simulator ? simulators.find(s => s.urlSlug === simulator)?.id : null;
       
@@ -70,46 +121,96 @@ function AdminDataLoader() {
         throw error;
       }
     }, 500); // 500ms debounce
-  }, [simulator, simulators, isGlobalConfigRoute]);
+  }, [simulator, simulators]);
 
   useEffect(() => {
+    console.log('🔍 === useEffect TRIGGERED ===');
+    console.log('🔍 Current simulator:', simulator);
+    console.log('🔍 isDataLoadingRef:', isDataLoadingRef.current);
+    console.log('🔍 hasDataLoadedRef:', hasDataLoadedRef.current);
+    
     // Prevent multiple data loads using refs
-    if (isDataLoadingRef.current || hasDataLoadedRef.current) {
+    if (isDataLoadingRef.current) {
+      console.log('⚠️ Already loading, skipping...');
       return;
+    }
+    
+    // Check if we already loaded data for this specific simulator
+    if (hasDataLoadedRef.current && loadedSimulatorRef.current === simulator) {
+      console.log('⚠️ Already loaded for this simulator, skipping...');
+      return;
+    }
+    
+    // Reset refs when simulator changes
+    if (simulator && loadedSimulatorRef.current !== simulator) {
+      console.log('🔍 === SIMULATOR CHANGED ===');
+      console.log('🔍 New simulator:', simulator);
+      console.log('🔍 Previous simulator:', loadedSimulatorRef.current);
+      console.log('🔍 Resetting refs...');
+      hasDataLoadedRef.current = false;
+      isDataLoadingRef.current = false;
     }
 
     const loadAdminData = async () => {
+      console.log('🔍 === START loadAdminData ===');
+      console.log('🔍 Current simulator param:', simulator);
+      console.log('🔍 isDataLoadingRef:', isDataLoadingRef.current);
+      console.log('🔍 hasDataLoadedRef:', hasDataLoadedRef.current);
+      
       try {
         isDataLoadingRef.current = true;
         setIsLoading(true);
         
+        console.log('🔍 Loading simulators...');
         // Load simulators first to get the simulator ID
         const simulatorsResponse = await SimulatorApi.loadSimulators();
+        console.log('🔍 Simulators loaded:', simulatorsResponse?.length);
         setSimulators(simulatorsResponse || []);
         
+        console.log('🔍 Finding simulator with slug:', simulator);
         // Calculate simulator ID after simulators are loaded
         const simulatorId = simulator ? simulatorsResponse?.find(s => s.urlSlug === simulator)?.id : null;
-        console.log('🔍 Router: Calculated simulatorId:', simulatorId, 'from simulator slug:', simulator);
+        console.log('🔍 Router: URL slug from params:', simulator);
         console.log('🔍 Router: Available simulators:', simulatorsResponse?.map(s => ({ id: s.id, urlSlug: s.urlSlug, name: s.name })));
+        console.log('🔍 Router: Calculated simulatorId:', simulatorId);
         
-        // Load data based on route type
-        if (isGlobalConfigRoute) {
-          // For global configuration routes, we don't need to load simulator-specific data
-          setItems([]);
-          setCategories([]);
-        } else {
-          // For simulator-specific routes, load services and categories with the simulator ID
-          const [servicesResponse, categoriesResponse] = await Promise.all([
-            api.loadPricingItems(simulatorId), // Pass simulator ID to filter services
-            api.loadCategories(simulatorId)    // Pass simulator ID to filter categories
-          ]);
-          
-          setItems(servicesResponse || []);
-          setCategories(categoriesResponse || []);
+        if (!simulatorId && simulator) {
+          console.error('❌ Router: No simulator found for slug:', simulator);
+          console.error('❌ Router: Available slugs:', simulatorsResponse?.map(s => s.urlSlug));
+          console.error('❌ Router: Available simulators:', simulatorsResponse?.map(s => ({ id: s.id, urlSlug: s.urlSlug, name: s.name })));
+          setError(`Simulator not found: ${simulator}. Available simulators: ${simulatorsResponse?.map(s => s.urlSlug).join(', ')}`);
+          return;
         }
+        
+        console.log('🔍 Loading all data with simulatorId:', simulatorId);
+        // Load all data with the simulator ID
+        const [servicesResponse, categoriesResponse, configurationsResponse, tagsResponse] = await Promise.all([
+          api.loadPricingItems(simulatorId), // Pass simulator ID to filter services
+          api.loadCategories(simulatorId),  // Pass simulator ID to filter categories
+          api.loadConfigurations(simulatorId), // Pass simulator ID to filter configurations
+          api.loadTags(simulatorId)          // Pass simulator ID to filter tags
+        ]);
+        
+        console.log('🔍 Data loaded - Services:', servicesResponse?.length, 
+                    'Categories:', categoriesResponse?.length,
+                    'Configs:', configurationsResponse?.length,
+                    'Tags:', tagsResponse?.length);
+        console.log('🔍 First service simulator_id:', (servicesResponse?.[0] as any)?.simulator_id);
+        console.log('🔍 First category simulator_id:', (categoriesResponse?.[0] as any)?.simulator_id);
+        
+        setItems(servicesResponse || []);
+        setCategories(categoriesResponse || []);
+        setConfigurations(configurationsResponse || []);
+        setTags(tagsResponse || []);
+        
+        console.log('🔍 Router: Loaded configurations:', configurationsResponse?.length || 0);
+        console.log('🔍 Router: Loaded tags:', tagsResponse?.length || 0);
         hasDataLoadedRef.current = true;
+        loadedSimulatorRef.current = simulator;
+        console.log('🔍 === END loadAdminData SUCCESS ===');
+        console.log('🔍 Loaded data for simulator:', simulator);
       } catch (error) {
-        // // // console.error('❌ Failed to load admin data:', error);
+        console.error('❌ === loadAdminData FAILED ===', error);
         setError(`Failed to load admin data: ${error instanceof Error ? error.message : 'Unknown error'}`);
       } finally {
         isDataLoadingRef.current = false;
@@ -125,13 +226,23 @@ function AdminDataLoader() {
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, []); // Empty dependency array - only run once
+  }, [simulator]); // Depend on simulator changes
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
+      <AdminInterface
+        onClose={() => window.history.back()}
+        items={[]}
+        categories={[]}
+        configurations={[]}
+        tags={[]}
+        onUpdateItems={async () => {}}
+        onUpdateCategories={async () => {}}
+        onLogout={async () => {}}
+        currentUserId={user?.id || ""}
+        currentUserRole={user?.role || ""}
+        isLoading={true}
+      />
     );
   }
 
@@ -155,13 +266,10 @@ function AdminDataLoader() {
       onClose={() => window.history.back()}
       items={items}
       categories={categories}
+      configurations={configurations}
+      tags={tags}
       onUpdateItems={debouncedSaveItems}
       onUpdateCategories={async (categories) => {
-        if (isGlobalConfigRoute) {
-          // For global configuration routes, we don't save simulator-specific data
-          return;
-        }
-        
         // Calculate simulator ID from current simulators
         const currentSimulatorId = simulator ? simulators.find(s => s.urlSlug === simulator)?.id : null;
         
@@ -179,6 +287,7 @@ function AdminDataLoader() {
       onLogout={handleLogout}
       currentUserId={user?.id || ""}
       currentUserRole={user?.role || ""}
+      isLoading={false}
     />
   );
 }
@@ -189,16 +298,36 @@ export function AppRouter() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background">
+        <div className="flex items-center justify-center h-screen">
+          <div className="space-y-4 w-96">
+            <Skeleton className="h-8 w-48 mx-auto" />
+            <Skeleton className="h-4 w-32 mx-auto" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background">
+        <div className="flex items-center justify-center h-screen">
+          <div className="space-y-4 w-96">
+            <Skeleton className="h-8 w-48 mx-auto" />
+            <Skeleton className="h-4 w-32 mx-auto" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          </div>
+        </div>
       </div>
     }>
       <Routes>
@@ -272,55 +401,6 @@ export function AppRouter() {
         } 
       />
       
-      {/* Configuration routes */}
-      <Route 
-        path="/admin/:simulator/configuration/pricing/units" 
-        element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
-        } 
-      />
-      <Route 
-        path="/admin/:simulator/configuration/pricing/types" 
-        element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
-        } 
-      />
-      <Route 
-        path="/admin/:simulator/configuration/pricing/billing-cycles" 
-        element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
-        } 
-      />
-      <Route 
-        path="/admin/:simulator/configuration/pricing/tiered-templates" 
-        element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
-        } 
-      />
-      <Route 
-        path="/admin/:simulator/configuration/users" 
-        element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
-        } 
-      />
-      <Route 
-        path="/admin/:simulator/configuration/pdf-builder/sections" 
-        element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
-        } 
-      />
-      <Route 
-        path="/admin/:simulator/configuration/pdf-builder/templates" 
-        element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
-        } 
-      />
-      <Route 
-        path="/admin/:simulator/configuration/pdf-builder/archived" 
-        element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
-        } 
-      />
       
       {/* Global admin routes */}
       <Route 
@@ -352,25 +432,25 @@ export function AppRouter() {
       <Route 
         path="/admin/configuration/pricing/units" 
         element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+          isAuthenticated ? <ConfigurationLoader /> : <Navigate to={ROUTES.LOGIN} />
         } 
       />
       <Route 
         path="/admin/configuration/pricing/types" 
         element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+          isAuthenticated ? <ConfigurationLoader /> : <Navigate to={ROUTES.LOGIN} />
         } 
       />
       <Route 
         path="/admin/configuration/pricing/billing-cycles" 
         element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+          isAuthenticated ? <ConfigurationLoader /> : <Navigate to={ROUTES.LOGIN} />
         } 
       />
       <Route 
         path="/admin/configuration/pricing/tiered-templates" 
         element={
-          isAuthenticated ? <AdminDataLoader /> : <Navigate to={ROUTES.LOGIN} />
+          isAuthenticated ? <ConfigurationLoader /> : <Navigate to={ROUTES.LOGIN} />
         } 
       />
       
@@ -504,8 +584,18 @@ function PreviewPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background">
+        <div className="flex items-center justify-center h-screen">
+          <div className="space-y-4 w-96">
+            <Skeleton className="h-8 w-48 mx-auto" />
+            <Skeleton className="h-4 w-32 mx-auto" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
@@ -12,111 +11,136 @@ import { api } from '../../../../utils/api';
 interface TieredTemplate {
   id: string;
   name: string;
+  value: string;
   description: string;
-  tiers: Array<{
-    min: number;
-    max: number | null;
-    price: number;
-    unit: string;
-  }>;
-  isActive: boolean;
-  display_order?: number;
+  display_order: number;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export function TieredTemplatesConfiguration() {
-  const { simulator } = useParams<{ simulator: string }>();
-  const [templates, setTemplates] = useState<TieredTemplate[]>([]);
+  const [tieredTemplates, setTieredTemplates] = useState<TieredTemplate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load templates from database
+  // Load tiered templates from database
   useEffect(() => {
-    const loadTemplates = async () => {
+    const loadTieredTemplates = async () => {
       try {
         setIsLoading(true);
         setError(null);
         const data = await api.loadPricingTemplates();
-        
-        // Transform database data to component format
-        const transformedTemplates: TieredTemplate[] = data.map((template: any) => ({
-          id: template.id,
-          name: template.name,
-          description: template.description || '',
-          tiers: template.tiers || [],
-          isActive: template.is_active ?? true,
-          display_order: template.display_order
-        }));
-        
-        setTemplates(transformedTemplates);
+        setTieredTemplates(data);
       } catch (err: any) {
         setError(err.message || 'Failed to load tiered templates');
+        console.error('Error loading tiered templates:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadTemplates();
-  }, [simulator]);
+    loadTieredTemplates();
+  }, []);
 
-  const handleCreateTemplate = () => {
-    // TODO: Implement create template dialog
-  };
-
-  const handleEditTemplate = (template: TieredTemplate) => {
-    // TODO: Implement edit template dialog
-  };
-
-  const handleDeleteTemplate = async (template: TieredTemplate) => {
+  const handleCreateTieredTemplate = async (tieredTemplate: Omit<TieredTemplate, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      setError(null);
-      await api.deletePricingTemplate(template.id);
-      setTemplates(prev => prev.filter(t => t.id !== template.id));
+      const newTieredTemplate = await api.savePricingTemplate({
+        ...tieredTemplate,
+        id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      });
+      setTieredTemplates(prev => [...prev, newTieredTemplate]);
     } catch (err: any) {
-      setError(err.message || 'Failed to delete tiered template');
+      console.error('Error creating tiered template:', err);
+      throw err;
     }
   };
 
-  const handleDuplicateTemplate = async (template: TieredTemplate) => {
+  const handleUpdateTieredTemplate = async (tieredTemplate: TieredTemplate) => {
     try {
-      const duplicatedTemplate = {
-        ...template,
-        id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: `${template.name} (Copy)`
-      };
-      await api.createTieredTemplate(duplicatedTemplate);
-      setTemplates(prev => [...prev, duplicatedTemplate]);
+      const updatedTieredTemplate = await api.savePricingTemplate(tieredTemplate);
+      setTieredTemplates(prev => prev.map(tt => tt.id === tieredTemplate.id ? updatedTieredTemplate : tt));
     } catch (err: any) {
-      setError(err.message || 'Failed to duplicate tiered template');
+      console.error('Error updating tiered template:', err);
+      throw err;
+    }
+  };
+
+  const handleDeleteTieredTemplate = async (templateId: string) => {
+    try {
+      await api.deletePricingTemplate(templateId);
+      setTieredTemplates(prev => prev.filter(tt => tt.id !== templateId));
+    } catch (err: any) {
+      console.error('Error deleting tiered template:', err);
+      throw err;
     }
   };
 
   const handleToggleActive = async (templateId: string) => {
     try {
-      setError(null);
-      const template = templates.find(t => t.id === templateId);
-      if (!template) return;
+      const tieredTemplate = tieredTemplates.find(tt => tt.id === templateId);
+      if (!tieredTemplate) return;
       
-      await api.togglePricingTemplateActive(templateId, !template.isActive);
-      setTemplates(prev => prev.map(t => 
-        t.id === templateId ? { ...t, isActive: !t.isActive } : t
+      await api.togglePricingTemplateActive(templateId, !tieredTemplate.is_active);
+      setTieredTemplates(prev => prev.map(tt => 
+        tt.id === templateId ? { ...tt, is_active: !tt.is_active } : tt
       ));
     } catch (err: any) {
-      setError(err.message || 'Failed to toggle tiered template status');
+      console.error('Error toggling tiered template status:', err);
     }
   };
 
-  const formatTiers = (tiers: TieredTemplate['tiers']) => {
-    if (!tiers || tiers.length === 0) return 'No tiers';
-    return `${tiers.length} tier${tiers.length !== 1 ? 's' : ''}`;
+  const handleDuplicateTieredTemplate = async (tieredTemplate: TieredTemplate) => {
+    try {
+      const duplicatedTieredTemplate = {
+        ...tieredTemplate,
+        id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: `${tieredTemplate.name} (Copy)`,
+        display_order: tieredTemplates.length + 1
+      };
+      
+      const newTieredTemplate = await api.savePricingTemplate(duplicatedTieredTemplate);
+      setTieredTemplates(prev => [...prev, newTieredTemplate]);
+    } catch (err: any) {
+      console.error('Error duplicating tiered template:', err);
+      throw err;
+    }
   };
+
+  const columns = createTieredTemplateColumns(
+    handleUpdateTieredTemplate,
+    handleDeleteTieredTemplate,
+    handleDuplicateTieredTemplate,
+    handleToggleActive
+  );
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Tiered Templates</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (error) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold mb-2">Error Loading Tiered Templates</h2>
-            <p className="text-red-600">{error}</p>
+        <CardHeader>
+          <CardTitle>Tiered Templates</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center p-8">
+            <p className="text-destructive mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -130,33 +154,28 @@ export function TieredTemplatesConfiguration() {
           <div>
             <CardTitle>Tiered Templates</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              Manage pricing templates with multiple tiers
+              Manage global tiered pricing templates available across all simulators
             </p>
           </div>
-          <Button onClick={handleCreateTemplate}>
+          <Button onClick={() => handleCreateTieredTemplate({
+            name: '',
+            value: '',
+            description: '',
+            display_order: tieredTemplates.length + 1,
+            is_active: true
+          })}>
             <Plus className="mr-2 h-4 w-4" />
-            Create New
+            Create New Template
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">Loading...</p>
-          </div>
-        ) : (
-          <DataTable 
-            columns={createTieredTemplateColumns(
-              handleEditTemplate,
-              handleDeleteTemplate,
-              handleDuplicateTemplate,
-              handleToggleActive
-            )} 
-            data={templates}
-            searchKey="name"
-            searchPlaceholder="Search tiered templates..."
-          />
-        )}
+        <DataTable 
+          columns={columns} 
+          data={tieredTemplates}
+          searchKey="name"
+          onRowClick={(tieredTemplate) => handleUpdateTieredTemplate(tieredTemplate)}
+        />
       </CardContent>
     </Card>
   );

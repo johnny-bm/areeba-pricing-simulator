@@ -139,6 +139,7 @@ export function ClientFieldsManager({
           data={configurations}
           searchKey="name"
           searchPlaceholder="Search configurations..."
+          onRowClick={(config) => handleEditConfig(config)}
         />
       </CardContent>
 

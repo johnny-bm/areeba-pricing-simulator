@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
@@ -12,103 +11,137 @@ import { api } from '../../../../utils/api';
 interface BillingCycle {
   id: string;
   name: string;
-  description: string;
   value: string;
-  isActive: boolean;
-  months?: number | null;
-  display_order?: number;
+  description: string;
+  months: number | null;
+  display_order: number;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export function BillingCyclesConfiguration() {
-  const { simulator } = useParams<{ simulator: string }>();
   const [billingCycles, setBillingCycles] = useState<BillingCycle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load billing cycles from database
   useEffect(() => {
-    const loadCycles = async () => {
+    const loadBillingCycles = async () => {
       try {
         setIsLoading(true);
         setError(null);
         const data = await api.loadPricingCycles();
-        
-        // Transform database data to component format
-        const transformedCycles: BillingCycle[] = data.map((cycle: any) => ({
-          id: cycle.id,
-          name: cycle.name,
-          description: cycle.description || '',
-          value: cycle.value,
-          isActive: cycle.is_active ?? true,
-          months: cycle.months,
-          display_order: cycle.display_order
-        }));
-        
-        setBillingCycles(transformedCycles);
+        setBillingCycles(data);
       } catch (err: any) {
         setError(err.message || 'Failed to load billing cycles');
+        console.error('Error loading billing cycles:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadCycles();
-  }, [simulator]);
+    loadBillingCycles();
+  }, []);
 
-  const handleCreateCycle = () => {
-    // TODO: Implement create cycle dialog
-  };
-
-  const handleEditCycle = (cycle: BillingCycle) => {
-    // TODO: Implement edit cycle dialog
-  };
-
-  const handleDeleteCycle = async (cycle: BillingCycle) => {
+  const handleCreateBillingCycle = async (billingCycle: Omit<BillingCycle, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      setError(null);
-      await api.deletePricingCycle(cycle.id);
-      setBillingCycles(prev => prev.filter(c => c.id !== cycle.id));
+      const newBillingCycle = await api.savePricingCycle({
+        ...billingCycle,
+        id: `cycle-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      });
+      setBillingCycles(prev => [...prev, newBillingCycle]);
     } catch (err: any) {
-      setError(err.message || 'Failed to delete billing cycle');
+      console.error('Error creating billing cycle:', err);
+      throw err;
     }
   };
 
-  const handleDuplicateCycle = async (cycle: BillingCycle) => {
+  const handleUpdateBillingCycle = async (billingCycle: BillingCycle) => {
     try {
-      const duplicatedCycle = {
-        ...cycle,
-        id: `cycle-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: `${cycle.name} (Copy)`
-      };
-      await api.createBillingCycle(duplicatedCycle);
-      setBillingCycles(prev => [...prev, duplicatedCycle]);
+      const updatedBillingCycle = await api.savePricingCycle(billingCycle);
+      setBillingCycles(prev => prev.map(bc => bc.id === billingCycle.id ? updatedBillingCycle : bc));
     } catch (err: any) {
-      setError(err.message || 'Failed to duplicate billing cycle');
+      console.error('Error updating billing cycle:', err);
+      throw err;
+    }
+  };
+
+  const handleDeleteBillingCycle = async (cycleId: string) => {
+    try {
+      await api.deletePricingCycle(cycleId);
+      setBillingCycles(prev => prev.filter(bc => bc.id !== cycleId));
+    } catch (err: any) {
+      console.error('Error deleting billing cycle:', err);
+      throw err;
     }
   };
 
   const handleToggleActive = async (cycleId: string) => {
     try {
-      setError(null);
-      const cycle = billingCycles.find(c => c.id === cycleId);
-      if (!cycle) return;
+      const billingCycle = billingCycles.find(bc => bc.id === cycleId);
+      if (!billingCycle) return;
       
-      await api.togglePricingCycleActive(cycleId, !cycle.isActive);
-      setBillingCycles(prev => prev.map(c => 
-        c.id === cycleId ? { ...c, isActive: !c.isActive } : c
+      await api.togglePricingCycleActive(cycleId, !billingCycle.is_active);
+      setBillingCycles(prev => prev.map(bc => 
+        bc.id === cycleId ? { ...bc, is_active: !bc.is_active } : bc
       ));
     } catch (err: any) {
-      setError(err.message || 'Failed to toggle billing cycle status');
+      console.error('Error toggling billing cycle status:', err);
     }
   };
+
+  const handleDuplicateBillingCycle = async (billingCycle: BillingCycle) => {
+    try {
+      const duplicatedBillingCycle = {
+        ...billingCycle,
+        id: `cycle-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: `${billingCycle.name} (Copy)`,
+        display_order: billingCycles.length + 1
+      };
+      
+      const newBillingCycle = await api.savePricingCycle(duplicatedBillingCycle);
+      setBillingCycles(prev => [...prev, newBillingCycle]);
+    } catch (err: any) {
+      console.error('Error duplicating billing cycle:', err);
+      throw err;
+    }
+  };
+
+  const columns = createBillingCycleColumns(
+    handleUpdateBillingCycle,
+    handleDeleteBillingCycle,
+    handleDuplicateBillingCycle,
+    handleToggleActive
+  );
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Billing Cycles</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (error) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold mb-2">Error Loading Billing Cycles</h2>
-            <p className="text-red-600">{error}</p>
+        <CardHeader>
+          <CardTitle>Billing Cycles</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center p-8">
+            <p className="text-destructive mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -122,33 +155,29 @@ export function BillingCyclesConfiguration() {
           <div>
             <CardTitle>Billing Cycles</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              Manage the available billing cycles for recurring services
+              Manage global billing cycles available across all simulators
             </p>
           </div>
-          <Button onClick={handleCreateCycle}>
+          <Button onClick={() => handleCreateBillingCycle({
+            name: '',
+            value: '',
+            description: '',
+            months: null,
+            display_order: billingCycles.length + 1,
+            is_active: true
+          })}>
             <Plus className="mr-2 h-4 w-4" />
-            Create New
+            Create New Cycle
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">Loading...</p>
-          </div>
-        ) : (
-          <DataTable 
-            columns={createBillingCycleColumns(
-              handleEditCycle,
-              handleDeleteCycle,
-              handleDuplicateCycle,
-              handleToggleActive
-            )} 
-            data={billingCycles}
-            searchKey="name"
-            searchPlaceholder="Search billing cycles..."
-          />
-        )}
+        <DataTable 
+          columns={columns} 
+          data={billingCycles}
+          searchKey="name"
+          onRowClick={(billingCycle) => handleUpdateBillingCycle(billingCycle)}
+        />
       </CardContent>
     </Card>
   );

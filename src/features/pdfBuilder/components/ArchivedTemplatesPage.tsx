@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AdminPageLayout, AdminPageActions } from '@/components/AdminPageLayout';
-import { DataTable } from '@/components/DataTable';
+import { DataTable } from '../../../shared/components/ui/data-table';
 import { TableCell } from '@/components/ui/table';
 import { 
   Archive, 
@@ -122,7 +122,8 @@ export function ArchivedTemplatesPage() {
       isLoading={loading}
     >
       <DataTable
-        title="Generated PDFs"
+        title="Archived"
+        description="Generated PDF documents and archived templates"
         headers={['Client & Project', 'Template', 'Simulator', 'Generated', 'Actions']}
         items={pdfs}
         getItemKey={(pdf) => pdf.id}

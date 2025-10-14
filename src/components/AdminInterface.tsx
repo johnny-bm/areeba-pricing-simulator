@@ -41,13 +41,83 @@ const ScenarioHistoryTab = lazy(() => import('./ScenarioHistoryTab').then(m => (
 import { ConfigurationDialog } from './dialogs/ConfigurationDialog';
 import { ScenarioDialog } from './dialogs/ScenarioDialog';
 import { GuestSubmissionDetailDialog } from './dialogs/GuestSubmissionDetailDialog';
-import { Header } from './layout/Header';
+import { UnifiedHeader } from './layout/UnifiedHeader';
 import type { BreadcrumbItem } from './layout/Header';
-import { DataTable } from './DataTable';
+import { DataTable } from '../shared/components/ui/data-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { CategoryManager } from './CategoryManager';
 import { TagManager } from './TagManager';
 import { ClientFieldsManager } from './ClientFieldsManager';
+import { Skeleton } from './ui/skeleton';
 import { UserManagement as UserManagementComponent } from './UserManagement';
+
+// Custom skeleton component with smoother animation
+function SmoothSkeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={`rounded-md bg-muted/50 ${className}`}
+      style={{
+        animation: 'skeleton-loading 1.5s ease-in-out infinite',
+        background: 'linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--muted) / 0.5) 50%, hsl(var(--muted)) 75%)',
+        backgroundSize: '200% 100%',
+        animation: 'skeleton-shimmer 1.5s ease-in-out infinite'
+      }}
+      {...props}
+    />
+  );
+}
+
+// Content-only skeleton loading component
+function AdminContentSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="space-y-2">
+        <SmoothSkeleton className="h-8 w-48" />
+        <SmoothSkeleton className="h-4 w-96" />
+      </div>
+
+      {/* Content Cards */}
+      <div className="grid gap-6">
+        <div className="rounded-lg border bg-card p-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <SmoothSkeleton className="h-6 w-32" />
+              <SmoothSkeleton className="h-9 w-24" />
+            </div>
+            <div className="space-y-3">
+              <SmoothSkeleton className="h-4 w-full" />
+              <SmoothSkeleton className="h-4 w-3/4" />
+              <SmoothSkeleton className="h-4 w-1/2" />
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-lg border bg-card p-6">
+          <div className="space-y-4">
+            <SmoothSkeleton className="h-6 w-40" />
+            <div className="space-y-3">
+              <SmoothSkeleton className="h-4 w-full" />
+              <SmoothSkeleton className="h-4 w-5/6" />
+              <SmoothSkeleton className="h-4 w-2/3" />
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-lg border bg-card p-6">
+          <div className="space-y-4">
+            <SmoothSkeleton className="h-6 w-36" />
+            <div className="grid grid-cols-3 gap-4">
+              <SmoothSkeleton className="h-20 w-full" />
+              <SmoothSkeleton className="h-20 w-full" />
+              <SmoothSkeleton className="h-20 w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Wrapper component to fix TypeScript issues
 const UserManagementWrapper = (props: { currentUserId: string; currentUserRole: string }) => {
@@ -71,6 +141,7 @@ import { ROUTES } from '../config/routes';
 import { SimulatorApi } from '../utils/simulatorApi';
 import { Simulator } from '../types/simulator';
 import WordMarkRed from '../imports/WordMarkRed';
+import { SIMULATOR_ICON_MAP_SMALL } from '../utils/icons';
 // Import pricing configuration components
 import { UnitsConfiguration } from '../features/configuration/components/pricing/UnitsConfiguration';
 import { PricingTypesConfiguration } from '../features/configuration/components/pricing/PricingTypesConfiguration';
@@ -81,6 +152,8 @@ interface AdminInterfaceProps {
   onClose: () => void;
   items: PricingItem[];
   categories: Category[];
+  configurations?: ConfigurationDefinition[];
+  tags?: any[];
   selectedItems?: SelectedItem[];
   clientConfig?: ClientConfig;
   onUpdateItems: (items: PricingItem[]) => Promise<void>;
@@ -90,6 +163,7 @@ interface AdminInterfaceProps {
   adminToken?: string | null;
   currentUserId: string;
   currentUserRole: string;
+  isLoading?: boolean;
 }
 
 
@@ -97,6 +171,8 @@ export function AdminInterface({
   onClose, 
   items, 
   categories, 
+  configurations = [],
+  tags = [],
   selectedItems, 
   clientConfig, 
   onUpdateItems, 
@@ -105,7 +181,8 @@ export function AdminInterface({
   onForceRefresh,
   adminToken,
   currentUserId,
-  currentUserRole
+  currentUserRole,
+  isLoading = false
 }: AdminInterfaceProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -172,7 +249,6 @@ export function AdminInterface({
   
 
 
-  const [configurations, setConfigurations] = useState<any[]>([]);
   const [showConfigDialog, setShowConfigDialog] = useState(false);
   const [editingConfig, setEditingConfig] = useState<any>(null);
   const [scenarios, setScenarios] = useState<any[]>([]);
@@ -191,26 +267,316 @@ export function AdminInterface({
   
   // Find the actual simulator by slug
   const currentSimulator = currentSimulatorSlug ? simulators.find(s => s.urlSlug === currentSimulatorSlug)?.id : null;
+
+  // Column definitions for History table
+  const historyColumns: ColumnDef<any>[] = [
+    {
+      accessorKey: "scenarioId",
+      header: "Submission Code",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("scenarioId")}</div>
+      ),
+    },
+    {
+      accessorKey: "clientName",
+      header: "Client & Project",
+      cell: ({ row }) => {
+        const scenario = row.original;
+        return (
+          <div>
+            <div className="font-medium">{scenario.clientName}</div>
+            <div className="text-sm text-muted-foreground">{scenario.projectName}</div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "preparedBy",
+      header: "Prepared By",
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Date Created",
+      cell: ({ row }) => (
+        <div>{new Date(row.getValue("createdAt")).toLocaleDateString()}</div>
+      ),
+    },
+    {
+      accessorKey: "selectedItems",
+      header: "Items",
+      cell: ({ row }) => {
+        const scenario = row.original;
+        return <div>{scenario.selectedItems?.length || 0}</div>;
+      },
+    },
+    {
+      accessorKey: "summary.oneTimeCost",
+      header: "One-time Cost",
+      cell: ({ row }) => {
+        const scenario = row.original;
+        return <div>{formatPrice(scenario.summary?.oneTimeCost || 0)}</div>;
+      },
+    },
+    {
+      accessorKey: "summary.monthlyCost",
+      header: "Monthly Cost",
+      cell: ({ row }) => {
+        const scenario = row.original;
+        return <div>{formatPrice(scenario.summary?.monthlyCost || 0)}</div>;
+      },
+    },
+    {
+      accessorKey: "summary.globalDiscount",
+      header: "Discount",
+      cell: ({ row }) => {
+        const scenario = row.original;
+        return (
+          <div>
+            {scenario.summary?.globalDiscount > 0 ? `${scenario.summary.globalDiscount}%` : 'None'}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "summary.totalProjectCost",
+      header: "Total Project Cost",
+      cell: ({ row }) => {
+        const scenario = row.original;
+        return (
+          <div className="font-medium">
+            {formatPrice(scenario.summary?.totalProjectCost || 0)}
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const scenario = row.original;
+        return (
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSelectedScenario(scenario);
+                setShowScenarioDialog(true);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDuplicateScenario(scenario)}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => downloadPDF(scenario)}
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+
+  // Column definitions for Guest Submissions table
+  const guestSubmissionsColumns: ColumnDef<any>[] = [
+    {
+      accessorKey: "id",
+      header: "Submission Code",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("id")}</div>
+      ),
+    },
+    {
+      accessorKey: "contactName",
+      header: "Contact Name",
+    },
+    {
+      accessorKey: "company",
+      header: "Company",
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+    },
+    {
+      accessorKey: "totalPrice",
+      header: "Total Price",
+      cell: ({ row }) => (
+        <div className="font-medium">{formatPrice(row.getValue("totalPrice"))}</div>
+      ),
+    },
+    {
+      accessorKey: "services",
+      header: "Services",
+      cell: ({ row }) => {
+        const submission = row.original;
+        return <div>{submission.services?.length || 0}</div>;
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        return (
+          <Badge 
+            variant={status === 'submitted' ? 'default' : 'secondary'}
+            className={status === 'submitted' ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-gray-100 text-gray-600 hover:bg-gray-100"}
+          >
+            {status}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Date",
+      cell: ({ row }) => (
+        <div>{new Date(row.getValue("createdAt")).toLocaleDateString()}</div>
+      ),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const submission = row.original;
+        return (
+          <div onClick={(e) => e.stopPropagation()}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSelectedGuestSubmission(submission);
+                setShowGuestSubmissionDialog(true);
+              }}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+
+  // Column definitions for Configurations table
+  const configurationsColumns: ColumnDef<any>[] = [
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "is_active",
+      header: "Status",
+      cell: ({ row }) => {
+        const isActive = row.getValue("is_active") as boolean;
+        return (
+          <Badge 
+            variant={isActive ? "default" : "secondary"}
+            className={isActive ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-gray-100 text-gray-600 hover:bg-gray-100"}
+          >
+            {isActive ? 'Active' : 'Inactive'}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => {
+        const description = row.getValue("description") as string;
+        return (
+          <div className="text-sm text-muted-foreground max-w-xs truncate">
+            {description || 'No description'}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "fields",
+      header: "Fields",
+      cell: ({ row }) => {
+        const config = row.original;
+        return (
+          <div className="flex flex-wrap gap-1 max-w-xs">
+            {config.fields?.slice(0, 3).map((field: any) => (
+              <Badge key={field.id} variant="secondary" className="text-xs">
+                {field.label}
+              </Badge>
+            ))}
+            {config.fields && config.fields.length > 3 && (
+              <Badge variant="secondary" className="text-xs">
+                +{config.fields.length - 3} more
+              </Badge>
+            )}
+            {(!config.fields || config.fields.length === 0) && (
+              <span className="text-xs text-muted-foreground">No fields</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const config = row.original;
+        return (
+          <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setEditingConfig(config);
+                setShowConfigDialog(true);
+              }}
+            >
+              <Edit className="h-3 w-3" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => handleDuplicateConfiguration(config)}
+            >
+              <Copy className="h-3 w-3" />
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
   
 
 
-  // Load configurations and simulators on component mount
+  // Load simulators on component mount
   useEffect(() => {
-    const loadData = async () => {
+    const loadSimulators = async () => {
       try {
-        const [loadedConfigs, loadedSimulators] = await Promise.all([
-          api.loadConfigurations(),
-          SimulatorApi.loadSimulators()
-        ]);
-        setConfigurations(loadedConfigs);
+        const loadedSimulators = await SimulatorApi.loadSimulators();
         setSimulators(loadedSimulators);
       } catch (error) {
-        // // // console.error('Failed to load data:', error);
+        // // // console.error('Failed to load simulators:', error);
       }
     };
     
-    loadData();
+    loadSimulators();
   }, []);
+
+  // Clear navigation loading state when location changes or component mounts
+  useEffect(() => {
+    setNavigatingTo(null);
+  }, [location.pathname]);
 
   const loadScenarios = async () => {
     setScenariosLoading(true);
@@ -276,13 +642,12 @@ export function AdminInterface({
 
   const toggleSimulatorDropdown = (simulatorId: string) => {
     setExpandedSimulators(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(simulatorId)) {
-        newSet.delete(simulatorId);
-      } else {
-        newSet.add(simulatorId);
+      // If the clicked dropdown is already open, close it
+      if (prev.has(simulatorId)) {
+        return new Set();
       }
-      return newSet;
+      // Otherwise, close all others and open only this one
+      return new Set([simulatorId]);
     });
   };
 
@@ -502,10 +867,10 @@ export function AdminInterface({
                       <SidebarMenuItem>
                         <SidebarMenuButton
                           onClick={() => toggleSimulatorDropdown(simulator.id)}
-                          isActive={isCurrentSimulator}
+                          isActive={isCurrentSimulator || isExpanded}
                           size="sm"
                         >
-                          <CreditCard className="h-3.5 w-3.5" />
+                          {SIMULATOR_ICON_MAP_SMALL[simulator.iconName] || <CreditCard className="h-3.5 w-3.5" />}
                           <span>{simulator.title}</span>
                           {isExpanded ? (
                             <ChevronDown className="h-3.5 w-3.5 ml-auto" />
@@ -596,15 +961,19 @@ export function AdminInterface({
                   );
                 })}
                 
-                {/* Add New Simulator Button */}
-                <SidebarMenuButton
-                  onClick={() => navigate(ROUTES.ADMIN_SIMULATORS)}
-                  size="sm"
-                  className="border border-dashed border-sidebar-border"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>Add new simulator</span>
-                </SidebarMenuButton>
+                {/* All Simulators Menu Item */}
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => navigate(ROUTES.ADMIN_SIMULATORS)}
+                      isActive={currentSection === 'simulators' && !currentSimulator}
+                      size="sm"
+                    >
+                      <Package className="h-3.5 w-3.5" />
+                      <span>All Simulators</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
             </div>
           </div>
             
@@ -657,7 +1026,7 @@ export function AdminInterface({
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       onClick={() => toggleSimulatorDropdown('pdf-builder')}
-                      isActive={currentSection === 'pdf-builder'}
+                      isActive={currentSection === 'pdf-builder' || expandedSimulators.has('pdf-builder')}
                       size="sm"
                     >
                       <FileText className="h-3.5 w-3.5" />
@@ -716,7 +1085,7 @@ export function AdminInterface({
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       onClick={() => toggleSimulatorDropdown('pricing')}
-                      isActive={currentSection === 'pricing'}
+                      isActive={currentSection === 'pricing' || expandedSimulators.has('pricing')}
                       size="sm"
                     >
                       <Settings className="h-3.5 w-3.5" />
@@ -807,7 +1176,8 @@ export function AdminInterface({
 
       {/* Main Content */}
       <SidebarInset className="md:ml-[calc(var(--sidebar-width)+0.5rem)]">
-        <Header
+        <UnifiedHeader
+          pageType="admin"
           breadcrumbs={getBreadcrumbs()}
           showUserMenu={true}
           onLogout={onLogout}
@@ -820,7 +1190,16 @@ export function AdminInterface({
 
           {/* Content */}
           <div>
-            {/* Simulator-specific sections */}
+            <>
+              {/* Show skeleton loading when actually loading */}
+              {isLoading && (
+                <AdminContentSkeleton />
+              )}
+              
+              {/* Show actual content when not loading */}
+              {!isLoading && (
+                <>
+                {/* Simulator-specific sections */}
             {currentSimulator && currentSection === 'dashboard' && (
               <SimulatorDashboard simulatorId={currentSimulator} />
             )}
@@ -929,69 +1308,35 @@ export function AdminInterface({
             
             {!currentSimulator && currentSection === 'scenarios' && (
               <>
-                <DataTable
-                  title="Scenario History"
-                  headers={['Submission Code', 'Client & Project', 'Prepared By', 'Date Created', 'Items', 'One-time Cost', 'Monthly Cost', 'Discount', 'Total Project Cost', 'Actions']}
-                  items={scenarios}
-                  isLoading={scenariosLoading}
-                  getItemKey={(scenario) => scenario.scenarioId}
-                  renderRow={(scenario: any) => (
-                    <>
-                      <TableCell className="font-medium">{scenario.scenarioId}</TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{scenario.clientName}</div>
-                          <div className="text-sm text-muted-foreground">{scenario.projectName}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{scenario.preparedBy}</TableCell>
-                      <TableCell>{new Date(scenario.createdAt).toLocaleDateString()}</TableCell>
-                      <TableCell>{scenario.selectedItems?.length || 0}</TableCell>
-                      <TableCell>{formatPrice(scenario.summary?.oneTimeCost || 0)}</TableCell>
-                      <TableCell>{formatPrice(scenario.summary?.monthlyCost || 0)}</TableCell>
-                      <TableCell>
-                        {scenario.summary?.globalDiscount > 0 ? `${scenario.summary.globalDiscount}%` : 'None'}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {formatPrice(scenario.summary?.totalProjectCost || 0)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedScenario(scenario);
-                              setShowScenarioDialog(true);
-                            }}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDuplicateScenario(scenario)}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => downloadPDF(scenario)}
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </>
-                  )}
-                  actionButton={
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold tracking-tight">History</h2>
+                      <p className="text-muted-foreground">Pricing scenario submissions and history</p>
+                    </div>
                     <Button onClick={loadScenarios} disabled={scenariosLoading}>
                       <RefreshCw className={`h-4 w-4 mr-2 ${scenariosLoading ? 'animate-spin' : ''}`} />
                       Refresh
                     </Button>
-                  }
-                />
+                  </div>
+                  
+                  {scenariosLoading ? (
+                    <div className="flex items-center justify-center p-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                  ) : (
+                    <DataTable 
+                      columns={historyColumns} 
+                      data={scenarios}
+                      searchKey="scenarioId"
+                      searchPlaceholder="Search by submission code..."
+                      onRowClick={(scenario) => {
+                        setSelectedScenario(scenario);
+                        setShowScenarioDialog(true);
+                      }}
+                    />
+                  )}
+                </div>
                 
                 {showScenarioDialog && selectedScenario && (
                   <ScenarioDialog
@@ -1008,50 +1353,35 @@ export function AdminInterface({
             
             {!currentSimulator && currentSection === 'guest-submissions' && (
               <>
-                <DataTable
-                  title="Guest Submissions"
-                  headers={['Submission Code', 'Contact Name', 'Company', 'Email', 'Total Price', 'Services', 'Status', 'Date', 'Actions']}
-                  items={guestSubmissions}
-                  isLoading={guestSubmissionsLoading}
-                  getItemKey={(submission) => submission.id}
-                  renderRow={(submission: any) => (
-                    <>
-                      <TableCell className="font-medium">{submission.id}</TableCell>
-                      <TableCell>{submission.contactName}</TableCell>
-                      <TableCell>{submission.company}</TableCell>
-                      <TableCell>{submission.email}</TableCell>
-                      <TableCell className="font-medium">{formatPrice(submission.totalPrice)}</TableCell>
-                      <TableCell>{submission.services?.length || 0}</TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant={submission.status === 'submitted' ? 'default' : 'secondary'}
-                          className={submission.status === 'submitted' ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-gray-100 text-gray-600 hover:bg-gray-100"}
-                        >
-                          {submission.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{new Date(submission.createdAt).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedGuestSubmission(submission);
-                            setShowGuestSubmissionDialog(true);
-                          }}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </>
-                  )}
-                  actionButton={
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold tracking-tight">Guest Submissions</h2>
+                      <p className="text-muted-foreground">Guest user pricing submissions and contact information</p>
+                    </div>
                     <Button onClick={loadGuestSubmissions} disabled={guestSubmissionsLoading}>
                       <RefreshCw className={`h-4 w-4 mr-2 ${guestSubmissionsLoading ? 'animate-spin' : ''}`} />
                       Refresh
                     </Button>
-                  }
-                />
+                  </div>
+                  
+                  {guestSubmissionsLoading ? (
+                    <div className="flex items-center justify-center p-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                  ) : (
+                    <DataTable 
+                      columns={guestSubmissionsColumns} 
+                      data={guestSubmissions}
+                      searchKey="contactName"
+                      searchPlaceholder="Search by contact name..."
+                      onRowClick={(submission) => {
+                        setSelectedGuestSubmission(submission);
+                        setShowGuestSubmissionDialog(true);
+                      }}
+                    />
+                  )}
+                </div>
                 
                 {showGuestSubmissionDialog && selectedGuestSubmission && (
                   <GuestSubmissionDetailDialog
@@ -1069,29 +1399,12 @@ export function AdminInterface({
             {/* Legacy sections for backward compatibility - removed since we now have simulator-specific sections */}
             {!currentSimulator && currentSection === 'configurations' && (
               <>
-                <DataTable
-                  title="Client Fields"
-                  headers={['Name', 'Status', 'Description', 'Fields', 'Actions']}
-                  items={configurations}
-                  getItemKey={(config) => config.id}
-                  onReorder={handleReorderConfigurations}
-                  onRowClick={(config) => {
-                    setEditingConfig(config);
-                    setShowConfigDialog(true);
-                  }}
-                  searchFields={['name', 'description']}
-                  searchPlaceholder="Search configurations..."
-                  filterOptions={[
-                    {
-                      key: 'is_active',
-                      label: 'Status',
-                      options: [
-                        { value: 'true', label: 'Active', count: configurations.filter(c => c.is_active).length },
-                        { value: 'false', label: 'Inactive', count: configurations.filter(c => !c.is_active).length }
-                      ]
-                    }
-                  ]}
-                  actionButton={
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold tracking-tight">Client Fields</h2>
+                      <p className="text-muted-foreground">Configuration fields for client data collection</p>
+                    </div>
                     <Button 
                       onClick={() => {
                         setEditingConfig(null);
@@ -1101,80 +1414,19 @@ export function AdminInterface({
                       <Plus className="h-4 w-4 mr-2" />
                       Add Configuration
                     </Button>
-                  }
-                  emptyStateTitle="No Configurations"
-                  emptyStateDescription="Create your first configuration to define client fields that will appear in the simulator."
-                  emptyStateIcon={<Settings className="h-12 w-12 text-muted-foreground" />}
-                  emptyStateAction={
-                    <Button 
-                      onClick={() => {
-                        setEditingConfig(null);
-                        setShowConfigDialog(true);
-                      }}
-                      variant="outline"
-                    >
-                      Create Client Fields
-                    </Button>
-                  }
-                  renderRow={(config) => (
-                    <>
-                      <TableCell>
-                        <div className="font-medium">{config.name}</div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant={config.is_active ? "default" : "secondary"}
-                          className={config.is_active ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-gray-100 text-gray-600 hover:bg-gray-100"}
-                        >
-                          {config.is_active ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-muted-foreground max-w-xs truncate">
-                          {config.description || 'No description'}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1 max-w-xs">
-                          {config.fields?.slice(0, 3).map((field: any) => (
-                            <Badge key={field.id} variant="secondary" className="text-xs">
-                              {field.label}
-                            </Badge>
-                          ))}
-                          {config.fields && config.fields.length > 3 && (
-                            <Badge variant="secondary" className="text-xs">
-                              +{config.fields.length - 3} more
-                            </Badge>
-                          )}
-                          {(!config.fields || config.fields.length === 0) && (
-                            <span className="text-xs text-muted-foreground">No fields</span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <div className="flex gap-1">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => {
-                              setEditingConfig(config);
-                              setShowConfigDialog(true);
-                            }}
-                          >
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleDuplicateConfiguration(config)}
-                          >
-                            <Copy className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </>
-                  )}
-                />
+                  </div>
+                  
+                  <DataTable 
+                    columns={configurationsColumns} 
+                    data={configurations}
+                    searchKey="name"
+                    searchPlaceholder="Search configurations..."
+                    onRowClick={(config) => {
+                      setEditingConfig(config);
+                      setShowConfigDialog(true);
+                    }}
+                  />
+                </div>
 
                 {showConfigDialog && (
                   <ConfigurationDialog
@@ -1194,6 +1446,9 @@ export function AdminInterface({
                 )}
               </>
             )}
+          </>
+        )}
+        </>
           </div>
         </div>
       </SidebarInset>

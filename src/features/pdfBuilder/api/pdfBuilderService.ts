@@ -231,7 +231,7 @@ export class PdfBuilderService {
       .eq('template_id', id);
 
     if (countError) {
-      // // // console.warn('Failed to fetch section count:', countError);
+      // console.warn('Failed to fetch section count:', countError);
     }
 
     // Process the data to include section count
@@ -325,7 +325,7 @@ export class PdfBuilderService {
 
   static async deleteTemplate(id: string): Promise<void> {
     try {
-      // // // console.log('PdfBuilderService: Deleting template:', id);
+      // console.log('PdfBuilderService: Deleting template:', id);
       
       // First, delete any generated_pdfs records that reference this template
       // since template_id is NOT NULL, we can't set it to null
@@ -335,10 +335,10 @@ export class PdfBuilderService {
         .eq('template_id', id);
 
       if (deleteGeneratedPdfsError) {
-        // // // console.error('PdfBuilderService: Failed to delete generated_pdfs:', deleteGeneratedPdfsError);
+        // console.error('PdfBuilderService: Failed to delete generated_pdfs:', deleteGeneratedPdfsError);
         // Continue with deletion even if this fails
       } else {
-        // // // console.log('PdfBuilderService: Deleted generated_pdfs records for template:', id);
+        // console.log('PdfBuilderService: Deleted generated_pdfs records for template:', id);
       }
 
       // Delete template sections first (if they exist)
@@ -348,7 +348,7 @@ export class PdfBuilderService {
         .eq('template_id', id);
 
       if (sectionsError) {
-        // // // console.error('PdfBuilderService: Failed to delete template sections:', sectionsError);
+        // console.error('PdfBuilderService: Failed to delete template sections:', sectionsError);
         // Continue with template deletion even if this fails
       }
 
@@ -362,9 +362,9 @@ export class PdfBuilderService {
         throw new Error(`Failed to delete template: ${error.message}`);
       }
 
-      // // // console.log('PdfBuilderService: Template deleted successfully');
+      // console.log('PdfBuilderService: Template deleted successfully');
     } catch (error) {
-      // // // console.error('PdfBuilderService: Template deletion failed:', error);
+      // console.error('PdfBuilderService: Template deletion failed:', error);
       throw error;
     }
   }
@@ -407,7 +407,7 @@ export class PdfBuilderService {
   }
 
   static async getTemplateSections(templateId: string): Promise<TemplateSectionWithDetails[]> {
-    // // // console.log('PdfBuilderService: Fetching template sections for template:', templateId);
+    // console.log('PdfBuilderService: Fetching template sections for template:', templateId);
     
     const { data, error } = await supabase
       .from('template_sections_with_details')
@@ -416,19 +416,19 @@ export class PdfBuilderService {
       .order('position');
 
     if (error) {
-      // // // console.error('PdfBuilderService: Error fetching template sections:', error);
+      // console.error('PdfBuilderService: Error fetching template sections:', error);
       throw new Error(`Failed to fetch template sections: ${error.message}`);
     }
 
-    // // // console.log('PdfBuilderService: Template sections found:', data?.length || 0);
-    // // // console.log('PdfBuilderService: Template sections data:', data);
+    // console.log('PdfBuilderService: Template sections found:', data?.length || 0);
+    // console.log('PdfBuilderService: Template sections data:', data);
     
     return data || [];
   }
 
   // Archived Templates API
   static async getArchivedTemplates(): Promise<any[]> {
-    // // // console.log('PdfBuilderService: Fetching archived templates...');
+    // console.log('PdfBuilderService: Fetching archived templates...');
     
     // First, let's check if the is_archived column exists by trying a simple query
     try {
@@ -446,13 +446,13 @@ export class PdfBuilderService {
         `)
         .order('created_at', { ascending: false });
 
-      // // // console.log('PdfBuilderService: All templates query result:', { data: allTemplates, error: allError });
+      // console.log('PdfBuilderService: All templates query result:', { data: allTemplates, error: allError });
       
       if (allError) {
-        // // // console.error('PdfBuilderService: Error fetching all templates:', allError);
+        // console.error('PdfBuilderService: Error fetching all templates:', allError);
         // If the is_archived column doesn't exist, return empty array
         if (allError.message.includes('is_archived') || allError.message.includes('column')) {
-          // // // console.log('PdfBuilderService: is_archived column does not exist. Database migration may be needed.');
+          // console.log('PdfBuilderService: is_archived column does not exist. Database migration may be needed.');
           return [];
         }
         throw new Error(`Failed to fetch templates: ${allError.message}`);
@@ -460,7 +460,7 @@ export class PdfBuilderService {
 
       // Filter for archived templates
       const archivedTemplates = allTemplates?.filter(template => template.is_archived === true) || [];
-      // // // console.log('PdfBuilderService: Found', archivedTemplates.length, 'archived templates out of', allTemplates?.length || 0, 'total templates');
+      // console.log('PdfBuilderService: Found', archivedTemplates.length, 'archived templates out of', allTemplates?.length || 0, 'total templates');
 
       // Get section counts for each template separately
       const processedTemplates = await Promise.all(
@@ -477,11 +477,11 @@ export class PdfBuilderService {
         })
       );
 
-      // // // console.log('PdfBuilderService: Processed templates:', processedTemplates);
+      // console.log('PdfBuilderService: Processed templates:', processedTemplates);
       return processedTemplates;
       
     } catch (error) {
-      // // // console.error('PdfBuilderService: Error in getArchivedTemplates:', error);
+      // console.error('PdfBuilderService: Error in getArchivedTemplates:', error);
       throw error;
     }
   }
@@ -500,7 +500,7 @@ export class PdfBuilderService {
 
   // Generated PDFs API
   static async getGeneratedPdfs(filters: GeneratedPdfFilters = {}): Promise<GeneratedPdfListResponse> {
-    // // // console.log('PdfBuilderService: Fetching generated PDFs with filters:', filters);
+    // console.log('PdfBuilderService: Fetching generated PDFs with filters:', filters);
     
     // First, let's test if the table exists by doing a simple count query
     try {
@@ -508,14 +508,14 @@ export class PdfBuilderService {
         .from('generated_pdfs')
         .select('*', { count: 'exact', head: true });
       
-      // // // console.log('PdfBuilderService: Table exists check:', { count, countError });
+      // console.log('PdfBuilderService: Table exists check:', { count, countError });
       
       if (countError) {
-        // // // console.error('PdfBuilderService: Table does not exist or has permission issues:', countError);
+        // console.error('PdfBuilderService: Table does not exist or has permission issues:', countError);
         throw new Error(`Database table 'generated_pdfs' does not exist or is not accessible: ${countError.message}`);
       }
     } catch (error) {
-      // // // console.error('PdfBuilderService: Error checking table existence:', error);
+      // console.error('PdfBuilderService: Error checking table existence:', error);
       throw error;
     }
     
@@ -572,14 +572,14 @@ export class PdfBuilderService {
     const { data, error, count } = await query
       .range(from, to);
 
-    // // // console.log('PdfBuilderService: Generated PDFs query result:', { data, error, count });
+    // console.log('PdfBuilderService: Generated PDFs query result:', { data, error, count });
 
     if (error) {
-      // // // console.error('PdfBuilderService: Database error fetching generated PDFs:', error);
+      // console.error('PdfBuilderService: Database error fetching generated PDFs:', error);
       throw new Error(`Failed to fetch generated PDFs: ${error.message}`);
     }
 
-    // // // console.log('PdfBuilderService: Found', data?.length || 0, 'generated PDFs out of', count || 0, 'total');
+    // console.log('PdfBuilderService: Found', data?.length || 0, 'generated PDFs out of', count || 0, 'total');
 
     return {
       pdfs: data || [],
@@ -597,7 +597,7 @@ export class PdfBuilderService {
     pricing_data: any;
     pdf_url?: string;
   }): Promise<GeneratedPdf> {
-    // // // console.log('PdfBuilderService: Creating generated PDF record:', pdfData);
+    // console.log('PdfBuilderService: Creating generated PDF record:', pdfData);
     
     const { data, error } = await supabase
       .from('generated_pdfs')
@@ -605,14 +605,14 @@ export class PdfBuilderService {
       .select()
       .single();
 
-    // // // console.log('PdfBuilderService: Create generated PDF result:', { data, error });
+    // console.log('PdfBuilderService: Create generated PDF result:', { data, error });
 
     if (error) {
-      // // // console.error('PdfBuilderService: Failed to create generated PDF record:', error);
+      // console.error('PdfBuilderService: Failed to create generated PDF record:', error);
       throw new Error(`Failed to create generated PDF record: ${error.message}`);
     }
 
-    // // // console.log('PdfBuilderService: Successfully created generated PDF record:', data);
+    // console.log('PdfBuilderService: Successfully created generated PDF record:', data);
     return data;
   }
 
@@ -683,58 +683,58 @@ export class PdfBuilderService {
   // Utility methods
   static async getActiveTemplate(simulatorType: string): Promise<PdfTemplate | null> {
     try {
-      // // // console.log('PdfBuilderService: Fetching active template for simulator:', simulatorType);
-      // // // console.log('PdfBuilderService: Simulator type type:', typeof simulatorType);
+      // console.log('PdfBuilderService: Fetching active template for simulator:', simulatorType);
+      // console.log('PdfBuilderService: Simulator type type:', typeof simulatorType);
       
       // First, let's check if the table exists and what templates are available
       const { data: allTemplates, error: allError } = await supabase
         .from('pdf_templates')
         .select('*');
       
-      // // // console.log('PdfBuilderService: All templates:', { allTemplates, allError });
+      // console.log('PdfBuilderService: All templates:', { allTemplates, allError });
       
       if (allTemplates && allTemplates.length > 0) {
-        // // // console.log('PdfBuilderService: Available simulator types in templates:', 
-          allTemplates.map(t => ({ 
-            id: t.id, 
-            name: t.template_name, 
-            simulator_type: t.simulator_type, 
-            is_active: t.is_active,
-            type: typeof t.simulator_type,
-            length: t.simulator_type?.length
-          }))
-        );
+        // console.log('PdfBuilderService: Available simulator types in templates:', 
+        //   allTemplates.map(t => ({ 
+        //     id: t.id, 
+        //     name: t.template_name, 
+        //     simulator_type: t.simulator_type, 
+        //     is_active: t.is_active,
+        //     type: typeof t.simulator_type,
+        //     length: t.simulator_type?.length
+        //   }))
+        // );
         
         // Also log the exact simulator type we're looking for
-        // // // console.log('PdfBuilderService: Looking for simulator type:', {
-          value: simulatorType,
-          type: typeof simulatorType,
-          length: simulatorType?.length,
-          trimmed: simulatorType?.trim()
-        });
+        // console.log('PdfBuilderService: Looking for simulator type:', {
+        //   value: simulatorType,
+        //   type: typeof simulatorType,
+        //   length: simulatorType?.length,
+        //   trimmed: simulatorType?.trim()
+        // });
       }
       
       // Try to find active template for the simulator type
-      // // // console.log('PdfBuilderService: Trying to find active template...');
+      // console.log('PdfBuilderService: Trying to find active template...');
       const { data: activeTemplates, error: queryError } = await supabase
         .from('pdf_templates')
         .select('*')
         .eq('simulator_type', simulatorType)
         .eq('is_active', true);
 
-      // // // console.log('PdfBuilderService: Query result:', { activeTemplates, queryError });
+      // console.log('PdfBuilderService: Query result:', { activeTemplates, queryError });
 
       if (queryError) {
-        // // // console.error('PdfBuilderService: Query error:', queryError);
+        // console.error('PdfBuilderService: Query error:', queryError);
         // Try case-insensitive search as fallback
-        // // // console.log('PdfBuilderService: Trying case-insensitive search...');
+        // console.log('PdfBuilderService: Trying case-insensitive search...');
         const { data: caseInsensitive, error: caseError } = await supabase
           .from('pdf_templates')
           .select('*')
           .ilike('simulator_type', simulatorType)
           .eq('is_active', true);
 
-        // // // console.log('PdfBuilderService: Case-insensitive result:', { caseInsensitive, caseError });
+        // console.log('PdfBuilderService: Case-insensitive result:', { caseInsensitive, caseError });
 
         if (caseInsensitive && caseInsensitive.length > 0) {
           return caseInsensitive[0];
@@ -743,29 +743,29 @@ export class PdfBuilderService {
       }
 
       if (activeTemplates && activeTemplates.length > 0) {
-        // // // console.log('PdfBuilderService: Found active template, returning first one');
+        // console.log('PdfBuilderService: Found active template, returning first one');
         return activeTemplates[0];
       }
 
       // Try case-insensitive search
-      // // // console.log('PdfBuilderService: Trying case-insensitive search...');
+      // console.log('PdfBuilderService: Trying case-insensitive search...');
       const { data: caseInsensitive, error: caseError } = await supabase
         .from('pdf_templates')
         .select('*')
         .ilike('simulator_type', simulatorType)
         .eq('is_active', true);
 
-      // // // console.log('PdfBuilderService: Case-insensitive result:', { caseInsensitive, caseError });
+      // console.log('PdfBuilderService: Case-insensitive result:', { caseInsensitive, caseError });
 
       if (caseInsensitive && caseInsensitive.length > 0) {
         return caseInsensitive[0];
       }
 
-      // // // console.log('PdfBuilderService: No active template found for simulator type:', simulatorType);
+      // console.log('PdfBuilderService: No active template found for simulator type:', simulatorType);
       return null;
 
     } catch (error) {
-      // // // console.error('PdfBuilderService: Failed to fetch active template:', error);
+      // console.error('PdfBuilderService: Failed to fetch active template:', error);
       return null;
     }
   }

@@ -6,7 +6,8 @@ import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
 import { Input } from '../../../components/ui/input';
 import { TableCell } from '../../../components/ui/table';
-import { DataTable } from '../../../components/DataTable';
+import { DataTable } from '../../../shared/components/ui/data-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { AdminPageLayout, AdminPageActions } from '../../../components/AdminPageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { ScrollArea } from '../../../components/ui/scroll-area';
@@ -79,6 +80,117 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [templateSections, setTemplateSections] = useState<TemplateSection[]>([]);
   const [availableSections, setAvailableSections] = useState<ContentSection[]>([]);
+
+  // Column definitions for Templates table
+  const templateColumns: ColumnDef<PdfTemplate>[] = [
+    {
+      accessorKey: "template_name",
+      header: "Template",
+      cell: ({ row }) => {
+        const template = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-muted-foreground" />
+            <div>
+              <p className="font-medium">{template.template_name}</p>
+              <p className="text-sm text-muted-foreground">
+                {template.section_count || 0} sections
+              </p>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "simulator_type",
+      header: "Simulator",
+      cell: ({ row }) => (
+        <Badge variant="outline">
+          {row.getValue("simulator_type")}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "is_active",
+      header: "Status",
+      cell: ({ row }) => {
+        const isActive = row.getValue("is_active") as boolean;
+        return (
+          <Badge variant={isActive ? "default" : "secondary"}>
+            {isActive ? "Active" : "Inactive"}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "version_number",
+      header: "Version",
+      cell: ({ row }) => (
+        <span className="text-sm text-muted-foreground">
+          v{row.getValue("version_number")}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "created_at",
+      header: "Created",
+      cell: ({ row }) => (
+        <p className="text-sm text-muted-foreground">
+          {new Date(row.getValue("created_at")).toLocaleDateString()}
+        </p>
+      ),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const template = row.original;
+        return (
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleEditTemplate(template)}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDownloadPreview()}
+              title="Preview PDF"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDuplicateTemplate(template)}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+            {!template.is_active && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleActivateTemplate(template)}
+              >
+                <Play className="h-4 w-4" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDeleteTemplate(template)}
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
 
   // Fetch templates with filters
   const { 
@@ -992,117 +1104,12 @@ export function TemplatesPage({ permissions }: TemplatesPageProps) {
       actions={permissions.can_create_templates ? AdminPageActions.addNew(() => setShowCreateDialog(true), 'Create Template') : undefined}
       isLoading={loading}
     >
-      <DataTable
-        title="PDF Templates"
-        headers={['Template', 'Simulator', 'Status', 'Version', 'Created', 'Actions']}
-        items={filteredTemplates}
-        getItemKey={(template) => template.id}
-        renderRow={(template) => (
-          <>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">{template.template_name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {template.section_count || 0} sections
-                  </p>
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline">
-                {template.simulator_type}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge variant={template.is_active ? "default" : "secondary"}>
-                {template.is_active ? "Active" : "Inactive"}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <span className="text-sm text-muted-foreground">
-                v{template.version_number}
-              </span>
-            </TableCell>
-            <TableCell>
-              <p className="text-sm text-muted-foreground">
-                {new Date(template.created_at).toLocaleDateString()}
-              </p>
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleEditTemplate(template)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDownloadPreview()}
-                  title="Preview PDF"
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDuplicateTemplate(template)}
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-                {!template.is_active && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleActivateTemplate(template)}
-                  >
-                    <Play className="h-4 w-4" />
-                  </Button>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDeleteTemplate(template)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </TableCell>
-          </>
-        )}
+      <DataTable 
+        columns={templateColumns} 
+        data={filteredTemplates}
+        searchKey="template_name"
         searchPlaceholder="Search templates..."
-        searchFields={['template_name']}
-        filterOptions={[
-          {
-            key: 'simulator_type',
-            label: 'Simulators',
-            options: [
-              ...simulatorTypes.map((type) => ({
-                value: type.value,
-                label: type.label
-              }))
-            ]
-          }
-        ]}
-        emptyStateTitle="No PDF Templates"
-        emptyStateDescription="Create your first PDF template to start building custom documents."
-        emptyStateIcon={<FileText className="h-12 w-12 text-muted-foreground" />}
-        emptyStateAction={
-          permissions.can_create_templates ? (
-            <Button
-              variant="outline"
-              onClick={() => setShowCreateDialog(true)}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create First Template
-            </Button>
-          ) : undefined
-        }
+        onRowClick={(template) => handleEditTemplate(template)}
       />
 
       {/* Create Template Dialog */}

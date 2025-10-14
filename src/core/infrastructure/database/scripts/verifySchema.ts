@@ -99,10 +99,12 @@ export async function verifyDatabaseSchema(): Promise<SchemaVerificationResult> 
     }
 
     if (result.success) {
-      // // console.log('🎉 Database schema verification completed successfully');
+      // console.log('🎉 Database schema verification completed successfully');
     } else {
-      // // console.error('❌ Database schema verification failed:');
-      result.errors.forEach(error => // // console.error(`  - ${error}`));
+      // console.error('❌ Database schema verification failed:');
+      result.errors.forEach(error => {
+        // console.error(`  - ${error}`);
+      });
     }
 
     return result;
@@ -110,7 +112,7 @@ export async function verifyDatabaseSchema(): Promise<SchemaVerificationResult> 
     const message = `Database connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
     result.errors.push(message);
     result.success = false;
-    // // console.error('❌', message);
+    // console.error('❌', message);
     return result;
   }
 }

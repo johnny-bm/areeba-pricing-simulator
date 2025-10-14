@@ -13,7 +13,7 @@ import { AutoAddConfigPanel } from './AutoAddConfigPanel';
 import { BackendConnectionError } from './BackendConnectionError';
 import { ConnectionDiagnostics } from './ConnectionDiagnostics';
 import { GuestContactFormModal } from './GuestContactFormModal';
-import { Header, Footer } from './layout';
+import { UnifiedHeader, PageHeader, Footer } from './layout';
 import { ClientConfig, SelectedItem, PricingItem, Category, DynamicClientConfig } from '../types/domain';
 import { api } from '../utils/api';
 import { SimulatorApi } from '../utils/simulatorApi';
@@ -475,6 +475,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
         onLogout={handleLogout}
         currentUserId={userId || ''}
         currentUserRole={userRole || ''}
+        isLoading={false}
       />
     );
   }
@@ -501,8 +502,9 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header
+    <>
+      <UnifiedHeader
+        pageType="simulator"
         showBackButton={true}
         backButtonText="Back to Simulators"
         onBackClick={() => setSelectedSimulator(null)}
@@ -511,7 +513,13 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
       />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-6">
+      <main className="min-h-screen bg-background">
+        <div className="container mx-auto px-6 py-8">
+          <PageHeader
+          title={`${selectedSimulator?.title || 'Pricing'} Simulator`}
+          description="Configure your pricing parameters and calculate costs for your payment solutions"
+        />
+        
         {/* Client Configuration Section */}
         <div className="mb-8">
           <DynamicClientConfigBar
@@ -604,9 +612,8 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
             />
           </div>
         </div>
-      </div>
-
-      <Footer />
+        </div>
+      </main>
 
       {/* Modals */}
       {showSummaryDialog && (
@@ -632,7 +639,7 @@ export function PricingSimulator({ isGuestMode = false }: PricingSimulatorProps)
           onSubmit={handleGuestContactSubmit}
         />
       )}
-    </div>
+    </>
   );
 }
 

@@ -3,7 +3,7 @@ import { TableCell } from '../../../shared/components/ui/table';
 import { Button } from '../../../shared/components/ui/button';
 import { Badge } from '../../../shared/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/components/ui/select';
-import { DataTable } from '../../../components/DataTable';
+import { DataTable } from '../../../shared/components/ui/data-table';
 import { useAdminUsers } from '../hooks/useAdminUsers';
 import { AdminUser, AdminFilters } from '../types';
 import { ADMIN_ROLES, ADMIN_STATUS } from '../constants';
@@ -132,8 +132,8 @@ export function AdminUsersTable({
 
   return (
     <DataTable
-      title="Admin Users"
-      description="Manage user accounts and permissions"
+      title="Users"
+      description="User accounts and permissions management"
       headers={['User', 'Role', 'Status', 'Created', 'Actions']}
       items={filteredUsers}
       getItemKey={(user) => user.id}

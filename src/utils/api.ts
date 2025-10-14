@@ -76,7 +76,7 @@ export const api = {
           quantity_rules:quantity_rules(id, config_field_id, multiplier)
         `)
         .is('deleted_at', null)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: false }); // Changed to desc for cache busting
 
       // Filter by simulator if provided
       if (simulatorId) {
@@ -88,7 +88,13 @@ export const api = {
 
       const { data: services, error } = await query;
       
-      console.log('🔍 Services query result:', { data: services, error });
+      console.log('🔍 Services query result:', { 
+        data: services, 
+        error,
+        count: services?.length || 0,
+        firstServiceSimulatorId: services?.[0]?.simulator_id,
+        timestamp: new Date().toISOString()
+      });
       
       if (error) {
         throw new Error(`Failed to load services: ${error.message}`);
@@ -339,7 +345,7 @@ export const api = {
         .from(TABLES.CATEGORIES)
         .select('*')
         .is('deleted_at', null)
-        .order('display_order', { ascending: true });
+        .order('created_at', { ascending: false }); // Changed for cache busting
 
       // Filter by simulator if provided
       if (simulatorId) {
@@ -351,7 +357,13 @@ export const api = {
 
       const { data: categories, error } = await query;
       
-      console.log('🔍 Categories query result:', { data: categories, error });
+      console.log('🔍 Categories query result:', { 
+        data: categories, 
+        error,
+        count: categories?.length || 0,
+        firstCategorySimulatorId: categories?.[0]?.simulator_id,
+        timestamp: new Date().toISOString()
+      });
       
       if (error) {
         throw new Error(`Failed to load categories: ${error.message}`);
@@ -409,18 +421,31 @@ export const api = {
   // Load tags - now uses direct Supabase queries with RLS
   async loadTags(simulatorId?: string): Promise<Tag[]> {
     try {
+      console.log('🔍 loadTags called with simulatorId:', simulatorId);
+      
       let query = supabase
         .from(TABLES.TAGS)
         .select('*')
         .is('deleted_at', null)
-        .order('name', { ascending: true });
+        .order('created_at', { ascending: false }); // Changed for cache busting
 
       // Filter by simulator if provided
       if (simulatorId) {
         query = query.eq('simulator_id', simulatorId);
+        console.log('🔍 Filtering tags by simulator_id:', simulatorId);
+      } else {
+        console.log('🔍 Loading all tags (no simulator filter)');
       }
 
       const { data: tags, error } = await query;
+      
+      console.log('🔍 Tags query result:', { 
+        data: tags, 
+        error,
+        count: tags?.length || 0,
+        firstTagSimulatorId: tags?.[0]?.simulator_id,
+        timestamp: new Date().toISOString()
+      });
       
       if (error) {
         throw new Error(`Failed to load tags: ${error.message}`);
@@ -468,18 +493,31 @@ export const api = {
   // Load configurations - now uses direct Supabase queries with RLS
   async loadConfigurations(simulatorId?: string): Promise<ConfigurationDefinition[]> {
     try {
+      console.log('🔍 loadConfigurations called with simulatorId:', simulatorId);
+      
       let query = supabase
         .from(TABLES.CONFIGURATIONS)
         .select('*')
         .is('deleted_at', null)
-        .order('sort_order', { ascending: true });
+        .order('created_at', { ascending: false }); // Changed for cache busting
 
       // Filter by simulator if provided
       if (simulatorId) {
         query = query.eq('simulator_id', simulatorId);
+        console.log('🔍 Filtering configurations by simulator_id:', simulatorId);
+      } else {
+        console.log('🔍 Loading all configurations (no simulator filter)');
       }
 
       const { data: configurations, error } = await query;
+      
+      console.log('🔍 Configurations query result:', { 
+        data: configurations, 
+        error,
+        count: configurations?.length || 0,
+        firstConfigSimulatorId: configurations?.[0]?.simulator_id,
+        timestamp: new Date().toISOString()
+      });
       
       if (error) {
         throw new Error(`Failed to load configurations: ${error.message}`);
@@ -1470,7 +1508,7 @@ async saveGuestScenario(data: {
   // Config Pricing Units API
   // ============================================
 
-  async loadPricingUnits(simulatorId: string) {
+  async loadPricingUnits() {
     // // // console.log('🔍 Loading pricing units (global config)');
     
     const { data, error } = await supabase
@@ -1488,7 +1526,7 @@ async saveGuestScenario(data: {
     return data || [];
   },
 
-  async savePricingUnit(unit: any, simulatorId: string) {
+  async savePricingUnit(unit: any) {
     // // // console.log('🔍 Saving pricing unit:', unit);
     
     const user = await getCurrentUser();
@@ -1880,5 +1918,6 @@ async saveGuestScenario(data: {
     }
     
     // // // console.log('✅ Pricing template active status toggled');
-  }
+  },
+
 };

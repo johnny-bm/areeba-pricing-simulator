@@ -7,8 +7,16 @@ import { Switch } from './ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { DataTable } from './DataTable';
-import { TableCell } from './ui/table';
+import { DataTable } from '../shared/components/ui/data-table';
+import { ColumnDef } from '@tanstack/react-table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { StandardDialog } from './StandardDialog';
 import { SimulatorDialog } from './dialogs/SimulatorDialog.tsx';
 import { 
@@ -16,7 +24,8 @@ import {
   Edit, 
   Trash2, 
   CreditCard,
-  Copy
+  Copy,
+  MoreHorizontal
 } from 'lucide-react';
 import { Simulator, CreateSimulatorData, UpdateSimulatorData, SIMULATOR_ICONS } from '../types/simulator';
 import { SimulatorApi } from '../utils/simulatorApi';
@@ -93,30 +102,6 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
     }
   };
 
-  const handleReorderSimulators = async (reorderedSimulators: Simulator[]) => {
-    try {
-      // Update sortOrder for each simulator based on new order
-      const updates = reorderedSimulators.map((simulator, index) => ({
-        ...simulator,
-        sort_order: index
-      }));
-      
-      // Update all simulators with new sort order
-      await Promise.all(updates.map(simulator => 
-        SimulatorApi.updateSimulator(simulator.id, {
-          sort_order: simulator.sort_order
-        })
-      ));
-      
-      // Update local state
-      setSimulators(reorderedSimulators);
-      toast.success('Simulators reordered successfully!');
-    } catch (error) {
-      // // console.error('Error reordering simulators:', error);
-      toast.error(`Failed to reorder simulators: ${(error as Error).message}`);
-    }
-  };
-
   const handleSaveSimulator = async (simulatorData: CreateSimulatorData | UpdateSimulatorData) => {
     try {
       if (isCreating) {
@@ -146,107 +131,129 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
     }
   };
 
-  const handleReorder = async (fromIndex: number, toIndex: number) => {
-    const newSimulators = [...simulators];
-    const [movedSimulator] = newSimulators.splice(fromIndex, 1);
-    newSimulators.splice(toIndex, 0, movedSimulator);
-
-    // Update local state immediately for better UX
-    setSimulators(newSimulators);
-
-    try {
-      const simulatorIds = newSimulators.map(s => s.id);
-      await SimulatorApi.reorderSimulators(simulatorIds);
-      toast.success('Simulators reordered successfully');
-    } catch (error) {
-      // // console.error('Failed to reorder simulators:', error);
-      toast.error('Failed to reorder simulators');
-      // Revert on error
-      loadSimulators();
-    }
-  };
+  // Define columns for the modern DataTable
+  const columns: ColumnDef<Simulator>[] = [
+    {
+      accessorKey: "title",
+      header: "Simulator",
+      cell: ({ row }) => {
+        const simulator = row.original;
+        return (
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              {SIMULATOR_ICON_MAP_SMALL[simulator.iconName] || <CreditCard className="h-4 w-4" />}
+            </div>
+            <div>
+              <div className="font-medium">{simulator.title}</div>
+              <div className="text-sm text-muted-foreground">{simulator.name}</div>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const simulator = row.original;
+        return (
+          <div className="flex gap-1">
+            {simulator.is_active && (
+              <Badge variant="default" className="text-xs">Active</Badge>
+            )}
+            {simulator.isAvailable && (
+              <Badge variant="outline" className="text-xs">Available</Badge>
+            )}
+            {simulator.comingSoon && (
+              <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "urlSlug",
+      header: "URL Slug",
+      cell: ({ row }) => {
+        const simulator = row.original;
+        return (
+          <code className="text-sm bg-muted px-2 py-1 rounded">
+            {simulator.urlSlug}
+          </code>
+        );
+      },
+    },
+    {
+      accessorKey: "sort_order",
+      header: "Order",
+      cell: ({ row }) => {
+        const simulator = row.original;
+        return (
+          <span className="text-sm font-mono text-muted-foreground">
+            {simulator.sort_order}
+          </span>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const simulator = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleEditSimulator(simulator)}>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={() => handleDeleteSimulator(simulator)}
+                className="text-destructive"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
 
   return (
-    <div className="space-y-6">
-      <DataTable
-        title="Simulators"
-        headers={['Simulator', 'Status', 'URL Slug', 'Order', 'Actions']}
-        items={simulators || []}
-        getItemKey={(simulator) => simulator.id}
-        onReorder={handleReorderSimulators}
-        renderRow={(simulator: Simulator) => (
-          <>
-            <TableCell>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                  {SIMULATOR_ICON_MAP_SMALL[simulator.iconName] || <CreditCard className="h-4 w-4" />}
-                </div>
-                <div>
-                  <div className="font-medium">{simulator.title}</div>
-                  <div className="text-sm text-muted-foreground">{simulator.name}</div>
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>
-              <div className="flex gap-1">
-                {simulator.is_active && (
-                  <Badge variant="default" className="text-xs">Active</Badge>
-                )}
-                {simulator.isAvailable && (
-                  <Badge variant="secondary" className="text-xs">Available</Badge>
-                )}
-                {simulator.comingSoon && (
-                  <Badge variant="outline" className="text-xs">Coming Soon</Badge>
-                )}
-              </div>
-            </TableCell>
-            <TableCell>
-              <code className="text-sm bg-muted px-2 py-1 rounded">
-                {simulator.urlSlug}
-              </code>
-            </TableCell>
-            <TableCell>
-              <span className="text-sm font-mono text-muted-foreground">
-                {simulator.sort_order + 1}
-              </span>
-            </TableCell>
-            <TableCell>
-              <div className="flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleEditSimulator(simulator)}
-                >
-                  <Edit className="h-3 w-3" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDeleteSimulator(simulator)}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
-            </TableCell>
-          </>
-        )}
-        actionButton={
-          <div className="flex gap-2">
-            <Button onClick={handleCreateSimulator}>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Simulator
-            </Button>
-            <Button variant="outline" onClick={handleCreateFromTemplate}>
-              <Copy className="h-4 w-4 mr-2" />
-              Copy from Template
-            </Button>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Simulators</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Manage your pricing simulators and their configurations
+            </p>
           </div>
-        }
-        isLoading={isLoading}
-        emptyStateTitle="No simulators found"
-        emptyStateDescription="Create your first simulator to get started"
-        emptyStateIcon={<CreditCard className="h-12 w-12 text-muted-foreground" />}
-      />
+          <Button onClick={handleCreateSimulator}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create New
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <DataTable 
+          columns={columns} 
+          data={simulators}
+          searchKey="title"
+          searchPlaceholder="Search simulators..."
+          onRowClick={(simulator) => handleEditSimulator(simulator)}
+        />
+      </CardContent>
 
       {showSimulatorDialog && (
         <SimulatorDialog
@@ -300,6 +307,6 @@ export function SimulatorManager({ onClose }: SimulatorManagerProps) {
           </div>
         </StandardDialog>
       )}
-    </div>
+    </Card>
   );
 }

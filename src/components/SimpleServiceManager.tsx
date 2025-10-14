@@ -176,6 +176,7 @@ export function SimpleServiceManager({
           data={services}
           searchKey="name"
           searchPlaceholder="Search services by name, description, or tags..."
+          onRowClick={(service) => handleEditService(service)}
         />
       </CardContent>
 

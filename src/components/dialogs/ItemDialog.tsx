@@ -169,12 +169,12 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
       };
 
       // Saving service with tags
-      // // console.log('Saving service with tags:', {
-        serviceId: newItem.id,
-        serviceName: newItem.name,
-        tags: newItem.tags,
-        tagsCount: newItem.tags?.length || 0
-      });
+      // console.log('Saving service with tags:', {
+      //   serviceId: newItem.id,
+      //   serviceName: newItem.name,
+      //   tags: newItem.tags,
+      //   tagsCount: newItem.tags?.length || 0
+      // });
 
       await onSave(newItem);
       
@@ -199,12 +199,12 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         // Clear temporary tags since they're now permanent
         setTemporaryTags([]);
       } catch (refreshError) {
-        // // console.warn('Failed to refresh existing tags after save:', refreshError);
+        // console.warn('Failed to refresh existing tags after save:', refreshError);
       }
       
       onClose();
     } catch (error) {
-      // // console.error('Failed to save service:', error);
+      // console.error('Failed to save service:', error);
       
       // 🔧 CRITICAL FIX: Handle auto-add related errors gracefully  
       if ((error as Error).message && (

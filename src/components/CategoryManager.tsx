@@ -148,6 +148,7 @@ export function CategoryManager({
           data={categories}
           searchKey="name"
           searchPlaceholder="Search categories..."
+          onRowClick={(category) => handleEditCategory(category)}
         />
       </CardContent>
 

@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
@@ -12,105 +11,138 @@ import { api } from '../../../../utils/api';
 interface PricingType {
   id: string;
   name: string;
-  description: string;
   value: string;
-  isActive: boolean;
-  supportsRecurring?: boolean;
-  supportsTiered?: boolean;
-  display_order?: number;
+  description: string;
+  supports_tiered: boolean;
+  supports_recurring: boolean;
+  display_order: number;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export function PricingTypesConfiguration() {
-  const { simulator } = useParams<{ simulator: string }>();
   const [pricingTypes, setPricingTypes] = useState<PricingType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load pricing types from database
   useEffect(() => {
-    const loadTypes = async () => {
+    const loadPricingTypes = async () => {
       try {
         setIsLoading(true);
         setError(null);
         const data = await api.loadPricingTypes();
-        
-        // Transform database data to component format
-        const transformedTypes: PricingType[] = data.map((type: any) => ({
-          id: type.id,
-          name: type.name,
-          description: type.description || '',
-          value: type.value,
-          isActive: type.is_active ?? true,
-          supportsRecurring: type.supports_recurring ?? false,
-          supportsTiered: type.supports_tiered ?? false,
-          display_order: type.display_order
-        }));
-        
-        setPricingTypes(transformedTypes);
+        setPricingTypes(data);
       } catch (err: any) {
         setError(err.message || 'Failed to load pricing types');
+        console.error('Error loading pricing types:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadTypes();
-  }, [simulator]);
+    loadPricingTypes();
+  }, []);
 
-  const handleCreateType = () => {
-    // TODO: Implement create type dialog
-  };
-
-  const handleEditType = (type: PricingType) => {
-    // TODO: Implement edit type dialog
-  };
-
-  const handleDeleteType = async (type: PricingType) => {
+  const handleCreatePricingType = async (pricingType: Omit<PricingType, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      setError(null);
-      await api.deletePricingType(type.id);
-      setPricingTypes(prev => prev.filter(t => t.id !== type.id));
+      const newPricingType = await api.savePricingType({
+        ...pricingType,
+        id: `type-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      });
+      setPricingTypes(prev => [...prev, newPricingType]);
     } catch (err: any) {
-      setError(err.message || 'Failed to delete pricing type');
+      console.error('Error creating pricing type:', err);
+      throw err;
     }
   };
 
-  const handleDuplicateType = async (type: PricingType) => {
+  const handleUpdatePricingType = async (pricingType: PricingType) => {
     try {
-      const duplicatedType = {
-        ...type,
-        id: `type-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: `${type.name} (Copy)`
-      };
-      await api.createPricingType(duplicatedType);
-      setPricingTypes(prev => [...prev, duplicatedType]);
+      const updatedPricingType = await api.savePricingType(pricingType);
+      setPricingTypes(prev => prev.map(pt => pt.id === pricingType.id ? updatedPricingType : pt));
     } catch (err: any) {
-      setError(err.message || 'Failed to duplicate pricing type');
+      console.error('Error updating pricing type:', err);
+      throw err;
+    }
+  };
+
+  const handleDeletePricingType = async (typeId: string) => {
+    try {
+      await api.deletePricingType(typeId);
+      setPricingTypes(prev => prev.filter(pt => pt.id !== typeId));
+    } catch (err: any) {
+      console.error('Error deleting pricing type:', err);
+      throw err;
     }
   };
 
   const handleToggleActive = async (typeId: string) => {
     try {
-      setError(null);
-      const type = pricingTypes.find(t => t.id === typeId);
-      if (!type) return;
+      const pricingType = pricingTypes.find(pt => pt.id === typeId);
+      if (!pricingType) return;
       
-      await api.togglePricingTypeActive(typeId, !type.isActive);
-      setPricingTypes(prev => prev.map(t => 
-        t.id === typeId ? { ...t, isActive: !t.isActive } : t
+      await api.togglePricingTypeActive(typeId, !pricingType.is_active);
+      setPricingTypes(prev => prev.map(pt => 
+        pt.id === typeId ? { ...pt, is_active: !pt.is_active } : pt
       ));
     } catch (err: any) {
-      setError(err.message || 'Failed to toggle pricing type status');
+      console.error('Error toggling pricing type status:', err);
     }
   };
+
+  const handleDuplicatePricingType = async (pricingType: PricingType) => {
+    try {
+      const duplicatedPricingType = {
+        ...pricingType,
+        id: `type-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: `${pricingType.name} (Copy)`,
+        display_order: pricingTypes.length + 1
+      };
+      
+      const newPricingType = await api.savePricingType(duplicatedPricingType);
+      setPricingTypes(prev => [...prev, newPricingType]);
+    } catch (err: any) {
+      console.error('Error duplicating pricing type:', err);
+      throw err;
+    }
+  };
+
+  const columns = createPricingTypeColumns(
+    handleUpdatePricingType,
+    handleDeletePricingType,
+    handleDuplicatePricingType,
+    handleToggleActive
+  );
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Pricing Types</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (error) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold mb-2">Error Loading Pricing Types</h2>
-            <p className="text-red-600">{error}</p>
+        <CardHeader>
+          <CardTitle>Pricing Types</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center p-8">
+            <p className="text-destructive mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -124,33 +156,30 @@ export function PricingTypesConfiguration() {
           <div>
             <CardTitle>Pricing Types</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              Manage the available pricing types for services
+              Manage global pricing types available across all simulators
             </p>
           </div>
-          <Button onClick={handleCreateType}>
+          <Button onClick={() => handleCreatePricingType({
+            name: '',
+            value: '',
+            description: '',
+            supports_tiered: false,
+            supports_recurring: false,
+            display_order: pricingTypes.length + 1,
+            is_active: true
+          })}>
             <Plus className="mr-2 h-4 w-4" />
-            Create New
+            Create New Type
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">Loading...</p>
-          </div>
-        ) : (
-          <DataTable 
-            columns={createPricingTypeColumns(
-              handleEditType,
-              handleDeleteType,
-              handleDuplicateType,
-              handleToggleActive
-            )} 
-            data={pricingTypes}
-            searchKey="name"
-            searchPlaceholder="Search pricing types..."
-          />
-        )}
+        <DataTable 
+          columns={columns} 
+          data={pricingTypes}
+          searchKey="name"
+          onRowClick={(pricingType) => handleUpdatePricingType(pricingType)}
+        />
       </CardContent>
     </Card>
   );

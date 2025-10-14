@@ -4,7 +4,8 @@ import { Badge } from './ui/badge';
 import { TableCell } from './ui/table';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Plus, Edit, Trash2, User as UserIcon, Copy, Mail } from 'lucide-react';
-import { DataTable } from './DataTable';
+import { DataTable } from '../shared/components/ui/data-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { UserDialog } from './dialogs/UserDialog';
 import { StandardDialog } from './StandardDialog';
 import { supabase } from '../utils/supabase/client';
@@ -41,6 +42,144 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
   const isOwner = currentUserRole === ROLES.OWNER;
   const isAdmin = currentUserRole === ROLES.ADMIN;
   const canManageUsers = isOwner || isAdmin;
+
+  // Column definitions for Users table
+  const userColumns: ColumnDef<User>[] = [
+    {
+      accessorKey: "email",
+      header: "User",
+      cell: ({ row }) => {
+        const user = row.original;
+        const displayName = user.first_name || user.last_name
+          ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+          : user.email || 'User';
+        const avatarProps = getAvatarProps(displayName);
+        
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10">
+              <AvatarFallback className={`text-sm font-medium ${avatarProps.bgClass} ${avatarProps.textClass}`}>
+                {avatarProps.initials}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="font-medium">
+                {user.first_name || user.last_name
+                  ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+                  : 'No name set'}
+                {user.id === currentUserId && (
+                  <Badge variant="outline" className="ml-2 text-xs">You</Badge>
+                )}
+                {user.is_invite && (
+                  <Badge variant="secondary" className="ml-2 text-xs">Pending Invite</Badge>
+                )}
+              </div>
+              <div className="text-sm text-muted-foreground">{user.email}</div>
+              {user.is_invite && user.expires_at && (
+                <div className="text-xs text-muted-foreground">
+                  Expires: {new Date(user.expires_at).toLocaleDateString()}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "role",
+      header: "Role",
+      cell: ({ row }) => {
+        const role = row.getValue("role") as string;
+        return (
+          <Badge variant="outline" className={getRoleBadgeClasses(role)}>
+            {role.charAt(0).toUpperCase() + role.slice(1)}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "is_active",
+      header: "Status",
+      cell: ({ row }) => {
+        const user = row.original;
+        if (user.is_invite) {
+          return (
+            <Badge variant="outline">
+              Invite Sent
+            </Badge>
+          );
+        }
+        return (
+          <Badge variant={user.is_active ? "default" : "secondary"}>
+            {user.is_active ? 'Active' : 'Inactive'}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "created_at",
+      header: "Created",
+      cell: ({ row }) => (
+        <div className="text-sm">
+          {new Date(row.getValue("created_at")).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })}
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+            {canManageUsers && (
+              <>
+                {!user.is_invite && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setEditingUser(user);
+                      setShowUserDialog(true);
+                    }}
+                    title="Edit user"
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                )}
+                {user.is_invite && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleResendInvite(user)}
+                    title="Resend invite email"
+                    className="text-primary hover:text-primary/80"
+                  >
+                    <Mail className="h-3 w-3" />
+                  </Button>
+                )}
+                {(isOwner || (isAdmin && user.role !== ROLES.OWNER)) && user.id !== currentUserId && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleDeleteUser(user)}
+                    title="Delete user"
+                    className="text-destructive hover:text-destructive/80"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
+        );
+      },
+    },
+  ];
 
   // Load users
   const loadUsers = async () => {
@@ -348,41 +487,13 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
 
   return (
     <>
-      <DataTable
-        title="User Management"
-        description="Manage system users, roles, and access permissions"
-        headers={['User', 'Role', 'Status', 'Created', 'Actions']}
-        items={users}
-        getItemKey={(user) => user.id}
-        onRowClick={(user) => {
-          if (canManageUsers && !user.is_invite) {
-            setEditingUser(user);
-            setShowUserDialog(true);
-          }
-        }}
-        searchFields={['email', 'first_name', 'last_name']}
-        searchPlaceholder="Search by name or email..."
-        filterOptions={[
-          {
-            key: 'role',
-            label: 'Role',
-            options: [
-              { value: ROLES.OWNER, label: 'Owner', count: users.filter(u => u.role === ROLES.OWNER).length },
-              { value: ROLES.ADMIN, label: 'Admin', count: users.filter(u => u.role === ROLES.ADMIN).length },
-              { value: ROLES.MEMBER, label: 'Member', count: users.filter(u => u.role === ROLES.MEMBER).length },
-            ]
-          },
-          {
-            key: 'is_active',
-            label: 'Status',
-            options: [
-              { value: 'true', label: 'Active', count: users.filter(u => u.is_active).length },
-              { value: 'false', label: 'Inactive', count: users.filter(u => !u.is_active).length },
-            ]
-          }
-        ]}
-        actionButton={
-          canManageUsers ? (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Users</h2>
+            <p className="text-muted-foreground">System users, roles, and access permissions</p>
+          </div>
+          {canManageUsers && (
             <Button onClick={() => {
               setEditingUser(null);
               setShowUserDialog(true);
@@ -390,120 +501,28 @@ export function UserManagement({ currentUserId, currentUserRole }: UserManagemen
               <Plus className="h-4 w-4 mr-2" />
               Add User
             </Button>
-          ) : undefined
-        }
-        emptyStateTitle="No users found"
-        emptyStateDescription="Users will appear here once they are added to the system"
-        emptyStateIcon={<UserIcon className="h-12 w-12 text-muted-foreground" />}
-        isLoading={isLoading}
-        renderRow={(user) => {
-          const displayName = user.first_name || user.last_name
-            ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
-            : user.email || 'User';
-          const avatarProps = getAvatarProps(displayName);
-          
-          return (
-            <>
-            <TableCell>
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className={`text-sm font-medium ${avatarProps.bgClass} ${avatarProps.textClass}`}>
-                    {avatarProps.initials}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="font-medium">
-                    {user.first_name || user.last_name
-                      ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
-                      : 'No name set'}
-                    {user.id === currentUserId && (
-                      <Badge variant="outline" className="ml-2 text-xs">You</Badge>
-                    )}
-                    {user.is_invite && (
-                      <Badge variant="secondary" className="ml-2 text-xs">Pending Invite</Badge>
-                    )}
-                  </div>
-                  <div className="text-sm text-muted-foreground">{user.email}</div>
-                  {user.is_invite && user.expires_at && (
-                    <div className="text-xs text-muted-foreground">
-                      Expires: {new Date(user.expires_at).toLocaleDateString()}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline" className={getRoleBadgeClasses(user.role)}>
-                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              {user.is_invite ? (
-                <Badge variant="outline">
-                  Invite Sent
-                </Badge>
-              ) : (
-                <Badge variant={user.is_active ? "default" : "secondary"}>
-                  {user.is_active ? 'Active' : 'Inactive'}
-                </Badge>
-              )}
-            </TableCell>
-            <TableCell>
-              <div className="text-sm">
-                {new Date(user.created_at).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })}
-              </div>
-            </TableCell>
-            <TableCell onClick={(e) => e.stopPropagation()}>
-              <div className="flex gap-1">
-                {canManageUsers && (
-                  <>
-                    {!user.is_invite && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          setEditingUser(user);
-                          setShowUserDialog(true);
-                        }}
-                        title="Edit user"
-                      >
-                        <Edit className="h-3 w-3" />
-                      </Button>
-                    )}
-                    {user.is_invite && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleResendInvite(user)}
-                        title="Resend invite email"
-                        className="text-primary hover:text-primary/80"
-                      >
-                        <Mail className="h-3 w-3" />
-                      </Button>
-                    )}
-                    {(isOwner || (isAdmin && user.role !== ROLES.OWNER)) && user.id !== currentUserId && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDeleteUser(user)}
-                        title="Delete user"
-                        className="text-destructive hover:text-destructive/80"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    )}
-                  </>
-                )}
-              </div>
-            </TableCell>
-            </>
-          );
-        }}
-      />
+          )}
+        </div>
+        
+        {isLoading ? (
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          <DataTable 
+            columns={userColumns} 
+            data={users}
+            searchKey="email"
+            searchPlaceholder="Search by name or email..."
+            onRowClick={(user) => {
+              if (canManageUsers && !user.is_invite) {
+                setEditingUser(user);
+                setShowUserDialog(true);
+              }
+            }}
+          />
+        )}
+      </div>
 
       {showUserDialog && (
         <UserDialog

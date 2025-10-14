@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
@@ -12,15 +11,16 @@ import { api } from '../../../../utils/api';
 interface Unit {
   id: string;
   name: string;
+  value: string;
   description: string;
-  category: 'one-time' | 'monthly-recurring' | 'transaction-based' | 'event-activity-based';
-  isActive: boolean;
-  value?: string;
-  display_order?: number;
+  category: string;
+  display_order: number;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export function UnitsConfiguration() {
-  const { simulator } = useParams<{ simulator: string }>();
   const [units, setUnits] = useState<Unit[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,46 +31,63 @@ export function UnitsConfiguration() {
       try {
         setIsLoading(true);
         setError(null);
-        // For global config routes, simulator can be undefined - that's OK
-        const data = await api.loadPricingUnits(simulator || 'global');
-        
-        // Transform database data to component format
-        const transformedUnits: Unit[] = data.map((unit: any) => ({
-          id: unit.id,
-          name: unit.name,
-          description: unit.description || '',
-          category: unit.category || 'one-time',
-          isActive: unit.is_active ?? true,
-          value: unit.value,
-          display_order: unit.display_order
-        }));
-        
-        setUnits(transformedUnits);
+        const data = await api.loadPricingUnits();
+        setUnits(data);
       } catch (err: any) {
         setError(err.message || 'Failed to load pricing units');
+        console.error('Error loading units:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
     loadUnits();
-  }, [simulator]);
+  }, []);
 
-  const handleCreateUnit = () => {
-    // TODO: Implement create unit dialog
-  };
-
-  const handleEditUnit = (unit: Unit) => {
-    // TODO: Implement edit unit dialog
-  };
-
-  const handleDeleteUnit = async (unit: Unit) => {
+  const handleCreateUnit = async (unit: Omit<Unit, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      setError(null);
-      await api.deletePricingUnit(unit.id);
-      setUnits(prev => prev.filter(u => u.id !== unit.id));
+      const newUnit = await api.savePricingUnit({
+        ...unit,
+        id: `unit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      });
+      setUnits(prev => [...prev, newUnit]);
     } catch (err: any) {
-      setError(err.message || 'Failed to delete unit');
+      console.error('Error creating unit:', err);
+      throw err;
+    }
+  };
+
+  const handleUpdateUnit = async (unit: Unit) => {
+    try {
+      const updatedUnit = await api.savePricingUnit(unit);
+      setUnits(prev => prev.map(u => u.id === unit.id ? updatedUnit : u));
+    } catch (err: any) {
+      console.error('Error updating unit:', err);
+      throw err;
+    }
+  };
+
+  const handleDeleteUnit = async (unitId: string) => {
+    try {
+      await api.deletePricingUnit(unitId);
+      setUnits(prev => prev.filter(u => u.id !== unitId));
+    } catch (err: any) {
+      console.error('Error deleting unit:', err);
+      throw err;
+    }
+  };
+
+  const handleToggleActive = async (unitId: string) => {
+    try {
+      const unit = units.find(u => u.id === unitId);
+      if (!unit) return;
+      
+      await api.togglePricingUnitActive(unitId, !unit.is_active);
+      setUnits(prev => prev.map(u => 
+        u.id === unitId ? { ...u, is_active: !u.is_active } : u
+      ));
+    } catch (err: any) {
+      console.error('Error toggling unit status:', err);
     }
   };
 
@@ -79,48 +96,52 @@ export function UnitsConfiguration() {
       const duplicatedUnit = {
         ...unit,
         id: `unit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: `${unit.name} (Copy)`
+        name: `${unit.name} (Copy)`,
+        display_order: units.length + 1
       };
-      await api.createPricingUnit(duplicatedUnit);
-      setUnits(prev => [...prev, duplicatedUnit]);
-    } catch (err: any) {
-      setError(err.message || 'Failed to duplicate unit');
-    }
-  };
-
-  const handleToggleActive = async (unitId: string) => {
-    try {
-      setError(null);
-      const unit = units.find(u => u.id === unitId);
-      if (!unit) return;
       
-      await api.togglePricingUnitActive(unitId, !unit.isActive);
-      setUnits(prev => prev.map(u => 
-        u.id === unitId ? { ...u, isActive: !u.isActive } : u
-      ));
+      const newUnit = await api.savePricingUnit(duplicatedUnit);
+      setUnits(prev => [...prev, newUnit]);
     } catch (err: any) {
-      setError(err.message || 'Failed to toggle unit status');
+      console.error('Error duplicating unit:', err);
+      throw err;
     }
   };
 
+  const columns = createUnitColumns(
+    handleUpdateUnit,
+    handleDeleteUnit,
+    handleDuplicateUnit,
+    handleToggleActive
+  );
 
-  const getCategoryLabel = (category: string) => {
-    switch (category) {
-      case 'one-time': return 'One Time';
-      case 'monthly-recurring': return 'Monthly';
-      case 'transaction-based': return 'Transaction';
-      case 'event-activity-based': return 'Event';
-      default: return category;
-    }
-  };
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Pricing Units</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (error) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold mb-2">Error Loading Pricing Units</h2>
-            <p className="text-red-600">{error}</p>
+        <CardHeader>
+          <CardTitle>Pricing Units</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center p-8">
+            <p className="text-destructive mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -134,33 +155,29 @@ export function UnitsConfiguration() {
           <div>
             <CardTitle>Pricing Units</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              Manage the available units for pricing services
+              Manage global pricing units available across all simulators
             </p>
           </div>
-          <Button onClick={handleCreateUnit}>
+          <Button onClick={() => handleCreateUnit({
+            name: '',
+            value: '',
+            description: '',
+            category: '',
+            display_order: units.length + 1,
+            is_active: true
+          })}>
             <Plus className="mr-2 h-4 w-4" />
-            Create New
+            Create New Unit
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">Loading...</p>
-          </div>
-        ) : (
-          <DataTable 
-            columns={createUnitColumns(
-              handleEditUnit,
-              handleDeleteUnit,
-              handleDuplicateUnit,
-              handleToggleActive
-            )} 
-            data={units}
-            searchKey="name"
-            searchPlaceholder="Search units..."
-          />
-        )}
+        <DataTable 
+          columns={columns} 
+          data={units}
+          searchKey="name"
+          onRowClick={(unit) => handleUpdateUnit(unit)}
+        />
       </CardContent>
     </Card>
   );

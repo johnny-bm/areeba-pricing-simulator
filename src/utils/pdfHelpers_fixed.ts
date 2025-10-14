@@ -783,11 +783,11 @@ export async function downloadPDF(data: PDFData) {
       // Don't throw - we still want the PDF to be generated
     }
   } else {
-    // // console.log('pdfHelpers: Skipping database save - missing required data:', {
-      clientName: safeData.config?.clientName,
-      projectName: safeData.config?.projectName,
-      simulatorId: safeData.simulator?.id
-    });
+    // console.log('pdfHelpers: Skipping database save - missing required data:', {
+    //   clientName: safeData.config?.clientName,
+    //   projectName: safeData.config?.projectName,
+    //   simulatorId: safeData.simulator?.id
+    // });
   }
 
   // Generate and download the PDF
@@ -809,9 +809,9 @@ export async function downloadPDF(data: PDFData) {
     // Clean up the URL object
     URL.revokeObjectURL(url);
     
-    // // console.log('pdfHelpers: PDF download initiated successfully');
+    // console.log('pdfHelpers: PDF download initiated successfully');
   } catch (error) {
-    // // console.error('pdfHelpers: Failed to generate PDF:', error);
+    // console.error('pdfHelpers: Failed to generate PDF:', error);
     throw error;
   }
 }

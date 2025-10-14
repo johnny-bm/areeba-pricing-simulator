@@ -109,15 +109,15 @@ export function SignupPage() {
         throw new Error('Signup failed - no user returned');
       }
 
-      // // console.log('Step 2: Auth user created:', authData.user.id);
-      // // console.log('Step 3: Creating profile with data:', {
-        id: authData.user.id,
-        email: invite.email,
-        first_name: firstName || null,
-        last_name: lastName || null,
-        role: invite.role,
-        is_active: true,
-      });
+      // console.log('Step 2: Auth user created:', authData.user.id);
+      // console.log('Step 3: Creating profile with data:', {
+      //   id: authData.user.id,
+      //   email: invite.email,
+      //   first_name: firstName || null,
+      //   last_name: lastName || null,
+      //   role: invite.role,
+      //   is_active: true,
+      // });
 
       const { data: profileData, error: profileError } = await supabase
         .from(TABLES.USER_PROFILES)
@@ -144,10 +144,10 @@ export function SignupPage() {
         .update({ used_at: new Date().toISOString() })
         .eq('id', invite.id);
 
-      // // console.log('Step 5: Success! Navigating to simulators...');
+      // console.log('Step 5: Success! Navigating to simulators...');
       navigate('/simulators');
     } catch (err: any) {
-      // // console.error('Full signup error:', err);
+      // console.error('Full signup error:', err);
       setError(err.message || 'Signup failed. Please try again.');
       setIsLoading(false);
     }
