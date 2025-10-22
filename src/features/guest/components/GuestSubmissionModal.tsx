@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StandardDialog } from '../../../components/StandardDialog';
-import { Button } from '../../../shared/components/ui/button';
-import { Alert, AlertDescription } from '../../../shared/components/ui/alert';
+import { Button } from '../../../components/ui/button';
+import { Alert, AlertDescription } from '../../../components/ui/alert';
 import { GuestContactForm } from './GuestContactForm';
 import { useGuestSession } from '../hooks/useGuestSession';
 import { useGuestValidation } from '../hooks/useGuestValidation';

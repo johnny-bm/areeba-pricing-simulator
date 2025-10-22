@@ -22,7 +22,7 @@ import { ArrowLeft, LogOut, Settings, Sun, Moon, Monitor } from 'lucide-react';
 import { ROUTES } from '../../config/routes';
 import { ROLES } from '../../config/database';
 import { getAvatarProps } from '../../utils/avatarColors';
-import WordMarkRed from '../../imports/WordMarkRed';
+import WordMarkRed from '../../assets/icons/WordMarkRed';
 
 export interface BreadcrumbItem {
   label: string;

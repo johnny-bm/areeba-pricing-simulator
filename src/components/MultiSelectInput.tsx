@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -51,6 +51,26 @@ export function MultiSelectInput({
 }: MultiSelectInputProps) {
   const [inputValue, setInputValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [isMouseOverDropdown, setIsMouseOverDropdown] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Handle outside clicks to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+        setIsMouseOverDropdown(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   // Get selected option objects for display
   const selectedOptions = options.filter(option => selectedValues.includes(option.id));
@@ -116,7 +136,7 @@ export function MultiSelectInput({
   const canCreateNew = allowCreateNew && inputValue.trim() && !options.some(opt => opt.label.toLowerCase() === inputValue.trim().toLowerCase());
 
   return (
-    <div className="space-y-2">
+    <div ref={containerRef} className="space-y-2">
       <Label>{label}</Label>
       
       {/* Selected Values Display */}
@@ -149,13 +169,11 @@ export function MultiSelectInput({
           onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
           onFocus={handleInputClick}
-          onBlur={(e) => {
-            // Only close if not clicking on the dropdown
-            setTimeout(() => {
-              if (!e.relatedTarget?.closest('.multi-select-dropdown')) {
-                setIsOpen(false);
-              }
-            }, 100);
+          onBlur={() => {
+            // Close dropdown when input loses focus (outside click handler will take care of the rest)
+            if (!isMouseOverDropdown) {
+              setIsOpen(false);
+            }
           }}
         />
         
@@ -174,7 +192,11 @@ export function MultiSelectInput({
         
         {/* Dropdown positioned absolutely */}
         {isOpen && (
-          <div className="multi-select-dropdown absolute top-full left-0 right-0 z-50 mt-1 bg-popover border border-border rounded-md shadow-md">
+          <div 
+            className="multi-select-dropdown absolute top-full left-0 right-0 z-50 mt-1 bg-popover border border-border rounded-md shadow-md"
+            onMouseEnter={() => setIsMouseOverDropdown(true)}
+            onMouseLeave={() => setIsMouseOverDropdown(false)}
+          >
             <div className="border-b px-3 py-2">
               <div className="text-xs font-medium text-muted-foreground mb-1">
                 {Object.keys(groupedOptions).some(key => groupedOptions[key].length > 0)
@@ -201,7 +223,11 @@ export function MultiSelectInput({
                         {groupOptions.map((option) => (
                           <div
                             key={option.id}
-                            onClick={() => handleAdd(option.id)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleAdd(option.id);
+                            }}
                             className="cursor-pointer px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
                           >
                             <div className="flex items-center justify-between">

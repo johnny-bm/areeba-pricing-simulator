@@ -186,67 +186,92 @@ export class AuthService {
   }
 
   /**
-   * Get current user from session
+   * Get current user from session with timeout handling
    */
   static async getCurrentUser(): Promise<User | null> {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session?.user) {
-      return null;
-    }
-
-    let profile;
-    let error;
-    
     try {
-      const { data, error: profileError } = await supabase
-        .from(TABLES.USER_PROFILES)
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
+      // Add timeout to session check
+      const sessionPromise = supabase.auth.getSession();
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Session timeout')), 3000)
+      );
       
-      profile = data;
-      error = profileError;
-    } catch (err) {
-      // // console.error('Profile fetch error:', err);
-      error = err;
-    }
-
-    // If profile doesn't exist, create one automatically
-    if (error || !profile) {
-      // // console.log('Profile not found, creating one automatically...');
+      const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
       
-      const newProfile = {
-        id: session.user.id,
-        email: session.user.email || '',
-        first_name: session.user.user_metadata?.first_name || '',
-        last_name: session.user.user_metadata?.last_name || '',
-        role: 'member',
-        is_active: true
-      };
+      if (!session?.user) {
+        return null;
+      }
 
+      // Try to get profile with timeout
+      let profile;
+      let error;
+      
       try {
-        const { data: createdProfile, error: createError } = await supabase
+        const profilePromise = supabase
           .from(TABLES.USER_PROFILES)
-          .insert(newProfile)
-          .select()
+          .select('*')
+          .eq('id', session.user.id)
           .single();
+        
+        const profileTimeoutPromise = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('Profile fetch timeout')), 2000)
+        );
+        
+        const { data, error: profileError } = await Promise.race([
+          profilePromise,
+          profileTimeoutPromise
+        ]);
+        
+        profile = data;
+        error = profileError;
+      } catch (err) {
+        error = err;
+      }
 
-        if (createError) {
-          // // console.error('Failed to create profile:', createError);
+      // If profile doesn't exist, create one automatically
+      if (error || !profile) {
+        const newProfile = {
+          id: session.user.id,
+          email: session.user.email || '',
+          first_name: session.user.user_metadata?.first_name || '',
+          last_name: session.user.user_metadata?.last_name || '',
+          role: 'member',
+          is_active: true
+        };
+
+        try {
+          const createPromise = supabase
+            .from(TABLES.USER_PROFILES)
+            .insert(newProfile)
+            .select()
+            .single();
+          
+          const createTimeoutPromise = new Promise<never>((_, reject) => 
+            setTimeout(() => reject(new Error('Profile creation timeout')), 2000)
+          );
+          
+          const { data: createdProfile, error: createError } = await Promise.race([
+            createPromise,
+            createTimeoutPromise
+          ]);
+
+          if (createError) {
+            // Use the new profile data as fallback
+            profile = newProfile;
+          } else {
+            profile = createdProfile;
+          }
+        } catch (createError) {
           // Use the new profile data as fallback
           profile = newProfile;
-        } else {
-          profile = createdProfile;
         }
-      } catch (createError) {
-        // // console.error('Profile creation failed:', createError);
-        // Use the new profile data as fallback
-        profile = newProfile;
       }
-    }
 
-    return profile;
+      return profile;
+    } catch (error) {
+      console.warn('Auth service error:', error);
+      return null;
+    }
   }
 
   /**

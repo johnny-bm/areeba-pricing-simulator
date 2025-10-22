@@ -125,7 +125,9 @@ export function DataTable<T>({
 
   // Filter and search logic
   const filteredItems = useMemo(() => {
-    let filtered = [...items];
+    // Ensure items is always an array to prevent "items is not iterable" error
+    const safeItems = Array.isArray(items) ? items : [];
+    let filtered = [...safeItems];
 
     // Apply search filter
     if (searchTerm && searchFields.length > 0) {

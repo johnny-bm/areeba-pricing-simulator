@@ -2,11 +2,11 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../features/auth';
-import { ErrorBoundary } from '../shared/components/ErrorBoundary';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ThemeProvider } from '../contexts/ThemeContext';
-import { analytics } from '../shared/lib/analytics';
-import { errorTracking } from '../shared/lib/errorTracking';
-import { performanceService } from '../shared/lib/performance';
+import { analytics } from '../lib/analytics';
+import { errorTracking } from '../lib/errorTracking';
+import { performanceService } from '../lib/performance';
 import { getEnvironmentConfig } from '../config/production';
 
 interface ProvidersProps {

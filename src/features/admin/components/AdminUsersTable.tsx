@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { TableCell } from '../../../shared/components/ui/table';
-import { Button } from '../../../shared/components/ui/button';
-import { Badge } from '../../../shared/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/components/ui/select';
-import { DataTable } from '../../../shared/components/ui/data-table';
+import { TableCell } from '../../../components/ui/table';
+import { Button } from '../../../components/ui/button';
+import { Badge } from '../../../components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
+import { DataTable } from '../../../components/ui/data-table';
 import { useAdminUsers } from '../hooks/useAdminUsers';
 import { AdminUser, AdminFilters } from '../types';
 import { ADMIN_ROLES, ADMIN_STATUS } from '../constants';
@@ -109,10 +109,18 @@ export function AdminUsersTable({
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-10 bg-gray-200 rounded" style={{
+          background: 'linear-gradient(90deg, #e5e7eb 25%, #d1d5db 50%, #e5e7eb 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'skeleton-shimmer 1.5s ease-in-out infinite'
+        }}></div>
         <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-12 bg-gray-200 rounded animate-pulse"></div>
+            <div key={i} className="h-12 bg-gray-200 rounded" style={{
+              background: 'linear-gradient(90deg, #e5e7eb 25%, #d1d5db 50%, #e5e7eb 75%)',
+              backgroundSize: '200% 100%',
+              animation: 'skeleton-shimmer 1.5s ease-in-out infinite'
+            }}></div>
           ))}
         </div>
       </div>

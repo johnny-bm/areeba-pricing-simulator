@@ -6,7 +6,7 @@ import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
 import { TableCell } from '../../../components/ui/table';
 import { Input } from '../../../components/ui/input';
-import { DataTable } from '../../../shared/components/ui/data-table';
+import { DataTable } from '../../../components/ui/data-table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 import { 
   Dialog,

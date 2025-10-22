@@ -23,12 +23,19 @@
       "baseUrl": ".",
       "paths": {
         "@/*": ["./src/*"],
+        "@/components/*": ["./src/components/*"],
+        "@/features/*": ["./src/features/*"],
+        "@/utils/*": ["./src/utils/*"],
+        "@/types/*": ["./src/types/*"],
+        "@/config/*": ["./src/config/*"],
+        "@/hooks/*": ["./src/hooks/*"],
+        "@/lib/*": ["./src/lib/*"],
+        "@/assets/*": ["./src/assets/*"],
+        "@/styles/*": ["./src/styles/*"],
         "@/core/*": ["./src/core/*"],
         "@/presentation/*": ["./src/presentation/*"],
         "@/state/*": ["./src/state/*"],
         "@/routing/*": ["./src/routing/*"],
-        "@/config/*": ["./src/config/*"],
-        "@/types/*": ["./src/types/*"],
         "@/tests/*": ["./tests/*"]
       }
     },

@@ -1,10 +1,10 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "@/shared/components/ui/badge"
-import { Button } from "@/shared/components/ui/button"
-import { Checkbox } from "@/shared/components/ui/checkbox"
-import { Switch } from "@/shared/components/ui/switch"
+import { Badge } from "./ui/badge"
+import { Button } from "./ui/button"
+import { Checkbox } from "./ui/checkbox"
+import { Switch } from "./ui/switch"
 import { ArrowUpDown, MoreVertical } from "lucide-react"
 import {
   DropdownMenu,
@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu"
+} from "../components/ui/dropdown-menu"
 import { Category } from "@/types/domain"
 
 export type CategoryType = Category

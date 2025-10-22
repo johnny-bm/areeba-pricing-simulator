@@ -11,7 +11,6 @@ import { PricingItem, PricingTier, Category, ConfigurationDefinition } from '../
 import { MultiSelectInput } from '../MultiSelectInput';
 import { TieredPricingEditor } from '../TieredPricingEditor';
 import { NumberInput } from '../NumberInput';
-import { ALL_UNITS } from '../../utils/unitClassification';
 import { api } from '../../utils/api';
 import { PRICING_TYPES } from '../../config/database';
 
@@ -23,7 +22,7 @@ interface ItemFormData {
   unit: string;
   defaultPrice: number;
   tags: string[];
-  pricingType: 'fixed' | 'tiered';
+  pricingType: 'one_time' | 'recurring' | 'per_unit' | 'tiered';
   tiers: PricingTier[];
   quantitySourceFields?: string[];
   quantityMultiplier?: number;
@@ -51,7 +50,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
     unit: 'per month',
     defaultPrice: 0,
     tags: [],
-    pricingType: 'fixed',
+    pricingType: 'one_time',
     tiers: [],
     quantitySourceFields: undefined,
     quantityMultiplier: 1,
@@ -65,26 +64,52 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
   const [availableServices, setAvailableServices] = useState<PricingItem[]>([]);
   const [existingTags, setExistingTags] = useState<string[]>([]);
   const [temporaryTags, setTemporaryTags] = useState<string[]>([]); // Tags added during this dialog session
+  const [availableUnits, setAvailableUnits] = useState<string[]>([]);
+  const [availablePricingTypes, setAvailablePricingTypes] = useState<Array<{value: string, label: string}>>([]);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [initialFormData, setInitialFormData] = useState<ItemFormData | null>(null);
 
   // Load configurations when dialog opens
   useEffect(() => {
     if (isOpen) {
       const loadData = async () => {
         try {
-          const [configsData, servicesData] = await Promise.all([
+          const [configsData, servicesData, unitsData, pricingTypesData, tagsData] = await Promise.all([
             api.loadConfigurations(),
-            api.loadPricingItems()
+            api.loadPricingItems(),
+            api.loadPricingUnits(),
+            api.loadPricingTypes(),
+            api.loadTags() // Load tags from database
           ]);
           setConfigurations(configsData.filter(config => config.is_active));
           setAvailableServices(servicesData);
           
-          // Extract all unique tags from services
-          const allTags = new Set<string>();
+          // Filter active units and extract their names
+          const activeUnits = unitsData
+            .filter(unit => unit.is_active)
+            .map(unit => unit.name)
+            .sort();
+          setAvailableUnits(activeUnits);
+          
+          // Filter active pricing types
+          const activePricingTypes = pricingTypesData
+            .filter(type => type.is_active)
+            .map(type => ({ value: type.value, label: type.name }));
+          setAvailablePricingTypes(activePricingTypes);
+          
+          // Load tags from the tags table and combine with service tags
+          const serviceTags = new Set<string>();
           servicesData.forEach(service => {
             if (service.tags) {
-              service.tags.forEach(tag => allTags.add(tag));
+              service.tags.forEach(tag => serviceTags.add(tag));
             }
           });
+          
+          // Combine tags from tags table with service tags
+          const allTags = new Set<string>();
+          tagsData.forEach(tag => allTags.add(tag.name));
+          serviceTags.forEach(tag => allTags.add(tag));
+          
           setExistingTags(Array.from(allTags).sort());
           
           // Loaded existing tags
@@ -95,6 +120,8 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           setAvailableServices([]);
           setExistingTags([]);
           setTemporaryTags([]);
+          setAvailableUnits([]);
+          setAvailablePricingTypes([]);
         }
       };
       
@@ -109,7 +136,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
       
       if (item && !isCreating) {
         // Edit mode
-        setFormData({
+        const initialData = {
           id: item.id || '',
           name: item.name || '',
           description: item.description || '',
@@ -117,12 +144,17 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           unit: item.unit || 'per month',
           defaultPrice: item.defaultPrice || 0,
           tags: item.tags || [],
-          pricingType: (item.pricingType as any) || 'fixed',
+          pricingType: (item.pricingType as 'one_time' | 'recurring' | 'per_unit' | 'tiered') || 'one_time',
           tiers: item.tiers || [],
           quantitySourceFields: item.auto_add_trigger_fields || item.autoQuantitySources || item.quantitySourceFields as string[],
           quantityMultiplier: item.quantityMultiplier || 1,
-          autoAddServices: (item.autoAddServices as any) || []
-        });
+          autoAddServices: Array.isArray(item.autoAddServices) 
+            ? item.autoAddServices.map(item => typeof item === 'string' ? item : item.configFieldId).filter(Boolean)
+            : []
+        };
+        setFormData(initialData);
+        setInitialFormData(initialData);
+        setHasUnsavedChanges(false);
       } else {
         // Create mode
         setFormData({
@@ -133,7 +165,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           unit: 'per month',
           defaultPrice: 0,
           tags: [],
-          pricingType: 'fixed',
+          pricingType: 'one_time',
           tiers: [],
           quantitySourceFields: undefined,
           quantityMultiplier: 1,
@@ -161,11 +193,13 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
         auto_add_trigger_fields: formData.quantitySourceFields && formData.quantitySourceFields.length > 0 ? formData.quantitySourceFields : undefined,
         autoQuantitySources: formData.quantitySourceFields && formData.quantitySourceFields.length > 0 ? formData.quantitySourceFields : undefined,
         quantityMultiplier: formData.quantityMultiplier && formData.quantityMultiplier !== 1 ? formData.quantityMultiplier : undefined,
-        autoAddServices: formData.autoAddServices && formData.autoAddServices.length > 0 ? formData.autoAddServices.map(serviceId => ({
-          configFieldId: serviceId,
-          triggerCondition: 'boolean',
-          triggerValue: true
-        })) : undefined
+        autoAddServices: formData.autoAddServices && formData.autoAddServices.length > 0 
+          ? formData.autoAddServices.map(configFieldId => ({
+              configFieldId,
+              triggerCondition: 'boolean',
+              triggerValue: true
+            }))
+          : undefined
       };
 
       // Saving service with tags
@@ -266,7 +300,17 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
   };
 
   const updateField = <K extends keyof ItemFormData>(field: K, value: ItemFormData[K]) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+      
+      // Check if there are unsaved changes
+      if (initialFormData && !isCreating) {
+        const hasChanges = JSON.stringify(newData) !== JSON.stringify(initialFormData);
+        setHasUnsavedChanges(hasChanges);
+      }
+      
+      return newData;
+    });
   };
 
   const isValid = formData.name?.trim() && formData.description?.trim() && formData.categoryId && formData.unit;
@@ -282,6 +326,8 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
           : 'Modify the selected pricing service settings, pricing tiers, and configuration options.'
       }
       size="lg"
+      hasUnsavedChanges={hasUnsavedChanges}
+      onAutoSave={handleSave}
       destructiveActions={!isCreating && item && onDelete ? [{
         label: isDeleting ? 'Deleting...' : 'Delete',
         onClick: handleDelete,
@@ -357,7 +403,7 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {ALL_UNITS.map((unit) => (
+                  {availableUnits.map((unit) => (
                     <SelectItem key={unit} value={unit}>
                       {unit}
                     </SelectItem>
@@ -379,14 +425,17 @@ export function ItemDialog({ isOpen, onClose, onSave, onDelete, onDuplicate, ite
               <Label>Pricing Type</Label>
               <Select 
                 value={formData.pricingType} 
-                onValueChange={(value: 'fixed' | 'tiered') => updateField('pricingType', value)}
+                onValueChange={(value: 'one_time' | 'recurring' | 'per_unit' | 'tiered') => updateField('pricingType', value)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="fixed">Fixed Pricing</SelectItem>
-                  <SelectItem value="tiered">Tiered Pricing</SelectItem>
+                  {availablePricingTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

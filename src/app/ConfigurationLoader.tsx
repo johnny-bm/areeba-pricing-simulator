@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useAuthContext } from '../features/auth';
-import { AdminInterface } from '../components/AdminInterface';
+import { AdminInterface } from '../features/admin/components/AdminInterface';
 import { UnitsConfiguration } from '../features/configuration/components/pricing/UnitsConfiguration';
 import { PricingTypesConfiguration } from '../features/configuration/components/pricing/PricingTypesConfiguration';
 import { BillingCyclesConfiguration } from '../features/configuration/components/pricing/BillingCyclesConfiguration';

@@ -28,8 +28,8 @@ export class AdminService {
       const users = await api.getUsers(filters);
       return users.map(user => ({
         ...user,
-        lastLogin: user.last_login,
-        loginCount: user.login_count
+        lastLogin: null, // Column doesn't exist in database
+        loginCount: 0 // Column doesn't exist in database
       }));
     } catch (error) {
       throw new Error(`Failed to fetch users: ${(error as Error).message}`);
@@ -51,8 +51,8 @@ export class AdminService {
       
       return {
         ...user,
-        lastLogin: user.last_login,
-        loginCount: user.login_count
+        lastLogin: null, // Column doesn't exist in database
+        loginCount: 0 // Column doesn't exist in database
       };
     } catch (error) {
       throw new Error(`Failed to fetch user: ${(error as Error).message}`);
@@ -77,8 +77,8 @@ export class AdminService {
       const updatedUser = await api.updateUser(id, updates);
       return {
         ...updatedUser,
-        lastLogin: updatedUser.last_login,
-        loginCount: updatedUser.login_count
+        lastLogin: null, // Column doesn't exist in database
+        loginCount: 0 // Column doesn't exist in database
       };
     } catch (error) {
       throw new Error(`Failed to update user: ${(error as Error).message}`);

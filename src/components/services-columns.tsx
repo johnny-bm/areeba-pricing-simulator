@@ -1,10 +1,11 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "@/shared/components/ui/badge"
-import { Button } from "@/shared/components/ui/button"
-import { Checkbox } from "@/shared/components/ui/checkbox"
-import { Switch } from "@/shared/components/ui/switch"
+import { Badge } from "./ui/badge"
+import { Button } from "./ui/button"
+import { Checkbox } from "./ui/checkbox"
+import { Switch } from "./ui/switch"
+import { Spinner } from "@/components/ui/spinner"
 import { ArrowUpDown, MoreVertical } from "lucide-react"
 import {
   DropdownMenu,
@@ -13,7 +14,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu"
+} from "./ui/dropdown-menu"
 import { PricingItem } from "@/types/domain"
 import { formatPrice } from "@/utils/formatters"
 
@@ -24,7 +25,8 @@ export const createServiceColumns = (
   onEdit: (service: PricingItem) => void,
   onDelete: (service: PricingItem) => void,
   onDuplicate: (service: PricingItem) => void,
-  onToggleActive: (serviceId: string) => void
+  onToggleActive: (serviceId: string) => void,
+  deletingServiceId?: string | null
 ): ColumnDef<ServiceType>[] => [
   // Selection checkbox
   {
@@ -73,7 +75,15 @@ export const createServiceColumns = (
   // Category column
   {
     accessorKey: "categoryId",
-    header: "Category",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Category
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const categoryId = row.getValue("categoryId") as string
       const category = categories.find(cat => cat.id === categoryId)
@@ -208,8 +218,16 @@ export const createServiceColumns = (
               <DropdownMenuItem 
                 onClick={() => onDelete(service)}
                 className="text-red-600"
+                disabled={deletingServiceId === service.id}
               >
-                Delete
+                {deletingServiceId === service.id ? (
+                  <div className="flex items-center gap-2">
+                    <Spinner size="sm" />
+                    Deleting...
+                  </div>
+                ) : (
+                  "Delete"
+                )}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AdminPageLayout, AdminPageActions } from '@/components/AdminPageLayout';
-import { DataTable } from '../../../shared/components/ui/data-table';
+import { AdminPageLayout, AdminPageActions } from '../../admin/components/AdminPageLayout';
+import { DataTable } from '../../../components/ui/data-table';
 import { TableCell } from '@/components/ui/table';
 import { 
   Archive, 

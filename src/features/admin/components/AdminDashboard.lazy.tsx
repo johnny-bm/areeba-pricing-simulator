@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Card, CardContent } from '../../../shared/components/ui/card';
+import { Card, CardContent } from '../../../components/ui/card';
 import { Loader2 } from 'lucide-react';
 
 const AdminDashboard = lazy(() => import('./AdminDashboard'));

@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { Card, CardContent } from '../../../shared/components/ui/card';
-import { Separator } from '../../../shared/components/ui/separator';
-import { Label } from '../../../shared/components/ui/label';
-import { Button } from '../../../shared/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/components/ui/select';
+import { Card, CardContent } from '../../../components/ui/card';
+import { Separator } from '../../../components/ui/separator';
+import { Label } from '../../../components/ui/label';
+import { Button } from '../../../components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
 import { NumberInput } from '../../../components/NumberInput';
 import { SelectedItem, Category, DynamicClientConfig } from '../../../types/domain';
 import { formatPrice } from '../../../utils/formatters';
 import { usePricingCalculation } from '../hooks/usePricingCalculation';
 import { DISCOUNT_TYPES, DISCOUNT_APPLICATIONS } from '../constants';
 import { Save, ChevronDown, ChevronUp } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../shared/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../components/ui/collapsible';
 
 interface FeeSummaryProps {
   selectedItems: SelectedItem[];

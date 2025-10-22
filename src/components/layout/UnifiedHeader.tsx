@@ -22,7 +22,7 @@ import { ArrowLeft, LogOut, Settings, Sun, Moon, Monitor, Home, Shield } from 'l
 import { ROUTES } from '../../config/routes';
 import { ROLES } from '../../config/database';
 import { getAvatarProps } from '../../utils/avatarColors';
-import WordMarkRed from '../../imports/WordMarkRed';
+import WordMarkRed from '../../assets/icons/WordMarkRed';
 
 export interface BreadcrumbItem {
   label: string;
@@ -182,7 +182,7 @@ export function UnifiedHeader({
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {showAdminButton && (
+          {showAdminButton && isAdminOrOwner && (
             <DropdownMenuItem onClick={onAdminClick}>
               <Shield className="mr-2 h-4 w-4" />
               <span>Admin Panel</span>
@@ -270,10 +270,15 @@ export function UnifiedHeader({
   };
 
   const renderLeftSection = () => {
-    // Show back button if specified
-    if (showBackButton) {
-      return (
-        <div className="flex items-center gap-3">
+    // For admin pages, show breadcrumbs on the left instead of logo
+    if (pageType === 'admin' && finalBreadcrumbs && finalBreadcrumbs.length > 0) {
+      return renderBreadcrumbs();
+    }
+
+    // Show logo and back button (if specified) for non-admin pages
+    return (
+      <div className="flex items-center gap-3">
+        {showBackButton && (
           <Button
             variant="ghost"
             size="sm"
@@ -283,18 +288,7 @@ export function UnifiedHeader({
             <ArrowLeft className="h-4 w-4" />
             {backButtonText}
           </Button>
-        </div>
-      );
-    }
-
-    // For admin pages, show breadcrumbs on the left instead of logo
-    if (pageType === 'admin' && finalBreadcrumbs && finalBreadcrumbs.length > 0) {
-      return renderBreadcrumbs();
-    }
-
-    // Show logo only for non-admin pages
-    return (
-      <div className="flex items-center gap-3">
+        )}
         <WordMarkRed className="h-6" />
       </div>
     );
@@ -302,19 +296,12 @@ export function UnifiedHeader({
 
   return (
     <header className={`border-b bg-background ${className}`}>
-      <div className="container mx-auto px-6">
+      <div className="w-full px-6">
         <div className="flex h-16 items-center justify-between">
           {/* Left section - Logo, back button, or breadcrumbs for admin */}
           <div className="flex items-center gap-4">
             {renderLeftSection()}
           </div>
-          
-          {/* Center section - Breadcrumbs for non-admin pages only */}
-          {pageType !== 'admin' && finalBreadcrumbs && finalBreadcrumbs.length > 0 && (
-            <div className="flex-1 flex justify-center">
-              {renderBreadcrumbs()}
-            </div>
-          )}
           
           {/* Right section - Theme toggle, user menu */}
           <div className="flex items-center gap-2">

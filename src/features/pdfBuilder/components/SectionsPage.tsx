@@ -6,8 +6,8 @@ import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
 import { Input } from '../../../components/ui/input';
 import { TableCell } from '../../../components/ui/table';
-import { DataTable } from '../../../shared/components/ui/data-table';
-import { AdminPageLayout, AdminPageActions } from '../../../components/AdminPageLayout';
+import { DataTable } from '../../../components/ui/data-table';
+import { AdminPageLayout, AdminPageActions } from '../../admin/components/AdminPageLayout';
 import { 
   Dialog,
   DialogContent,

@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useFastAuth } from '../hooks/useFastAuth';
 import { AuthContextType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -9,7 +10,8 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const auth = useAuth();
+  // Use fast auth for better performance and timeout handling
+  const auth = useFastAuth();
 
   return (
     <AuthContext.Provider value={auth}>

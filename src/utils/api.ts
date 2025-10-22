@@ -1,9 +1,11 @@
 // Direct Supabase API - uses RLS policies and direct database queries
 // Maps to the schema defined in /config/database.ts
 
-import { PricingItem, Category, ScenarioData, ConfigurationDefinition, Tag } from '../types/domain';
+import { PricingItem, Category, ScenarioData, ConfigurationDefinition, Tag, ClientConfig, SelectedItem, ScenarioSummary, UserProfile, Invite } from '../types/domain';
 import { supabase } from './supabase/client';
 import { TABLES, COLUMNS } from '../config/database';
+import { PricingItemService, CategoryService, TagService, ConfigurationService } from './apiService';
+import { rateLimiters, sanitize, permissions, audit } from './security';
 
 // Helper function to get current user for audit fields
 const getCurrentUser = async () => {
@@ -34,7 +36,7 @@ export const api = {
           return true;
         }
         throw new Error(error.message);
-      } catch (error: any) {
+      } catch (error) {
         
         if (i === retries) {
           return false;
@@ -56,7 +58,7 @@ export const api = {
         .limit(1);
       
       return !error;
-    } catch (error: any) {
+    } catch (error) {
       return false;
     }
   },
@@ -64,59 +66,8 @@ export const api = {
   // Load services - now uses direct Supabase queries with RLS
   async loadPricingItems(simulatorId?: string): Promise<PricingItem[]> {
     try {
-      console.log('🔍 loadPricingItems called with simulatorId:', simulatorId);
-      
-      let query = supabase
-        .from(TABLES.SERVICES)
-        .select(`
-          *,
-          category:categories(id, name, color),
-          service_tags:service_tags(tag:tags(id, name)),
-          auto_add_rules:auto_add_rules(id, config_field_id),
-          quantity_rules:quantity_rules(id, config_field_id, multiplier)
-        `)
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false }); // Changed to desc for cache busting
-
-      // Filter by simulator if provided
-      if (simulatorId) {
-        query = query.eq('simulator_id', simulatorId);
-        console.log('🔍 Filtering services by simulator_id:', simulatorId);
-      } else {
-        console.log('🔍 Loading all services (no simulator filter)');
-      }
-
-      const { data: services, error } = await query;
-      
-      console.log('🔍 Services query result:', { 
-        data: services, 
-        error,
-        count: services?.length || 0,
-        firstServiceSimulatorId: services?.[0]?.simulator_id,
-        timestamp: new Date().toISOString()
-      });
-      
-      if (error) {
-        throw new Error(`Failed to load services: ${error.message}`);
-      }
-      
-      // Transform the data to match frontend expectations
-      const transformedServices = (services || []).map(service => {
-        const transformed = {
-          ...service,
-          // Map database fields to frontend fields
-          categoryId: service.category?.id || null,
-          defaultPrice: service.default_price || 0,
-          pricingType: service.pricing_type === 'simple' ? 'one_time' : service.pricing_type,
-          billingCycle: service.billing_cycle,
-          // Transform tags from service_tags relationship
-          tags: service.service_tags?.map((st: any) => st.tag?.name).filter(Boolean) || []
-        };
-        
-        return transformed;
-      });
-      
-      return transformedServices;
+      const pricingService = new PricingItemService();
+      return await pricingService.loadPricingItems(simulatorId);
     } catch (error) {
       throw error;
     }
@@ -134,23 +85,60 @@ export const api = {
 
   // Save services - now uses direct Supabase operations with audit fields
   async savePricingItems(items: PricingItem[], simulatorId?: string): Promise<void> {
-    try {
-      const user = await getCurrentUser();
-      const timestamp = getCurrentTimestamp();
+      try {
+        // Apply rate limiting
+        await rateLimiters.mutations(async () => {
+          const user = await getCurrentUser();
+          const timestamp = getCurrentTimestamp();
       
+      // Sanitize and validate input
+      const sanitizedItems = items.map(item => ({
+        ...item,
+        name: sanitize.text(item.name),
+        description: sanitize.text(item.description || ''),
+        unit: sanitize.text(item.unit),
+        defaultPrice: sanitize.number(item.defaultPrice),
+        categoryId: sanitize.uuid(item.categoryId || ''),
+        pricingType: sanitize.text(item.pricingType),
+        billingCycle: sanitize.text(item.billingCycle)
+      }));
+
+      // Validate required fields
+      const invalidItems = sanitizedItems.filter(item => 
+        !item.name || !item.categoryId || item.defaultPrice < 0
+      );
+      
+      if (invalidItems.length > 0) {
+        audit.logSuspiciousActivity('invalid_pricing_items', { 
+          count: invalidItems.length,
+          items: invalidItems.map(i => ({ id: i.id, name: i.name }))
+        });
+        throw new Error('Invalid pricing items detected. Please check your input.');
+      }
+
       // Prepare items with audit fields and correct column mapping
-      const itemsWithAudit = items.map(item => {
+      const itemsWithAudit = sanitizedItems.map(item => {
         const mappedItem = {
           id: item.id,
           name: item.name,
-          description: item.description || '',
+          description: item.description,
           category: item.categoryId, // Map categoryId to category
           unit: item.unit,
           default_price: item.defaultPrice, // Map defaultPrice to default_price
-          pricing_type: item.pricingType === 'one_time' ? 'simple' : item.pricingType, // Map 'one_time' to 'simple' for database
+          pricing_type: item.pricingType === 'tiered' ? 'tiered' : 'simple', // Map to database constraint values
           billing_cycle: item.billingCycle,
           is_active: item.is_active !== undefined ? item.is_active : true,
-          tiered_pricing: item.tiers ? { type: 'tiered', tiers: item.tiers } : null,
+          tiered_pricing: (() => {
+            return item.tiers ? { 
+              type: 'tiered', 
+              tiers: item.tiers,
+              original_pricing_type: item.pricingType // Store original pricing type
+            } : { 
+              type: 'simple', 
+              tiers: [], // Required by constraint
+              original_pricing_type: item.pricingType // Store original pricing type for non-tiered items too
+            };
+          })(),
           simulator_id: simulatorId,
           created_by: user?.id,
           updated_by: user?.id,
@@ -164,8 +152,12 @@ export const api = {
       // Filter out services without valid categories first
       const validItems = itemsWithAudit.filter(item => {
         const hasValidCategory = item.category && item.category !== 'undefined' && item.category !== 'null';
+        if (!hasValidCategory) {
+          // Service has invalid category - will be filtered out
+        }
         return hasValidCategory;
       });
+      
 
       if (validItems.length === 0 && itemsWithAudit.length > 0) {
         throw new Error('No services with valid categories found. Please assign categories to your services.');
@@ -195,26 +187,10 @@ export const api = {
         return;
       }
 
-      // Validate that all categories exist before saving services
-      const categoryIds = [...new Set(validItems.map(item => item.category))];
-      
-      const { data: existingCategories, error: categoryCheckError } = await supabase
-        .from(TABLES.CATEGORIES)
-        .select('id, name')
-        .in('id', categoryIds)
-        .is('deleted_at', null);
-      
-      if (categoryCheckError) {
-        throw new Error(`Failed to validate categories: ${categoryCheckError.message}`);
-      }
-      
-      const existingCategoryIds = existingCategories?.map(cat => cat.id) || [];
-      const missingCategories = categoryIds.filter(id => !existingCategoryIds.includes(id));
-      
-      if (missingCategories.length > 0) {
-        throw new Error(`Categories not found: ${missingCategories.join(', ')}. Please create these categories first.`);
-      }
+      // Skip category validation for better performance - let database constraints handle it
+      // This reduces an extra database query on every save
 
+      
       const { data, error } = await supabase
         .from(TABLES.SERVICES)
         .upsert(validItems, { 
@@ -224,8 +200,10 @@ export const api = {
         .select();
       
       if (error) {
+        console.error('❌ Database error:', error);
         throw new Error(`Failed to save services: ${error.message}`);
       }
+      
 
       // Soft-delete services that are no longer in the array
       const savedServiceIds = validItems.map(item => item.id);
@@ -255,83 +233,142 @@ export const api = {
         }
       }
 
-      // Save service-tag associations
-      for (const item of items) {
-        if (item.tags && item.tags.length > 0) {
-          // First, ensure all tags exist in the tags table
-          for (const tagName of item.tags) {
-            // Check if tag exists
-            const { data: existingTag } = await supabase
-              .from(TABLES.TAGS)
-              .select('id')
-              .eq('name', tagName)
-              .maybeSingle();
-            
-            if (!existingTag) {
-              // Create tag if it doesn't exist
-              const { error: tagCreateError } = await supabase
-                .from(TABLES.TAGS)
-                .insert({
-                  id: `tag-${tagName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
-                  name: tagName,
-                  is_active: true,
-                  simulator_id: simulatorId,
+      // Optimize service-tag associations with batching
+      const allTagNames = [...new Set(items.flatMap(item => item.tags || []))];
+      
+      if (allTagNames.length > 0) {
+        // Batch create missing tags
+        const { data: existingTags } = await supabase
+          .from(TABLES.TAGS)
+          .select('id, name')
+          .in('name', allTagNames)
+          .eq('simulator_id', simulatorId);
+        
+        const existingTagNames = existingTags?.map(tag => tag.name) || [];
+        const missingTags = allTagNames.filter(name => !existingTagNames.includes(name));
+        
+        if (missingTags.length > 0) {
+          const newTags = missingTags.map(tagName => ({
+            id: `tag-${tagName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+            name: tagName,
+            is_active: true,
+            simulator_id: simulatorId,
+            created_by: user?.id,
+            updated_by: user?.id,
+            created_at: timestamp,
+            updated_at: timestamp
+          }));
+          
+          await supabase.from(TABLES.TAGS).insert(newTags);
+        }
+      }
+      
+      // Batch delete all existing service-tag associations for these services
+      const serviceIds = items.map(item => item.id);
+      await supabase
+        .from(TABLES.SERVICE_TAGS)
+        .delete()
+        .in('service_id', serviceIds);
+      
+      // Optimize service-tag associations with single query
+      const allServiceTags = [];
+      if (allTagNames.length > 0) {
+        // Get all tag IDs in one query
+        const { data: allTagData } = await supabase
+          .from(TABLES.TAGS)
+          .select('id, name')
+          .in('name', allTagNames)
+          .eq('simulator_id', simulatorId);
+        
+        if (allTagData && allTagData.length > 0) {
+          // Create a map for quick lookup
+          const tagMap = new Map(allTagData.map(tag => [tag.name, tag.id]));
+          
+          // Build service-tag associations
+          for (const item of items) {
+            if (item.tags && item.tags.length > 0) {
+              const serviceTags = item.tags
+                .map(tagName => tagMap.get(tagName))
+                .filter(tagId => tagId) // Filter out undefined tags
+                .map(tagId => ({
+                  service_id: item.id,
+                  tag_id: tagId,
                   created_by: user?.id,
                   updated_by: user?.id,
                   created_at: timestamp,
                   updated_at: timestamp
-                });
-              
-              if (tagCreateError) {
-              }
+                }));
+              allServiceTags.push(...serviceTags);
             }
-          }
-          
-          // Delete existing service-tag associations
-          const { error: deleteError } = await supabase
-            .from(TABLES.SERVICE_TAGS)
-            .delete()
-            .eq('service_id', item.id);
-          
-          if (deleteError) {
-          }
-          
-          // Get tag IDs for all tags
-          const { data: tagData } = await supabase
-            .from(TABLES.TAGS)
-            .select('id, name')
-            .in('name', item.tags);
-          
-          if (tagData && tagData.length > 0) {
-            // Create new service-tag associations
-            const serviceTags = tagData.map(tag => ({
-              service_id: item.id,
-              tag_id: tag.id,
-              created_by: user?.id,
-              updated_by: user?.id,
-              created_at: timestamp,
-              updated_at: timestamp
-            }));
-            
-            const { error: tagError } = await supabase
-              .from(TABLES.SERVICE_TAGS)
-              .insert(serviceTags);
-            
-            if (tagError) {
-            }
-          }
-        } else {
-          // Delete service-tag associations if no tags specified
-          const { error: deleteError } = await supabase
-            .from(TABLES.SERVICE_TAGS)
-            .delete()
-            .eq('service_id', item.id);
-          
-          if (deleteError) {
           }
         }
       }
+      
+      // Optimize auto-add and quantity rules with batch operations
+      // Batch delete all existing rules for these services
+      await Promise.all([
+        supabase.from('auto_add_rules').delete().in('service_id', serviceIds),
+        supabase.from('quantity_rules').delete().in('service_id', serviceIds)
+      ]);
+      
+      // Batch collect all rules to insert
+      const allAutoAddRules = [];
+      const allQuantityRules = [];
+      
+      for (const item of items) {
+        const serviceId = item.id;
+        
+        // Collect auto-add rules
+        const autoAddFields = item.autoAddServices || item.auto_add_trigger_fields || [];
+        if (autoAddFields.length > 0) {
+          const configFieldIds = autoAddFields.map(field => 
+            typeof field === 'string' ? field : field.configFieldId
+          ).filter(id => id && id !== null && id !== undefined);
+          
+          const autoAddRules = configFieldIds.map(configFieldId => ({
+            service_id: serviceId,
+            config_field_id: configFieldId,
+            simulator_id: simulatorId,
+            is_active: true
+          }));
+          allAutoAddRules.push(...autoAddRules);
+        }
+        
+        // Collect quantity rules
+        const quantityFields = item.quantitySourceFields || item.quantity_source_fields || [];
+        if (quantityFields.length > 0) {
+          const quantityRules = quantityFields.map(configFieldId => ({
+            service_id: serviceId,
+            config_field_id: configFieldId,
+            simulator_id: simulatorId,
+            multiplier: item.quantityMultiplier || 1.0,
+            is_active: true
+          }));
+          allQuantityRules.push(...quantityRules);
+        }
+      }
+      
+      // Batch insert all rules
+      const rulePromises = [];
+      if (allAutoAddRules.length > 0) {
+        rulePromises.push(supabase.from('auto_add_rules').insert(allAutoAddRules));
+      }
+      if (allQuantityRules.length > 0) {
+        rulePromises.push(supabase.from('quantity_rules').insert(allQuantityRules));
+      }
+      
+      if (rulePromises.length > 0) {
+        await Promise.all(rulePromises);
+      }
+      
+      if (allServiceTags.length > 0) {
+        await supabase.from(TABLES.SERVICE_TAGS).insert(allServiceTags);
+      }
+        });
     } catch (error) {
+      if (error instanceof Error && error.message.includes('Rate limit exceeded')) {
+        audit.logRateLimit('savePricingItems');
+      }
       throw error;
     }
   },
@@ -339,37 +376,10 @@ export const api = {
   // Load categories - now uses direct Supabase queries with RLS
   async loadCategories(simulatorId?: string): Promise<Category[]> {
     try {
-      console.log('🔍 loadCategories called with simulatorId:', simulatorId);
-      
-      let query = supabase
-        .from(TABLES.CATEGORIES)
-        .select('*')
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false }); // Changed for cache busting
-
-      // Filter by simulator if provided
-      if (simulatorId) {
-        query = query.eq('simulator_id', simulatorId);
-        console.log('🔍 Filtering categories by simulator_id:', simulatorId);
-      } else {
-        console.log('🔍 Loading all categories (no simulator filter)');
-      }
-
-      const { data: categories, error } = await query;
-      
-      console.log('🔍 Categories query result:', { 
-        data: categories, 
-        error,
-        count: categories?.length || 0,
-        firstCategorySimulatorId: categories?.[0]?.simulator_id,
-        timestamp: new Date().toISOString()
-      });
-      
-      if (error) {
-        throw new Error(`Failed to load categories: ${error.message}`);
-      }
-      
-      return categories || [];
+      const categoryService = new CategoryService();
+      return simulatorId 
+        ? await categoryService.loadBySimulator(simulatorId)
+        : await categoryService.loadAll();
     } catch (error) {
       throw error;
     }
@@ -421,39 +431,11 @@ export const api = {
   // Load tags - now uses direct Supabase queries with RLS
   async loadTags(simulatorId?: string): Promise<Tag[]> {
     try {
-      console.log('🔍 loadTags called with simulatorId:', simulatorId);
-      
-      let query = supabase
-        .from(TABLES.TAGS)
-        .select('*')
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false }); // Changed for cache busting
-
-      // Filter by simulator if provided
-      if (simulatorId) {
-        query = query.eq('simulator_id', simulatorId);
-        console.log('🔍 Filtering tags by simulator_id:', simulatorId);
-      } else {
-        console.log('🔍 Loading all tags (no simulator filter)');
-      }
-
-      const { data: tags, error } = await query;
-      
-      console.log('🔍 Tags query result:', { 
-        data: tags, 
-        error,
-        count: tags?.length || 0,
-        firstTagSimulatorId: tags?.[0]?.simulator_id,
-        timestamp: new Date().toISOString()
-      });
-      
-      if (error) {
-        throw new Error(`Failed to load tags: ${error.message}`);
-      }
-      
-      return tags || [];
+      const tagService = new TagService();
+      return simulatorId 
+        ? await tagService.loadBySimulator(simulatorId)
+        : await tagService.loadAll();
     } catch (error) {
-      // // // console.error('❌ Failed to load tags:', error);
       throw error;
     }
   },
@@ -493,39 +475,11 @@ export const api = {
   // Load configurations - now uses direct Supabase queries with RLS
   async loadConfigurations(simulatorId?: string): Promise<ConfigurationDefinition[]> {
     try {
-      console.log('🔍 loadConfigurations called with simulatorId:', simulatorId);
-      
-      let query = supabase
-        .from(TABLES.CONFIGURATIONS)
-        .select('*')
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false }); // Changed for cache busting
-
-      // Filter by simulator if provided
-      if (simulatorId) {
-        query = query.eq('simulator_id', simulatorId);
-        console.log('🔍 Filtering configurations by simulator_id:', simulatorId);
-      } else {
-        console.log('🔍 Loading all configurations (no simulator filter)');
-      }
-
-      const { data: configurations, error } = await query;
-      
-      console.log('🔍 Configurations query result:', { 
-        data: configurations, 
-        error,
-        count: configurations?.length || 0,
-        firstConfigSimulatorId: configurations?.[0]?.simulator_id,
-        timestamp: new Date().toISOString()
-      });
-      
-      if (error) {
-        throw new Error(`Failed to load configurations: ${error.message}`);
-      }
-      
-      return configurations || [];
+      const configurationService = new ConfigurationService();
+      return simulatorId 
+        ? await configurationService.loadBySimulator(simulatorId)
+        : await configurationService.loadAll();
     } catch (error) {
-      // // // console.error('❌ Failed to load configurations:', error);
       throw error;
     }
   },
@@ -618,13 +572,13 @@ async saveGuestScenario(data: {
   lastName: string;
   companyName: string;
   scenarioName: string;
-  config: any;
-  selectedItems: any[];
-  categories: any[];
+  config: ClientConfig;
+  selectedItems: SelectedItem[];
+  categories: Category[];
   globalDiscount: number;
   globalDiscountType: string;
   globalDiscountApplication: string;
-  summary: any;
+  summary: ScenarioSummary;
 }): Promise<{ success: boolean; submissionCode: string; scenarioId: string }> {
   try {
       const timestamp = getCurrentTimestamp();
@@ -842,7 +796,7 @@ async saveGuestScenario(data: {
   },
 
   // Session data persistence - now uses KV store with direct Supabase queries
-  async saveSessionData(sessionId: string, key: string, value: any): Promise<void> {
+  async saveSessionData(sessionId: string, key: string, value: unknown): Promise<void> {
     try {
       const fullKey = `${sessionId}_${key}`;
       
@@ -1311,12 +1265,13 @@ async saveGuestScenario(data: {
       }
       
       return data || [];
-    } catch (error: any) {
-      throw new Error(`Failed to fetch users: ${error.message}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch users: ${errorMessage}`);
     }
   },
 
-  async getUser(id: string): Promise<any | null> {
+  async getUser(id: string): Promise<UserProfile | null> {
     try {
       const { data, error } = await supabase
         .from(TABLES.USER_PROFILES)
@@ -1332,24 +1287,40 @@ async saveGuestScenario(data: {
       }
       
       return data;
-    } catch (error: any) {
-      throw new Error(`Failed to fetch user: ${error.message}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch user: ${errorMessage}`);
     }
   },
 
-  async updateUser(id: string, updates: any): Promise<any> {
+  async updateUser(id: string, updates: Partial<UserProfile>): Promise<UserProfile> {
     try {
-      const user = await getCurrentUser();
-      if (!user) {
-        throw new Error('User must be authenticated to update users');
-      }
+      // Apply rate limiting
+      await rateLimiters.mutations(async () => {
+        const user = await getCurrentUser();
+        if (!user) {
+          throw new Error('User must be authenticated to update users');
+        }
 
-      const timestamp = getCurrentTimestamp();
-      const updatesWithAudit = {
-        ...updates,
-        updated_by: user.id,
-        updated_at: timestamp
-      };
+        // Check permissions
+        if (!permissions.hasAdminAccess(user.user_metadata?.role || 'member')) {
+          throw new Error('Insufficient permissions to update users');
+        }
+
+        // Sanitize input
+        const sanitizedUpdates = {
+          ...updates,
+          full_name: updates.full_name ? sanitize.text(updates.full_name) : updates.full_name,
+          email: updates.email ? sanitize.email(updates.email) : updates.email,
+          role: updates.role ? sanitize.text(updates.role) : updates.role
+        };
+
+        const timestamp = getCurrentTimestamp();
+        const updatesWithAudit = {
+          ...sanitizedUpdates,
+          updated_by: user.id,
+          updated_at: timestamp
+        };
 
       const { data, error } = await supabase
         .from(TABLES.USER_PROFILES)
@@ -1358,13 +1329,18 @@ async saveGuestScenario(data: {
         .select()
         .single();
       
-      if (error) {
-        throw new Error(`Failed to update user: ${error.message}`);
+        if (error) {
+          throw new Error(`Failed to update user: ${error.message}`);
+        }
+        
+        return data;
+        });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('Rate limit exceeded')) {
+        audit.logRateLimit('updateUser');
       }
-      
-      return data;
-    } catch (error: any) {
-      throw new Error(`Failed to update user: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to update user: ${errorMessage}`);
     }
   },
 
@@ -1388,13 +1364,14 @@ async saveGuestScenario(data: {
       if (error) {
         throw new Error(`Failed to delete user: ${error.message}`);
       }
-    } catch (error: any) {
-      throw new Error(`Failed to delete user: ${error.message}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to delete user: ${errorMessage}`);
     }
   },
 
   // Invite Management Functions
-  async getInvites(): Promise<any[]> {
+  async getInvites(): Promise<Invite[]> {
     try {
       const { data, error } = await supabase
         .from('admin_invites')
@@ -1406,12 +1383,13 @@ async saveGuestScenario(data: {
       }
       
       return data || [];
-    } catch (error: any) {
-      throw new Error(`Failed to fetch invites: ${error.message}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch invites: ${errorMessage}`);
     }
   },
 
-  async createInvite(inviteData: any): Promise<any> {
+  async createInvite(inviteData: Partial<Invite>): Promise<Invite> {
     try {
       const user = await getCurrentUser();
       if (!user) {
@@ -1457,45 +1435,52 @@ async saveGuestScenario(data: {
     }
   },
 
-  // Statistics Functions
+  // Statistics Functions - Optimized with single query
   async getAdminStats(): Promise<any> {
     try {
-      const [usersResult, scenariosResult, guestSubmissionsResult] = await Promise.all([
-        supabase.from(TABLES.USER_PROFILES).select('id', { count: 'exact' }),
+      // Use a single optimized query with aggregations
+      const { data: statsData, error } = await supabase
+        .from(TABLES.USER_PROFILES)
+        .select(`
+          id,
+          is_active,
+          created_at
+        `);
+
+      if (error) throw error;
+
+      // Calculate stats from the single query result
+      const totalUsers = statsData?.length || 0;
+      const activeUsers = statsData?.filter(user => user.is_active).length || 0;
+
+      // Get scenario and guest submission counts in parallel
+      const [scenariosResult, guestSubmissionsResult, scenarioValues] = await Promise.all([
         supabase.from(TABLES.SIMULATOR_SUBMISSIONS).select('id', { count: 'exact' }),
-        supabase.from(TABLES.GUEST_SCENARIOS).select('id', { count: 'exact' })
+        supabase.from(TABLES.GUEST_SCENARIOS).select('id', { count: 'exact' }),
+        supabase.from(TABLES.SIMULATOR_SUBMISSIONS).select('cost_summary').not('cost_summary', 'is', null)
       ]);
 
-      const totalUsers = usersResult.count || 0;
       const totalScenarios = scenariosResult.count || 0;
       const totalGuestSubmissions = guestSubmissionsResult.count || 0;
-
-      // Calculate active users (users who logged in within last 30 days)
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
-      const { count: activeUsers } = await supabase
-        .from(TABLES.USER_PROFILES)
-        .select('id', { count: 'exact' })
-        .gte('last_login', thirtyDaysAgo.toISOString())
-        .eq('is_active', true);
-
-      // Calculate average scenario value
-      const { data: scenarioValues } = await supabase
-        .from(TABLES.SIMULATOR_SUBMISSIONS)
-        .select('total_price')
-        .not('total_price', 'is', null);
-
-      const averageScenarioValue = scenarioValues?.length 
-        ? scenarioValues.reduce((sum, s) => sum + (s.total_price || 0), 0) / scenarioValues.length 
+      const scenarioPrices = scenarioValues.data || [];
+      const totalRevenue = scenarioPrices.reduce((sum, s) => {
+        const costSummary = s.cost_summary;
+        if (costSummary && typeof costSummary === 'object' && 'totalProjectCost' in costSummary) {
+          return sum + (costSummary.totalProjectCost || 0);
+        }
+        return sum;
+      }, 0);
+      const averageScenarioValue = scenarioPrices.length 
+        ? totalRevenue / scenarioPrices.length 
         : 0;
 
       return {
         totalUsers,
         totalScenarios,
         totalGuestSubmissions,
-        totalRevenue: scenarioValues?.reduce((sum, s) => sum + (s.total_price || 0), 0) || 0,
-        activeUsers: activeUsers || 0,
+        totalRevenue,
+        activeUsers,
         averageScenarioValue,
         recentActivity: [] // TODO: Implement recent activity tracking
       };
@@ -1509,7 +1494,6 @@ async saveGuestScenario(data: {
   // ============================================
 
   async loadPricingUnits() {
-    // // // console.log('🔍 Loading pricing units (global config)');
     
     const { data, error } = await supabase
       .from('config_pricing_units')
@@ -1518,16 +1502,32 @@ async saveGuestScenario(data: {
       .order('display_order');
     
     if (error) {
-      // // // console.error('❌ Error loading pricing units:', error);
+      console.error('❌ Error loading pricing units:', error);
       throw error;
     }
     
-    // // // console.log('✅ Loaded pricing units:', data?.length);
     return data || [];
   },
 
   async savePricingUnit(unit: any) {
-    // // // console.log('🔍 Saving pricing unit:', unit);
+    
+    // Validate required fields
+    if (!unit.name || !unit.value) {
+      throw new Error('Name and value are required for pricing units');
+    }
+    
+    // Check for duplicate value only if it's not empty
+    if (unit.value.trim() !== '') {
+      const { data: existingUnits } = await supabase
+        .from('config_pricing_units')
+        .select('id, value')
+        .eq('value', unit.value)
+        .neq('id', unit.id || '');
+      
+      if (existingUnits && existingUnits.length > 0) {
+        throw new Error(`A pricing unit with value "${unit.value}" already exists`);
+      }
+    }
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1546,6 +1546,7 @@ async saveGuestScenario(data: {
       updated_at: now
     };
     
+    
     const { data, error } = await supabase
       .from('config_pricing_units')
       .upsert(payload)
@@ -1553,16 +1554,14 @@ async saveGuestScenario(data: {
       .single();
     
     if (error) {
-      // // // console.error('❌ Error saving pricing unit:', error);
+      console.error('❌ Error saving pricing unit:', error);
       throw error;
     }
     
-    // // // console.log('✅ Pricing unit saved:', data);
     return data;
   },
 
   async deletePricingUnit(unitId: string) {
-    // // // console.log('🔍 Deleting pricing unit:', unitId);
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1582,11 +1581,11 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing unit deleted');
+
   },
 
   async togglePricingUnitActive(unitId: string, isActive: boolean) {
-    // // // console.log('🔍 Toggling pricing unit active:', unitId, isActive);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1605,7 +1604,7 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing unit active status toggled');
+
   },
 
   // ============================================
@@ -1613,7 +1612,6 @@ async saveGuestScenario(data: {
   // ============================================
 
   async loadPricingTypes() {
-    // // // console.log('🔍 Loading pricing types (global config)');
     
     const { data, error } = await supabase
       .from('config_pricing_types')
@@ -1622,16 +1620,15 @@ async saveGuestScenario(data: {
       .order('display_order');
     
     if (error) {
-      // // // console.error('❌ Error loading pricing types:', error);
+      console.error('❌ Error loading pricing types:', error);
       throw error;
     }
     
-    // // // console.log('✅ Loaded pricing types:', data?.length);
     return data || [];
   },
 
   async savePricingType(type: any) {
-    // // // console.log('🔍 Saving pricing type:', type);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1662,12 +1659,12 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing type saved:', data);
+
     return data;
   },
 
   async deletePricingType(typeId: string) {
-    // // // console.log('🔍 Deleting pricing type:', typeId);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1687,11 +1684,11 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing type deleted');
+
   },
 
   async togglePricingTypeActive(typeId: string, isActive: boolean) {
-    // // // console.log('🔍 Toggling pricing type active:', typeId, isActive);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1710,7 +1707,7 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing type active status toggled');
+
   },
 
   // ============================================
@@ -1718,7 +1715,6 @@ async saveGuestScenario(data: {
   // ============================================
 
   async loadPricingCycles() {
-    // // // console.log('🔍 Loading pricing cycles (global config)');
     
     const { data, error } = await supabase
       .from('config_pricing_cycles')
@@ -1727,16 +1723,15 @@ async saveGuestScenario(data: {
       .order('display_order');
     
     if (error) {
-      // // // console.error('❌ Error loading pricing cycles:', error);
+      console.error('❌ Error loading pricing cycles:', error);
       throw error;
     }
     
-    // // // console.log('✅ Loaded pricing cycles:', data?.length);
     return data || [];
   },
 
   async savePricingCycle(cycle: any) {
-    // // // console.log('🔍 Saving pricing cycle:', cycle);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1766,12 +1761,12 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing cycle saved:', data);
+
     return data;
   },
 
   async deletePricingCycle(cycleId: string) {
-    // // // console.log('🔍 Deleting pricing cycle:', cycleId);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1791,11 +1786,11 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing cycle deleted');
+
   },
 
   async togglePricingCycleActive(cycleId: string, isActive: boolean) {
-    // // // console.log('🔍 Toggling pricing cycle active:', cycleId, isActive);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1814,7 +1809,7 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing cycle active status toggled');
+
   },
 
   // ============================================
@@ -1822,7 +1817,7 @@ async saveGuestScenario(data: {
   // ============================================
 
   async loadPricingTemplates() {
-    // // // console.log('🔍 Loading pricing templates (global config)');
+
     
     const { data, error } = await supabase
       .from('config_pricing_templates')
@@ -1835,12 +1830,12 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Loaded pricing templates:', data?.length);
+
     return data || [];
   },
 
   async savePricingTemplate(template: any) {
-    // // // console.log('🔍 Saving pricing template:', template);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1869,12 +1864,12 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing template saved:', data);
+
     return data;
   },
 
   async deletePricingTemplate(templateId: string) {
-    // // // console.log('🔍 Deleting pricing template:', templateId);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1894,11 +1889,11 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing template deleted');
+
   },
 
   async togglePricingTemplateActive(templateId: string, isActive: boolean) {
-    // // // console.log('🔍 Toggling pricing template active:', templateId, isActive);
+
     
     const user = await getCurrentUser();
     const now = getCurrentTimestamp();
@@ -1917,7 +1912,7 @@ async saveGuestScenario(data: {
       throw error;
     }
     
-    // // // console.log('✅ Pricing template active status toggled');
+
   },
 
 };

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Plus } from 'lucide-react';
 import { PricingItem } from '../types/domain';
 import { TagDialog } from './dialogs/TagDialog';
-import { DataTable } from '../shared/components/ui/data-table';
+import { DataTable } from './DataTable';
 import { createTagColumns } from './tags-columns';
 
 interface TagData {

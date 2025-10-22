@@ -1,10 +1,10 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "@/shared/components/ui/badge"
-import { Button } from "@/shared/components/ui/button"
-import { Checkbox } from "@/shared/components/ui/checkbox"
-import { Switch } from "@/shared/components/ui/switch"
+import { Badge } from "../../../../components/ui/badge";
+import { Button } from "../../../../components/ui/button";
+import { Checkbox } from "../../../../components/ui/checkbox";
+import { Switch } from "../../../../components/ui/switch";
 import { ArrowUpDown, MoreVertical } from "lucide-react"
 import {
   DropdownMenu,
@@ -13,14 +13,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu"
+} from "../../../../components/ui/dropdown-menu"
 
 export type UnitType = {
   id: string;
   name: string;
   description: string;
   category: 'one-time' | 'monthly-recurring' | 'transaction-based' | 'event-activity-based';
-  isActive: boolean;
+  is_active: boolean;
   value?: string;
   display_order?: number;
 }
@@ -140,10 +140,10 @@ export const createUnitColumns = (
   
   // Status badge (SEMANTIC COLORS!)
   {
-    accessorKey: "isActive",
+    accessorKey: "is_active",
     header: "Status",
     cell: ({ row }) => {
-      const isActive = row.getValue("isActive") as boolean
+      const isActive = row.getValue("is_active") as boolean
       return (
         <Badge 
           variant="outline"
@@ -165,7 +165,7 @@ export const createUnitColumns = (
         <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
           {/* Toggle Active Switch */}
           <Switch
-            checked={unit.isActive}
+            checked={unit.is_active}
             onCheckedChange={() => onToggleActive(unit.id)}
             className="data-[state=unchecked]:bg-gray-200"
           />

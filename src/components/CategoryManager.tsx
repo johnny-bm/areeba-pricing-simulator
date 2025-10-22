@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Plus } from 'lucide-react';
 import { Category, PricingItem } from '../types/domain';
 import { CategoryDialog } from './dialogs/CategoryDialog';
-import { DataTable } from '../shared/components/ui/data-table';
+import { DataTable } from './DataTable';
 import { createCategoryColumns } from './categories-columns';
 
 interface CategoryManagerProps {

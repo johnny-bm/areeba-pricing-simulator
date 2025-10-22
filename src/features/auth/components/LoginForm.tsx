@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../shared/components/ui/button';
-import { Input } from '../../../shared/components/ui/input';
-import { Label } from '../../../shared/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../shared/components/ui/card';
-import { Alert, AlertDescription } from '../../../shared/components/ui/alert';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
+import { Label } from '../../../components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Alert, AlertDescription } from '../../../components/ui/alert';
 import { useAuth } from '../hooks/useAuth';
 import { useAuthValidation } from '../hooks/useAuthValidation';
 import { LoginCredentials } from '../types';
 import { ROUTES } from '../../../config/routes';
-import WordMarkRed from '../../../imports/WordMarkRed';
+import WordMarkRed from '../../../assets/icons/WordMarkRed';
 
 interface LoginFormProps {
   onLoginSuccess?: () => void;

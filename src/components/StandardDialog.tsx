@@ -27,13 +27,17 @@ interface StandardDialogProps {
   // Layout options
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   hideCloseButton?: boolean;
+  
+  // Auto-save options
+  hasUnsavedChanges?: boolean;
+  onAutoSave?: () => Promise<void> | void;
 }
 
 const sizeClasses = {
-  sm: 'max-w-md',
-  md: 'max-w-lg', 
-  lg: 'max-w-2xl',
-  xl: 'max-w-4xl',
+  sm: 'max-w-lg',
+  md: 'max-w-2xl', 
+  lg: 'max-w-4xl',
+  xl: 'max-w-6xl',
   full: 'max-w-7xl'
 };
 
@@ -46,13 +50,27 @@ export const StandardDialog: React.FC<StandardDialogProps> = ({
   primaryAction,
   secondaryActions = [],
   destructiveActions = [],
-  size = 'md',
-  hideCloseButton = false
+  size = 'lg',
+  hideCloseButton = false,
+  hasUnsavedChanges = false,
+  onAutoSave
 }) => {
   const hasActions = primaryAction || secondaryActions.length > 0 || destructiveActions.length > 0;
 
+  const handleClose = async () => {
+    if (hasUnsavedChanges && onAutoSave) {
+      try {
+        await onAutoSave();
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+        // Still close the dialog even if auto-save fails
+      }
+    }
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className={`${sizeClasses[size]} max-h-[90vh] flex flex-col p-0`}>
         <DialogHeader className="p-6 pb-4">
           <DialogTitle>{title}</DialogTitle>

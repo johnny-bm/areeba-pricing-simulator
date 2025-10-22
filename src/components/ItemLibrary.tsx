@@ -4,7 +4,7 @@
  * Last Updated: 2025-09-30
  * This component uses cards for a cleaner, more visual layout
  */
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
@@ -25,7 +25,7 @@ interface ItemLibraryProps {
   clientConfig: ClientConfig;
 }
 
-export function ItemLibrary({ 
+export const ItemLibrary = React.memo(function ItemLibrary({ 
   items, 
   categories, 
   selectedItemIds, 
@@ -447,4 +447,4 @@ export function ItemLibrary({
       </Card>
     </div>
   );
-}
+});

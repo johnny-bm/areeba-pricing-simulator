@@ -1,14 +1,19 @@
-import { Toaster } from '../shared/components/ui/sonner';
+import { Toaster } from '../components/ui/sonner';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { AppRouter } from './router';
+import { OptimizedAppRouter } from './OptimizedRouter';
 import { AppProviders } from './providers';
 
 function App() {
   return (
     <ErrorBoundary>
       <AppProviders>
-        <AppRouter />
-        <Toaster toastOptions={{ style: { zIndex: 9999 } }} />
+        <OptimizedAppRouter />
+        <Toaster 
+          position="top-center"
+          richColors
+          closeButton
+        />
       </AppProviders>
     </ErrorBoundary>
   );

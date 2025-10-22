@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './app/App.tsx'
 import { ErrorBoundary } from './components/system/ErrorBoundary'
-import './globals.css'
+import './styles/globals.css'
 import { verifyDatabaseSchemaInDev } from '@/lib/db-verification';
 
 // Verify database schema in development

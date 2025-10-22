@@ -18,11 +18,35 @@ export function useAuth(): AuthState & {
     error: null,
   });
 
-  // Initialize auth state
+  // Initialize auth state with better error handling
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const user = await AuthService.getCurrentUser();
+        // Check localStorage first for faster initialization
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          try {
+            const user = JSON.parse(storedUser);
+            setState(prev => ({
+              ...prev,
+              user,
+              isAuthenticated: true,
+              isLoading: false,
+            }));
+            return;
+          } catch (parseError) {
+            console.warn('Failed to parse stored user:', parseError);
+            localStorage.removeItem('user');
+          }
+        }
+
+        // If no stored user, try to get from server with shorter timeout
+        const timeoutPromise = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('Authentication timeout')), 5000)
+        );
+        
+        const userPromise = AuthService.getCurrentUser();
+        const user = await Promise.race([userPromise, timeoutPromise]);
         
         if (user) {
           AuthService.storeUserData(user);
@@ -39,9 +63,10 @@ export function useAuth(): AuthState & {
           }));
         }
       } catch (error) {
+        console.warn('Auth initialization failed:', error);
+        // Don't set error state, just continue without auth
         setState(prev => ({
           ...prev,
-          error: (error as Error).message,
           isLoading: false,
         }));
       }

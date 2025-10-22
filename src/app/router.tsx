@@ -9,13 +9,13 @@ import { ConfigurationLoader } from './ConfigurationLoader';
 import { Skeleton } from '../components/ui/skeleton';
 
 // Lazy load heavy components
-const SimulatorLanding = lazy(() => import('../components/SimulatorLanding').then(m => ({ default: m.SimulatorLanding })));
-const LoginPage = lazy(() => import('../components/LoginPage').then(m => ({ default: m.LoginPage })));
-const SignupPage = lazy(() => import('../components/SignupPage').then(m => ({ default: m.SignupPage })));
-const ForgotPasswordPage = lazy(() => import('../components/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
-const ResetPasswordPage = lazy(() => import('../components/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
-const PricingSimulator = lazy(() => import('../components/PricingSimulator').then(m => ({ default: m.PricingSimulator })));
-const AdminInterface = lazy(() => import('../components/AdminInterface').then(m => ({ default: m.AdminInterface })));
+const SimulatorLanding = lazy(() => import('../features/simulator/components/SimulatorLanding').then(m => ({ default: m.SimulatorLanding })));
+const LoginPage = lazy(() => import('../features/auth/components/LoginPage').then(m => ({ default: m.LoginPage })));
+const SignupPage = lazy(() => import('../features/auth/components/SignupPage').then(m => ({ default: m.SignupPage })));
+const ForgotPasswordPage = lazy(() => import('../features/auth/components/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
+const ResetPasswordPage = lazy(() => import('../features/auth/components/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
+const PricingSimulator = lazy(() => import('../features/simulator/components/PricingSimulator').then(m => ({ default: m.PricingSimulator })));
+const AdminInterface = lazy(() => import('../features/admin/components/AdminInterface').then(m => ({ default: m.AdminInterface })));
 const PdfBuilderAdmin = lazy(() => import('../features/pdfBuilder').then(m => ({ default: m.PdfBuilderAdmin })));
 
 // Content-only skeleton loading component
@@ -111,78 +111,76 @@ function AdminDataLoader() {
       const currentSimulatorId = simulator ? simulators.find(s => s.urlSlug === simulator)?.id : null;
       
       if (!currentSimulatorId) {
+        console.error('Simulator ID not found!');
         throw new Error('Simulator ID not found. Please ensure you are on a valid simulator page.');
       }
+      
       try {
         await api.savePricingItems(items, currentSimulatorId);
         setItems(items);
       } catch (error) {
-        // // // console.error('❌ Router: Failed to save items:', error);
+        console.error('Router: Failed to save items:', error);
         throw error;
       }
     }, 500); // 500ms debounce
   }, [simulator, simulators]);
 
+  // Cleanup timeout on unmount
   useEffect(() => {
-    console.log('🔍 === useEffect TRIGGERED ===');
-    console.log('🔍 Current simulator:', simulator);
-    console.log('🔍 isDataLoadingRef:', isDataLoadingRef.current);
-    console.log('🔍 hasDataLoadedRef:', hasDataLoadedRef.current);
-    
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     // Prevent multiple data loads using refs
     if (isDataLoadingRef.current) {
-      console.log('⚠️ Already loading, skipping...');
       return;
     }
     
     // Check if we already loaded data for this specific simulator
     if (hasDataLoadedRef.current && loadedSimulatorRef.current === simulator) {
-      console.log('⚠️ Already loaded for this simulator, skipping...');
       return;
     }
     
     // Reset refs when simulator changes
     if (simulator && loadedSimulatorRef.current !== simulator) {
-      console.log('🔍 === SIMULATOR CHANGED ===');
-      console.log('🔍 New simulator:', simulator);
-      console.log('🔍 Previous simulator:', loadedSimulatorRef.current);
-      console.log('🔍 Resetting refs...');
       hasDataLoadedRef.current = false;
       isDataLoadingRef.current = false;
     }
 
     const loadAdminData = async () => {
-      console.log('🔍 === START loadAdminData ===');
-      console.log('🔍 Current simulator param:', simulator);
-      console.log('🔍 isDataLoadingRef:', isDataLoadingRef.current);
-      console.log('🔍 hasDataLoadedRef:', hasDataLoadedRef.current);
-      
       try {
         isDataLoadingRef.current = true;
         setIsLoading(true);
         
-        console.log('🔍 Loading simulators...');
         // Load simulators first to get the simulator ID
         const simulatorsResponse = await SimulatorApi.loadSimulators();
-        console.log('🔍 Simulators loaded:', simulatorsResponse?.length);
         setSimulators(simulatorsResponse || []);
         
-        console.log('🔍 Finding simulator with slug:', simulator);
         // Calculate simulator ID after simulators are loaded
         const simulatorId = simulator ? simulatorsResponse?.find(s => s.urlSlug === simulator)?.id : null;
-        console.log('🔍 Router: URL slug from params:', simulator);
-        console.log('🔍 Router: Available simulators:', simulatorsResponse?.map(s => ({ id: s.id, urlSlug: s.urlSlug, name: s.name })));
-        console.log('🔍 Router: Calculated simulatorId:', simulatorId);
         
         if (!simulatorId && simulator) {
-          console.error('❌ Router: No simulator found for slug:', simulator);
-          console.error('❌ Router: Available slugs:', simulatorsResponse?.map(s => s.urlSlug));
-          console.error('❌ Router: Available simulators:', simulatorsResponse?.map(s => ({ id: s.id, urlSlug: s.urlSlug, name: s.name })));
-          setError(`Simulator not found: ${simulator}. Available simulators: ${simulatorsResponse?.map(s => s.urlSlug).join(', ')}`);
+          console.error('Router: No simulator found for slug:', simulator);
+          
+          // Try to find a similar simulator
+          const similarSimulator = simulatorsResponse?.find(s => 
+            s.urlSlug.includes('issuing') || 
+            s.urlSlug.includes('processing') ||
+            s.name.toLowerCase().includes('issuing') ||
+            s.name.toLowerCase().includes('processing')
+          );
+          
+          if (similarSimulator) {
+            setError(`Simulator not found: ${simulator}. Did you mean "${similarSimulator.urlSlug}"? Available simulators: ${simulatorsResponse?.map(s => s.urlSlug).join(', ')}`);
+          } else {
+            setError(`Simulator not found: ${simulator}. Available simulators: ${simulatorsResponse?.map(s => s.urlSlug).join(', ')}`);
+          }
           return;
         }
-        
-        console.log('🔍 Loading all data with simulatorId:', simulatorId);
         // Load all data with the simulator ID
         const [servicesResponse, categoriesResponse, configurationsResponse, tagsResponse] = await Promise.all([
           api.loadPricingItems(simulatorId), // Pass simulator ID to filter services
@@ -191,26 +189,15 @@ function AdminDataLoader() {
           api.loadTags(simulatorId)          // Pass simulator ID to filter tags
         ]);
         
-        console.log('🔍 Data loaded - Services:', servicesResponse?.length, 
-                    'Categories:', categoriesResponse?.length,
-                    'Configs:', configurationsResponse?.length,
-                    'Tags:', tagsResponse?.length);
-        console.log('🔍 First service simulator_id:', (servicesResponse?.[0] as any)?.simulator_id);
-        console.log('🔍 First category simulator_id:', (categoriesResponse?.[0] as any)?.simulator_id);
-        
         setItems(servicesResponse || []);
         setCategories(categoriesResponse || []);
         setConfigurations(configurationsResponse || []);
         setTags(tagsResponse || []);
         
-        console.log('🔍 Router: Loaded configurations:', configurationsResponse?.length || 0);
-        console.log('🔍 Router: Loaded tags:', tagsResponse?.length || 0);
         hasDataLoadedRef.current = true;
         loadedSimulatorRef.current = simulator;
-        console.log('🔍 === END loadAdminData SUCCESS ===');
-        console.log('🔍 Loaded data for simulator:', simulator);
       } catch (error) {
-        console.error('❌ === loadAdminData FAILED ===', error);
+        console.error('loadAdminData failed:', error);
         setError(`Failed to load admin data: ${error instanceof Error ? error.message : 'Unknown error'}`);
       } finally {
         isDataLoadingRef.current = false;
@@ -236,9 +223,23 @@ function AdminDataLoader() {
         categories={[]}
         configurations={[]}
         tags={[]}
-        onUpdateItems={async () => {}}
-        onUpdateCategories={async () => {}}
-        onLogout={async () => {}}
+        onUpdateItems={debouncedSaveItems}
+        onUpdateCategories={async (categories) => {
+          // Calculate simulator ID from current simulators
+          const currentSimulatorId = simulator ? simulators.find(s => s.urlSlug === simulator)?.id : null;
+          
+          if (!currentSimulatorId) {
+            throw new Error('Simulator ID not found. Please ensure you are on a valid simulator page.');
+          }
+          try {
+            await api.saveCategories(categories, currentSimulatorId);
+            setCategories(categories);
+          } catch (error) {
+            console.error('Failed to save categories:', error);
+            throw error;
+          }
+        }}
+        onLogout={handleLogout}
         currentUserId={user?.id || ""}
         currentUserRole={user?.role || ""}
         isLoading={true}
@@ -296,6 +297,21 @@ export function AppRouter() {
   const { isAuthenticated, isLoading, user } = useAuthContext();
   const navigate = useNavigate();
 
+  // Add timeout for loading state to prevent infinite loading
+  const [showTimeout, setShowTimeout] = useState(false);
+  
+  useEffect(() => {
+    if (isLoading) {
+      const timeout = setTimeout(() => {
+        setShowTimeout(true);
+      }, 15000); // 15 second timeout
+      
+      return () => clearTimeout(timeout);
+    } else {
+      setShowTimeout(false);
+    }
+  }, [isLoading]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -308,6 +324,17 @@ export function AppRouter() {
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
             </div>
+            {showTimeout && (
+              <div className="text-center text-sm text-muted-foreground mt-4">
+                <p>Loading is taking longer than expected...</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                >
+                  Refresh Page
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

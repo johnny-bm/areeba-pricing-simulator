@@ -1,37 +1,73 @@
-import { useState, useEffect } from 'react';
+// React imports
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
+// External library imports
+import { Save, ChevronDown, ChevronUp } from "lucide-react";
+
+// Internal type imports
+import { SelectedItem, Category, DynamicClientConfig } from "../types/domain";
+
+// Internal utility imports
+import { formatPrice } from "../utils/formatters";
+import { calculateTieredPrice, getQuantitySourceDescription } from "../utils/tieredPricing";
+import { isOneTimeUnit } from "../utils/unitClassification";
+
+// Internal component imports
 import { Card, CardContent } from "./ui/card";
 import { Separator } from "./ui/separator";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { NumberInput } from "./NumberInput";
-import { SelectedItem, Category, DynamicClientConfig } from "../types/domain";
-import { formatPrice } from "../utils/formatters";
-import { calculateTieredPrice, getQuantitySourceDescription } from "../utils/tieredPricing";
-import { isOneTimeUnit } from "../utils/unitClassification";
-import { CardHeaderWithCollapse } from "./CardHeaderWithCollapse";
-import { Save, ChevronDown, ChevronUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
+import { NumberInput } from "./NumberInput";
+import { CardHeaderWithCollapse } from "./CardHeaderWithCollapse";
 import { ColorIndicator } from "./ui/color-indicator";
 
+/**
+ * Props for the FeeSummary component
+ */
 interface FeeSummaryProps {
+  /** Array of selected pricing items */
   selectedItems: SelectedItem[];
+  /** Array of available categories */
   categories: Category[];
+  /** Global discount amount */
   globalDiscount: number;
+  /** Type of global discount (percentage or fixed) */
   globalDiscountType: 'percentage' | 'fixed';
+  /** Application scope of global discount */
   globalDiscountApplication: 'none' | 'both' | 'monthly' | 'onetime';
+  /** Callback when global discount changes */
   onGlobalDiscountChange: (discount: number) => void;
+  /** Callback when global discount type changes */
   onGlobalDiscountTypeChange: (type: 'percentage' | 'fixed') => void;
+  /** Callback when global discount application changes */
   onGlobalDiscountApplicationChange: (application: 'none' | 'both' | 'monthly' | 'onetime') => void;
+  /** Client configuration object */
   clientConfig: DynamicClientConfig;
+  /** Optional submit handler */
   onSubmit?: () => Promise<void>;
+  /** Whether the form is currently submitting */
   isSubmitting?: boolean;
+  /** Whether the component is in guest mode */
   isGuestMode?: boolean;
+  /** Whether guest contact form has been submitted */
   guestContactSubmitted?: boolean;
+  /** Callback to show guest contact form */
   onShowGuestContactForm?: () => void;
 }
 
-export function FeeSummary({ 
+/**
+ * FeeSummary component for displaying pricing calculations and totals
+ * 
+ * This component provides a comprehensive summary of selected items, calculates
+ * totals, applies discounts, and handles form submission for both authenticated
+ * and guest users.
+ * 
+ * @param props - Component props
+ * @returns JSX element
+ */
+export const FeeSummary = React.memo(function FeeSummary({ 
   selectedItems, 
   categories,
   globalDiscount, 
@@ -483,4 +519,4 @@ export function FeeSummary({
       </CardContent>
     </Card>
   );
-}
+});

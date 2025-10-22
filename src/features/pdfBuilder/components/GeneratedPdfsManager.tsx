@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
 import { TableCell } from '../../../components/ui/table';
-import { DataTable } from '../../../shared/components/ui/data-table';
+import { DataTable } from '../../../components/ui/data-table';
 import { 
   Download, 
   Trash2, 

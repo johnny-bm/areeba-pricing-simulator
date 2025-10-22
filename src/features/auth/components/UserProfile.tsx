@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../shared/components/ui/button';
+import { Button } from '../../../components/ui/button';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
-} from '../../../shared/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '../../../shared/components/ui/avatar';
+} from '../../../components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '../../../components/ui/avatar';
 import { LogOut, User, Settings } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { AUTH_ROLES } from '../constants';

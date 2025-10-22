@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/components/ui/card';
-import { Badge } from '../../../shared/components/ui/badge';
-import { Button } from '../../../shared/components/ui/button';
-import { Label } from '../../../shared/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
+import { Button } from '../../../components/ui/button';
+import { Label } from '../../../components/ui/label';
 import { NumberInput } from '../../../components/NumberInput';
 import { PricingItem, SelectedItem } from '../../../types/domain';
 import { formatPrice } from '../../../utils/formatters';

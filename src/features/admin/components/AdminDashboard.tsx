@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/components/ui/card';
-import { Badge } from '../../../shared/components/ui/badge';
-import { Button } from '../../../shared/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
+import { Button } from '../../../components/ui/button';
 import { useAdminStats } from '../hooks/useAdminStats';
 import { formatPrice } from '../../../utils/formatters';
 import { Users, UserCheck, FileText, DollarSign, TrendingUp, Download } from 'lucide-react';
@@ -16,7 +16,11 @@ export function AdminDashboard({ onExportData }: AdminDashboardProps) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="animate-pulse">
+          <Card key={i} style={{
+            background: 'linear-gradient(90deg, #e5e7eb 25%, #d1d5db 50%, #e5e7eb 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'skeleton-shimmer 1.5s ease-in-out infinite'
+          }}>
             <CardHeader className="pb-2">
               <div className="h-4 bg-gray-200 rounded w-3/4"></div>
             </CardHeader>
